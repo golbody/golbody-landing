@@ -755,6 +755,137 @@
       line-height: 1.65;
       color: var(--color-text-muted);
     }
+
+    /* ============ CTA FINAL ============ */
+    .gol-final-cta {
+      padding: 96px 48px;
+      background: #122433;
+      border-top: 1px solid rgba(16, 145, 141, 0.1);
+      text-align: center;
+    }
+
+    @media (max-width: 639px) {
+      .gol-final-cta {
+        padding: 64px 24px;
+      }
+    }
+
+    .gol-final-cta h2 {
+      font-size: 40px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .gol-final-cta-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      margin-bottom: 40px;
+    }
+
+    .gol-final-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 16px 32px;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 8px 32px rgba(16, 145, 141, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .gol-final-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(16, 145, 141, 0.45);
+    }
+
+    .gol-final-cta-btn:active {
+      transform: translateY(0);
+    }
+
+    /* ============ FOOTER ============ */
+    .gol-footer {
+      background: #0D1F2D;
+      border-top: 1px solid rgba(16, 145, 141, 0.08);
+      padding: 32px 48px;
+    }
+
+    .gol-footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .gol-footer-logo {
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+
+    .gol-footer-copy {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-align: center;
+      flex: 1;
+      padding: 0 24px;
+    }
+
+    .gol-footer-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-shrink: 0;
+    }
+
+    .gol-footer-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .gol-footer-links a:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    @media (max-width: 639px) {
+      .gol-footer {
+        padding: 32px 24px;
+      }
+
+      .gol-footer-inner {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .gol-footer-copy {
+        padding: 0;
+        order: 2;
+      }
+
+      .gol-footer-links {
+        order: 3;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1208,6 +1339,26 @@
       });
     });
   </script>
+
+  <!-- ============ CTA FINAL ============ -->
+  <section class="gol-final-cta">
+    <h2>Pr&ecirc;t &agrave; transformer ton physique ?</h2>
+    <p class="gol-final-cta-subtitle">Rejoins des milliers d'utilisateurs qui ont d&eacute;j&agrave; essay&eacute; GolBody.</p>
+    <button class="gol-final-cta-btn">Commencer gratuitement &rarr;</button>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="gol-footer">
+    <div class="gol-footer-inner">
+      <a href="#" class="gol-footer-logo">GolBody</a>
+      <span class="gol-footer-copy">&copy; 2026 GolBody. Tous droits r&eacute;serv&eacute;s.</span>
+      <div class="gol-footer-links">
+        <a href="#">Mentions l&eacute;gales</a>
+        <a href="#">CGU</a>
+        <a href="#">Confidentialit&eacute;</a>
+      </div>
+    </div>
+  </footer>
 
 </body>
 </html>

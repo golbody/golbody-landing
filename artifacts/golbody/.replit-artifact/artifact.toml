@@ -1,0 +1,26 @@
+kind = "web"
+previewPath = "/"
+title = "GolBody"
+version = "1.0.0"
+id = "artifacts/golbody"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23945
+
+[services.development]
+run = "node server.cjs"
+
+[services.production]
+serve = "static"
+publicDir = "artifacts/golbody"
+
+[services.env]
+PORT = "23945"
+BASE_PATH = "/"

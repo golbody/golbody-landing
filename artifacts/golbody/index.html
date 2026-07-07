@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GolBody — Navigation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --color-bg: #0D1F2D;
+      --color-accent: #10918d;
+      --color-accent-hover: #0e7f7b;
+      --color-accent-dark: #0f734e;
+      --color-text-muted: #8ab0a8;
+      --color-text-muted-hover: #b8d4cf;
+      --color-border: rgba(16, 145, 141, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--color-bg);
+      min-height: 100vh;
+      color: #ffffff;
+    }
+
+    /* ============ NAVIGATION ============ */
+    .gol-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 48px;
+      background: rgba(13, 31, 45, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      z-index: 1000;
+    }
+
+    .gol-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .gol-logo {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+
+    .gol-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .gol-links a {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .gol-links a:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    .gol-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .gol-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 24px;
+      background: var(--color-accent);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .gol-btn:hover {
+      background: var(--color-accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .gol-btn:active {
+      transform: translateY(0);
+    }
+
+    .gol-menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      padding: 8px;
+      border-radius: 8px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .gol-menu-toggle:hover {
+      color: var(--color-text-muted-hover);
+      background: rgba(16, 145, 141, 0.08);
+    }
+
+    .gol-menu-toggle svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* ============ MOBILE MENU ============ */
+    .gol-mobile-menu {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: rgba(13, 31, 45, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 48px 24px;
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+    }
+
+    .gol-mobile-menu.is-open {
+      display: flex;
+    }
+
+    .gol-mobile-link {
+      display: block;
+      padding: 16px 0;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(16, 145, 141, 0.08);
+      cursor: pointer;
+      transition: color 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .gol-mobile-link:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    .gol-mobile-link:last-child {
+      border-bottom: none;
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 639px) {
+      .gol-nav {
+        padding: 0 24px;
+      }
+
+      .gol-links {
+        display: none;
+      }
+
+      .gol-menu-toggle {
+        display: flex;
+      }
+
+      .gol-mobile-menu {
+        padding: 16px 24px 24px;
+      }
+    }
+
+    /* ============ DEMO CONTENT ============ */
+    .gol-page {
+      padding-top: 64px;
+    }
+
+    .gol-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 64px);
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .gol-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(16, 145, 141, 0.1);
+      border: 1px solid rgba(16, 145, 141, 0.25);
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .gol-title {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: #ffffff;
+      max-width: 720px;
+      margin-bottom: 24px;
+      letter-spacing: -1.5px;
+    }
+
+    .gol-title span {
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .gol-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      max-width: 480px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .gol-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .gol-btn-outline {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 24px;
+      background: transparent;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border: 1px solid rgba(138, 176, 168, 0.25);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .gol-btn-outline:hover {
+      border-color: rgba(138, 176, 168, 0.5);
+      color: var(--color-text-muted-hover);
+    }
+
+    /* Scroll padding for anchor links */
+    html {
+      scroll-padding-top: 80px;
+    }
+
+    .gol-section {
+      padding: 96px 48px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 639px) {
+      .gol-section {
+        padding: 64px 24px;
+      }
+    }
+
+    .gol-section-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 24px;
+      letter-spacing: -0.5px;
+    }
+
+    .gol-section-text {
+      font-size: 16px;
+      color: var(--color-text-muted);
+      line-height: 1.7;
+      max-width: 640px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAVIGATION ============ -->
+  <nav class="gol-nav" role="navigation" aria-label="Navigation principale">
+    <div class="gol-nav-inner">
+      <a href="#" class="gol-logo">GolBody</a>
+
+      <ul class="gol-links">
+        <li><a href="#exemples">Exemples</a></li>
+        <li><a href="#avis">Avis</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+
+      <div class="gol-cta">
+        <a href="#commencer" class="gol-btn">Commencer</a>
+        <button
+          class="gol-menu-toggle"
+          id="menuToggle"
+          aria-label="Ouvrir le menu"
+          aria-expanded="false"
+          aria-controls="mobileMenu"
+        >
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ MOBILE MENU ============ -->
+  <div class="gol-mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="#exemples" class="gol-mobile-link">Exemples</a>
+    <a href="#avis" class="gol-mobile-link">Avis</a>
+    <a href="#faq" class="gol-mobile-link">FAQ</a>
+  </div>
+
+  <!-- ============ DEMO CONTENT ============ -->
+  <div class="gol-page">
+    <section class="gol-hero" id="commencer">
+      <div class="gol-label">Navigation GolBody</div>
+      <h1 class="gol-title">
+        Transformez votre corps avec <span>GolBody</span>
+      </h1>
+      <p class="gol-subtitle">
+        Le programme sur-mesure qui s'adapte &agrave; votre rythme de vie pour des r&eacute;sultats durables.
+      </p>
+      <div class="gol-actions">
+        <a href="#" class="gol-btn">Commencer maintenant</a>
+        <a href="#exemples" class="gol-btn-outline">Voir les exemples</a>
+      </div>
+    </section>
+
+    <section class="gol-section" id="exemples">
+      <h2 class="gol-section-title">Exemples</h2>
+      <p class="gol-section-text">
+        D&eacute;couvrez les transformations r&eacute;elles de nos membres et laissez-vous inspirer par leurs parcours.
+      </p>
+    </section>
+
+    <section class="gol-section" id="avis">
+      <h2 class="gol-section-title">Avis</h2>
+      <p class="gol-section-text">
+        Ce que nos utilisateurs disent de leur exp&eacute;rience GolBody au quotidien.
+      </p>
+    </section>
+
+    <section class="gol-section" id="faq">
+      <h2 class="gol-section-title">FAQ</h2>
+      <p class="gol-section-text">
+        Toutes les r&eacute;ponses &agrave; vos questions sur le programme, les tarifs et l'accompagnement.
+      </p>
+    </section>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIcon = menuToggle.querySelector('[data-lucide]');
+    let isOpen = false;
+
+    function updateMenuIcon() {
+      menuIcon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+      lucide.createIcons();
+    }
+
+    function closeMenu() {
+      isOpen = false;
+      mobileMenu.classList.remove('is-open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Ouvrir le menu');
+      updateMenuIcon();
+    }
+
+    function openMenu() {
+      isOpen = true;
+      mobileMenu.classList.add('is-open');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      menuToggle.setAttribute('aria-expanded', 'true');
+      menuToggle.setAttribute('aria-label', 'Fermer le menu');
+      updateMenuIcon();
+    }
+
+    menuToggle.addEventListener('click', function () {
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.gol-mobile-link').forEach(function (link) {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Close mobile menu on Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isOpen) {
+        closeMenu();
+      }
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function (e) {
+      if (isOpen && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+        closeMenu();
+      }
+    });
+  </script>
+
+</body>
+</html>

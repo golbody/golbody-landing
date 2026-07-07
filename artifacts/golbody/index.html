@@ -401,6 +401,105 @@
       }
     }
 
+    /* ============ DIFFÉRENCE GOLBODY ============ */
+    .gol-diff {
+      padding: 96px 48px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 639px) {
+      .gol-diff {
+        padding: 64px 24px;
+      }
+    }
+
+    .gol-diff-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .gol-diff-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(16, 145, 141, 0.1);
+      border: 1px solid rgba(16, 145, 141, 0.25);
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .gol-diff h2 {
+      font-size: 40px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .gol-diff-subtitle {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      max-width: 480px;
+      line-height: 1.6;
+      margin: 0 auto;
+    }
+
+    .gol-diff-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 639px) {
+      .gol-diff-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .gol-diff-card {
+      background: #122433;
+      border: 1px solid rgba(16, 145, 141, 0.15);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .gol-diff-card-label {
+      display: block;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      border-bottom: 1px solid rgba(16, 145, 141, 0.1);
+    }
+
+    .gol-diff-card-label.active {
+      color: var(--color-accent);
+    }
+
+    .gol-diff-card-img {
+      aspect-ratio: 3 / 4;
+      background: #1a3040;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gol-diff-card-img svg {
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+    }
+
     /* Scroll padding for anchor links */
     html {
       scroll-padding-top: 80px;
@@ -510,6 +609,36 @@
       </div>
     </div>
   </div>
+
+  <!-- ============ DIFFÉRENCE GOLBODY ============ -->
+  <section class="gol-diff" id="difference">
+    <div class="gol-diff-header">
+      <div class="gol-diff-badge">R&eacute;SULTATS</div>
+      <h2>La diff&eacute;rence GolBody</h2>
+      <p class="gol-diff-subtitle">Notre IA pr&eacute;serve ton visage, ta tenue et l'&eacute;clairage. Seul le corps change.</p>
+    </div>
+
+    <div class="gol-diff-cards">
+      <div class="gol-diff-card">
+        <span class="gol-diff-card-label">Avant</span>
+        <div class="gol-diff-card-img">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:#8ab0a8;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span style="font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;">Photo originale</span>
+          </div>
+        </div>
+      </div>
+      <div class="gol-diff-card">
+        <span class="gol-diff-card-label active">Apr&egrave;s — GolBody</span>
+        <div class="gol-diff-card-img">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:#10918d;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span style="font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;">Apr&egrave;s IA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <section class="gol-section" id="exemples">
     <h2 class="gol-section-title">Exemples</h2>

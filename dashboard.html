@@ -477,18 +477,16 @@
     let currentMode = 'image';
 
     // ===== Auth check =====
-    async function checkSession() {
-      const { data: { session }, error } = await supabaseClient.auth.getSession();
-      if (error || !session) {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || (!session && event !== 'INITIAL_SESSION')) {
         window.location.href = 'login.html';
         return;
       }
-      // Display user name
-      const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
-      userName.textContent = name;
-    }
-
-    checkSession();
+      if (session) {
+        const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
+        userName.textContent = name;
+      }
+    });
 
     // ===== Logout =====
     logoutBtn.addEventListener('click', async () => {

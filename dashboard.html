@@ -710,17 +710,41 @@
           throw new Error('Le SDK fal.ai n\'a pas pu \u00eatre charg\u00e9. Veuillez r\u00e9essayer.');
         }
 
-        const dataUrl = await fileToDataUrl(currentFile);
+        // Upload to fal.ai storage to get a public URL
+        let imageUrl;
+        if (fal.storage && fal.storage.upload) {
+          imageUrl = await fal.storage.upload(currentFile);
+        } else {
+          imageUrl = await fileToDataUrl(currentFile);
+        }
+
         const promptText = promptField.value.trim() || "Transform this person's body to be very muscular and athletic, keep the face, clothes, pose and background exactly the same, photorealistic";
         const result = await fal.run("fal-ai/flux-pro/kontext", {
           input: {
             prompt: promptText,
-            image_url: dataUrl
+            image_url: imageUrl
           }
         });
 
-        const afterUrl = result?.images?.[0]?.url || result?.image?.url || result?.output?.images?.[0]?.url;
+        console.log(JSON.stringify(result));
+
+        // Try common response shapes from fal.ai
+        let afterUrl = null;
+        if (result && typeof result === 'object') {
+          if (result.images && result.images[0]) {
+            afterUrl = result.images[0].url || result.images[0];
+          } else if (result.image) {
+            afterUrl = result.image.url || result.image;
+          } else if (result.output && result.output.images) {
+            afterUrl = result.output.images[0].url || result.output.images[0];
+          } else if (result.url) {
+            afterUrl = result.url;
+          } else if (result.data && result.data.images) {
+            afterUrl = result.data.images[0].url || result.data.images[0];
+          }
+        }
         if (!afterUrl) {
+          console.error('No image URL found in result:', result);
           throw new Error('Aucune image retournée par l\'API');
         }
 
@@ -730,6 +754,7 @@
         resultZone.style.display = 'block';
         lucide.createIcons();
       } catch (err) {
+        console.error('Generation error:', err);
         showError('Erreur : ' + (err.message || 'Impossible de générer l\'image'));
       } finally {
         loadingOverlay.classList.remove('is-visible');

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — GolBody</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0D1F2D;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background: #122433;
+      border: 1px solid rgba(16, 145, 141, 0.15);
+      border-radius: 16px;
+      padding: 48px;
+    }
+
+    .logo {
+      display: block;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10918d, #0f734e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 32px;
+      text-decoration: none;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #f0f6f4;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #8ab0a8;
+      text-align: center;
+      margin-bottom: 32px;
+      margin-top: 8px;
+    }
+
+    .google-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #1a3040;
+      border: 1px solid rgba(16, 145, 141, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      color: #f0f6f4;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .google-btn:hover {
+      border-color: rgba(16, 145, 141, 0.4);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0;
+      color: #8ab0a8;
+      font-size: 13px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(16, 145, 141, 0.2);
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field-label {
+      display: block;
+      color: #8ab0a8;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .field-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .field-input {
+      width: 100%;
+      background: #0D1F2D;
+      border: 1px solid rgba(16, 145, 141, 0.2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #f0f6f4;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field-input:focus {
+      border-color: #10918d;
+    }
+
+    .field-input::placeholder {
+      color: #5a7a72;
+    }
+
+    .forgot-link {
+      color: #10918d;
+      font-size: 13px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .forgot-link:hover {
+      opacity: 0.8;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #10918d, #0f734e);
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      color: #f0f6f4;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: opacity 0.2s;
+    }
+
+    .submit-btn:hover {
+      opacity: 0.9;
+    }
+
+    .signup-text {
+      text-align: center;
+      color: #8ab0a8;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+
+    .signup-text a {
+      color: #10918d;
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+
+    .signup-text a:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <a href="index.html" class="logo">GolBody</a>
+
+    <h1 class="title">Bon retour parmi nous</h1>
+    <p class="subtitle">Entrez vos identifiants pour vous connecter</p>
+
+    <button class="google-btn" type="button">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.7863 9.21913C17.7863 8.59861 17.7319 7.99993 17.6308 7.42151H9.17969V10.8423H13.9446C13.7417 11.9619 13.0964 12.9153 12.1406 13.5585V15.5741H14.7273C16.4047 14.0249 17.7863 11.8144 17.7863 9.21913Z" fill="#4285F4"/>
+        <path d="M9.18078 17.5606C11.4937 17.5606 13.427 16.7898 14.7284 15.5741L12.1417 13.5585C11.3741 14.0873 10.3458 14.4001 9.18078 14.4001C6.92569 14.4001 5.01624 12.8708 4.30373 10.7861H1.64062V12.8694C2.93444 15.7566 5.81378 17.5606 9.18078 17.5606Z" fill="#34A853"/>
+        <path d="M4.30281 10.7861C4.10555 10.2573 3.9945 9.68932 3.9945 9.10153C3.9945 8.51373 4.10555 7.94577 4.30281 7.41697V5.33366H1.6397C0.977107 6.64813 0.605469 8.13046 0.605469 9.10153C0.605469 10.0726 0.977107 11.5549 1.6397 12.8694L4.30281 10.7861Z" fill="#FBBC05"/>
+        <path d="M9.18078 3.80293C10.442 3.80293 11.5756 4.23248 12.4682 5.07438L14.7461 2.7965C13.4226 1.56802 11.4893 0.842529 9.18078 0.842529C5.81378 0.842529 2.93444 2.64651 1.64062 5.33367L4.30373 7.41698C5.01624 5.33224 6.92569 3.80293 9.18078 3.80293Z" fill="#EA4335"/>
+      </svg>
+      Se connecter avec Google
+    </button>
+
+    <div class="divider">ou</div>
+
+    <form>
+      <div class="field">
+        <label class="field-label" for="email">Email</label>
+        <input class="field-input" id="email" type="email" placeholder="vous@exemple.com" required>
+      </div>
+
+      <div class="field">
+        <div class="field-header">
+          <label class="field-label" for="password">Mot de passe</label>
+          <a class="forgot-link" href="#">Mot de passe oublié ?</a>
+        </div>
+        <input class="field-input" id="password" type="password" placeholder="••••••••" required>
+      </div>
+
+      <button class="submit-btn" type="submit">Se connecter</button>
+    </form>
+
+    <p class="signup-text">
+      Pas encore de compte ? <a href="register.html">S'inscrire</a>
+    </p>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

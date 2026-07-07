@@ -268,28 +268,69 @@
       color: #b8d4cf;
     }
 
-    /* ========== PROMPT FIELD ========== */
-    .prompt-field {
+    /* ========== TRANSFORMATION GRID ========== */
+    .transform-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 639px) {
+      .transform-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .transform-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid rgba(16, 145, 141, 0.25);
+      border-radius: 12px;
+      padding: 12px 8px;
+      color: #8ab0a8;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      text-align: center;
+    }
+
+    .transform-btn:hover {
+      border-color: rgba(16, 145, 141, 0.5);
+      color: #b8d4cf;
+    }
+
+    .transform-btn.selected {
+      background: #10918d;
+      border-color: #10918d;
+      color: #f0f6f4;
+    }
+
+    /* ========== EXTRA PROMPT ========== */
+    .prompt-extra {
       width: 100%;
       background: #122433;
       border: 1px solid rgba(16, 145, 141, 0.2);
       border-radius: 12px;
-      padding: 16px;
+      padding: 12px 16px;
       color: #f0f6f4;
       font-size: 14px;
       font-family: 'Inter', sans-serif;
       outline: none;
-      margin-top: 24px;
-      resize: vertical;
-      min-height: 96px;
+      margin-top: 16px;
       transition: border-color 0.2s;
     }
 
-    .prompt-field::placeholder {
+    .prompt-extra::placeholder {
       color: #5a7a72;
     }
 
-    .prompt-field:focus {
+    .prompt-extra:focus {
       border-color: #10918d;
     }
 
@@ -529,8 +570,30 @@
             <input type="file" class="upload-input" id="uploadInput" accept="image/*">
           </div>
 
-          <!-- Prompt -->
-          <textarea class="prompt-field" id="promptField" placeholder="Décris ta transformation souhaitée..."></textarea>
+          <!-- Transformation Options -->
+          <div class="transform-grid" id="transformGrid">
+            <button type="button" class="transform-btn" data-value="Make the biceps bigger">
+              💪 Biceps plus gros
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the shoulders wider">
+              🏋️ Épaules larges
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the abs visible">
+              🔥 Abdos visibles
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the pectorals more developed">
+              💥 Pectoraux développés
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the thighs more muscular">
+              🦵 Cuisses musclées
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the body leaner and more defined">
+              📐 Corps plus sec
+            </button>
+          </div>
+
+          <!-- Optional custom prompt -->
+          <input type="text" class="prompt-extra" id="promptExtra" placeholder="Précisions optionnelles...">
 
           <!-- Generate Button -->
           <button class="generate-btn" id="generateBtn" type="button" disabled>
@@ -591,7 +654,8 @@
     const previewImg = document.getElementById('previewImg');
     const removeFile = document.getElementById('removeFile');
     const generateBtn = document.getElementById('generateBtn');
-    const promptField = document.getElementById('promptField');
+    const transformGrid = document.getElementById('transformGrid');
+    const promptExtra = document.getElementById('promptExtra');
     const modeToggle = document.getElementById('modeToggle');
     const logoutBtn = document.getElementById('logoutBtn');
     const userName = document.getElementById('userName');
@@ -628,7 +692,8 @@
     // ===== New generation =====
     newGenBtn.addEventListener('click', () => {
       clearFile();
-      promptField.value = '';
+      promptExtra.value = '';
+      transformGrid.querySelectorAll('.transform-btn').forEach(btn => btn.classList.remove('selected'));
       resultZone.style.display = 'none';
       resultImage.src = '';
       downloadBtn.href = '#';
@@ -641,6 +706,13 @@
         modeToggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         currentMode = btn.dataset.mode;
+      });
+    });
+
+    // ===== Transformation selection =====
+    transformGrid.querySelectorAll('.transform-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('selected');
       });
     });
 
@@ -746,7 +818,15 @@
           imageUrl = await fileToDataUrl(currentFile);
         }
 
-        const promptText = promptField.value.trim() || "Transform this person's body to be very muscular and athletic, keep the face, clothes, pose and background exactly the same, photorealistic";
+        const selected = Array.from(transformGrid.querySelectorAll('.transform-btn.selected')).map(btn => btn.dataset.value);
+        const extra = promptExtra.value.trim();
+        let promptText = "Transform this person's body to be very muscular and athletic, keep the face, clothes, pose and background exactly the same, photorealistic";
+        if (selected.length > 0) {
+          promptText = selected.join(', ') + ', keep all other details of the photo identical, photorealistic';
+        }
+        if (extra) {
+          promptText += ', ' + extra;
+        }
         const result = await fal.run("fal-ai/flux-pro/kontext", {
           input: {
             prompt: promptText,

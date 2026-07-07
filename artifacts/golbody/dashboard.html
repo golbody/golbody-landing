@@ -513,27 +513,30 @@
           <button type="button" data-mode="video">Vidéo</button>
         </div>
 
-        <!-- Upload Zone -->
-        <div class="upload-zone" id="uploadZone">
-          <div class="upload-placeholder" id="uploadPlaceholder">
-            <i data-lucide="upload-cloud"></i>
-            <div class="upload-title">Ta photo</div>
-            <div class="upload-hint">Touche pour importer</div>
+        <!-- Form Zone -->
+        <div id="formZone">
+          <!-- Upload Zone -->
+          <div class="upload-zone" id="uploadZone">
+            <div class="upload-placeholder" id="uploadPlaceholder">
+              <i data-lucide="upload-cloud"></i>
+              <div class="upload-title">Ta photo</div>
+              <div class="upload-hint">Touche pour importer</div>
+            </div>
+            <div class="preview-wrapper" id="previewWrapper" style="display: none;">
+              <img id="previewImg" src="" alt="Aperçu">
+            </div>
+            <button class="remove-file" id="removeFile" type="button" style="display: none;">Supprimer la photo</button>
+            <input type="file" class="upload-input" id="uploadInput" accept="image/*">
           </div>
-          <div class="preview-wrapper" id="previewWrapper" style="display: none;">
-            <img id="previewImg" src="" alt="Aperçu">
-          </div>
-          <button class="remove-file" id="removeFile" type="button" style="display: none;">Supprimer la photo</button>
-          <input type="file" class="upload-input" id="uploadInput" accept="image/*">
+
+          <!-- Prompt -->
+          <textarea class="prompt-field" id="promptField" placeholder="Décris ta transformation souhaitée..."></textarea>
+
+          <!-- Generate Button -->
+          <button class="generate-btn" id="generateBtn" type="button" disabled>
+            Générer →
+          </button>
         </div>
-
-        <!-- Prompt -->
-        <textarea class="prompt-field" id="promptField" placeholder="Décris ta transformation souhaitée..."></textarea>
-
-        <!-- Generate Button -->
-        <button class="generate-btn" id="generateBtn" type="button" disabled>
-          Générer →
-        </button>
 
         <!-- Error message -->
         <div class="error-msg" id="errorMsg" style="display: none;"></div>
@@ -595,6 +598,7 @@
     const creditsText = document.getElementById('creditsText');
     const loadingOverlay = document.getElementById('loadingOverlay');
     const errorMsg = document.getElementById('errorMsg');
+    const formZone = document.getElementById('formZone');
     const resultZone = document.getElementById('resultZone');
     const resultImage = document.getElementById('resultImage');
     const downloadBtn = document.getElementById('downloadBtn');
@@ -628,6 +632,7 @@
       resultZone.style.display = 'none';
       resultImage.src = '';
       downloadBtn.href = '#';
+      formZone.style.display = 'block';
     });
 
     // ===== Mode toggle =====
@@ -773,6 +778,7 @@
 
         resultImage.src = afterUrl;
         downloadBtn.href = afterUrl;
+        formZone.style.display = 'none';
         resultZone.style.display = 'block';
         lucide.createIcons();
       } catch (err) {

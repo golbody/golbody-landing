@@ -293,7 +293,7 @@
       clearError();
       const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin + '/dashboard.html' }
+        options: { redirectTo: 'https://70ea1e66-f4e3-4119-a647-6dda3f76eb00-00-33xydmu24yfz3.picard.replit.dev/dashboard.html' }
       });
       if (error) showError(error.message);
     });

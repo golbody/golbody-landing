@@ -946,6 +946,7 @@
     }
 
     async function loadProfile(userId) {
+      console.log('[Profile] Loading profile for', userId);
       try {
         const { data: profile, error } = await supabaseClient
           .from('profiles')
@@ -954,17 +955,18 @@
           .single();
 
         if (error || !profile) {
-          // Create profile if missing
+          console.log('[Profile] No profile found, creating default');
           await supabaseClient.from('profiles').insert({ id: userId, credits: 100, plan: 'free' });
           currentCredits = 100;
           currentPlan = 'free';
         } else {
+          console.log('[Profile] Loaded:', profile.plan, profile.credits, 'credits');
           currentCredits = profile.credits ?? 100;
           currentPlan = profile.plan || 'free';
         }
         updateSidebar();
       } catch (err) {
-        console.error('Load profile error:', err);
+        console.error('[Profile] Load error:', err);
         currentCredits = 100;
         currentPlan = 'free';
         updateSidebar();
@@ -972,12 +974,38 @@
     }
 
     // ===== Auth check =====
+    let authChecked = false;
+
+    async function initAuth() {
+      console.log('[Auth] Initializing...');
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        console.log('[Auth] Session found via getSession:', session.user.email);
+        authChecked = true;
+        currentUser = session.user;
+        const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
+        userName.textContent = name;
+        await loadProfile(session.user.id);
+      }
+      // If no session from getSession, wait a bit for INITIAL_SESSION event
+      if (!session && !authChecked) {
+        setTimeout(() => {
+          if (!authChecked && !currentUser) {
+            console.log('[Auth] Still no session after timeout, redirecting to login');
+            window.location.href = 'login.html';
+          }
+        }, 2500);
+      }
+    }
+
     supabaseClient.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT' || (!session && event !== 'INITIAL_SESSION')) {
+      console.log('[Auth] State change:', event);
+      if (event === 'SIGNED_OUT') {
         window.location.href = 'login.html';
         return;
       }
-      if (session) {
+      if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED')) {
+        authChecked = true;
         currentUser = session.user;
         const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
         userName.textContent = name;
@@ -1023,41 +1051,67 @@
     });
 
     // ===== Subscribe buttons =====
+    async function ensureUser() {
+      if (currentUser) return currentUser;
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        currentUser = session.user;
+        return session.user;
+      }
+      return null;
+    }
+
     document.querySelectorAll('.subscribe-btn').forEach(btn => {
+      console.log('[Subscribe] Attaching listener to', btn.dataset.plan);
       btn.addEventListener('click', async () => {
         const plan = btn.dataset.plan;
-        if (!currentUser) {
+        console.log('[Subscribe] Clicked plan:', plan);
+
+        // Ensure user is authenticated before proceeding
+        const user = await ensureUser();
+        console.log('[Subscribe] ensureUser result:', user?.email || 'null');
+        if (!user) {
+          console.error('[Subscribe] User not authenticated');
           showError('Veuillez vous connecter pour souscrire à un abonnement.');
           return;
         }
+
         try {
           btn.disabled = true;
           btn.textContent = 'Chargement...';
+          console.log('[Subscribe] Calling /create-checkout-session with plan:', plan, 'userId:', user.id);
           const res = await fetch('/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               plan,
-              customerEmail: currentUser.email,
-              userId: currentUser.id,
+              customerEmail: user.email,
+              userId: user.id,
             }),
           });
+          console.log('[Subscribe] Response status:', res.status);
           const data = await res.json();
+          console.log('[Subscribe] Response data:', data);
           if (data.url) {
+            console.log('[Subscribe] Redirecting to Stripe:', data.url.substring(0, 60));
             window.location.href = data.url;
           } else {
+            console.error('[Subscribe] No URL in response:', data);
             showError(data.error || 'Erreur lors de la création de la session de paiement.');
             btn.disabled = false;
             btn.textContent = "S'abonner";
           }
         } catch (err) {
-          console.error('Subscribe error:', err);
+          console.error('[Subscribe] Error:', err);
           showError('Erreur de connexion. Réessayez.');
           btn.disabled = false;
           btn.textContent = "S'abonner";
         }
       });
     });
+
+    // Run auth initialization
+    initAuth();
 
     // ===== Logout =====
     logoutBtn.addEventListener('click', async () => {

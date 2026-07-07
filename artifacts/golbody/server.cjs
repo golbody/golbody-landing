@@ -8,11 +8,13 @@ const { createClient } = require('@supabase/supabase-js');
 const PORT = process.env.PORT || 3000;
 const BASE_PATH = process.env.BASE_PATH || '/';
 
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY_TEST || process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
-const STRIPE_PRICE_STARTER = process.env.STRIPE_PRICE_STARTER || '';
-const STRIPE_PRICE_PRO = process.env.STRIPE_PRICE_PRO || '';
-const STRIPE_PRICE_ULTRA = process.env.STRIPE_PRICE_ULTRA || '';
+
+// Hardcoded Stripe Price IDs
+const STRIPE_PRICE_STARTER = 'price_1TqduWAa7KFR9IQxxxu5V4Zs';
+const STRIPE_PRICE_PRO = 'price_1TqdupAa7KFR9IQxIvFx3Qno';
+const STRIPE_PRICE_ULTRA = 'price_1Tqdv7Aa7KFR9IQxC1TG0vNv';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://quvqqxrfewrsbajsllzk.supabase.co';
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -198,12 +200,13 @@ app.post('/create-checkout-session', async (req, res) => {
       }).eq('id', userId);
     }
 
+    const origin = req.headers.origin || req.headers.referer || `https://${process.env.REPLIT_DEV_DOMAIN || 'golbody.com'}`;
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${req.headers.origin || ''}${BASE_PATH}dashboard.html?success=true`,
-      cancel_url: `${req.headers.origin || ''}${BASE_PATH}dashboard.html?canceled=true`,
+      success_url: `${origin}${BASE_PATH}dashboard.html?success=true`,
+      cancel_url: `${origin}${BASE_PATH}dashboard.html?canceled=true`,
       metadata: { userId, plan },
     });
 

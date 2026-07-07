@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fal-ai/client/dist/index.umd.js"></script>
   <style>
     * {
       margin: 0;
@@ -362,6 +363,77 @@
       to { transform: rotate(360deg); }
     }
 
+    /* ========== RESULT ZONE ========== */
+    .result-zone {
+      margin-top: 32px;
+    }
+
+    .result-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f0f6f4;
+      margin-bottom: 16px;
+    }
+
+    .result-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .result-image-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .result-image-wrapper img {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 12px;
+      display: block;
+    }
+
+    .result-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #8ab0a8;
+      text-align: center;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #10918d, #0f734e);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      color: #f0f6f4;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: opacity 0.2s;
+      text-decoration: none;
+    }
+
+    .download-btn:hover {
+      opacity: 0.9;
+    }
+
+    .download-btn i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .error-msg {
+      margin-top: 16px;
+      color: #ff6b6b;
+      font-size: 14px;
+    }
+
     /* ========== RESPONSIVE ========== */
     @media (max-width: 767px) {
       .sidebar {
@@ -447,6 +519,28 @@
         <button class="generate-btn" id="generateBtn" type="button" disabled>
           Générer →
         </button>
+
+        <!-- Error message -->
+        <div class="error-msg" id="errorMsg" style="display: none;"></div>
+
+        <!-- Result Zone -->
+        <div class="result-zone" id="resultZone" style="display: none;">
+          <div class="result-title">Résultat</div>
+          <div class="result-comparison">
+            <div class="result-image-wrapper">
+              <img id="resultBefore" src="" alt="Avant">
+              <div class="result-label">Avant</div>
+            </div>
+            <div class="result-image-wrapper">
+              <img id="resultAfter" src="" alt="Après">
+              <div class="result-label">Après</div>
+            </div>
+          </div>
+          <a class="download-btn" id="downloadBtn" href="#" download="golbody-result.jpg">
+            <i data-lucide="download"></i>
+            Télécharger le résultat
+          </a>
+        </div>
       </div>
     </main>
   </div>
@@ -457,6 +551,9 @@
       'https://quvqqxrfewrsbajsllzk.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4NzUzMzUsImV4cCI6MjA2MjQ1MTMzNX0.kSiwD3dq1qTv3xVxQE0hXCp4sA9IgYkAIEknlqkq3K0'
     );
+
+    // ===== fal.ai =====
+    fal.config({ credentials: "9ed34c75-2e18-42dc-981b-5ecab4ddddc0:5b4683b2bfd89d3ae1601fa74c60a339" });
 
     // ===== DOM refs =====
     const uploadZone = document.getElementById('uploadZone');
@@ -472,6 +569,11 @@
     const userName = document.getElementById('userName');
     const creditsText = document.getElementById('creditsText');
     const loadingOverlay = document.getElementById('loadingOverlay');
+    const errorMsg = document.getElementById('errorMsg');
+    const resultZone = document.getElementById('resultZone');
+    const resultBefore = document.getElementById('resultBefore');
+    const resultAfter = document.getElementById('resultAfter');
+    const downloadBtn = document.getElementById('downloadBtn');
 
     let currentFile = null;
     let currentMode = 'image';
@@ -561,15 +663,58 @@
       }
     });
 
+    // ===== Helpers =====
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.style.display = 'block';
+    }
+
+    function clearError() {
+      errorMsg.textContent = '';
+      errorMsg.style.display = 'none';
+    }
+
+    function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
     // ===== Generate =====
     generateBtn.addEventListener('click', async () => {
       if (!currentFile) return;
+      clearError();
+      resultZone.style.display = 'none';
       loadingOverlay.classList.add('is-visible');
-      // Placeholder: simulate generation delay
-      setTimeout(() => {
+
+      try {
+        const dataUrl = await fileToDataUrl(currentFile);
+        const promptText = promptField.value.trim() || "Transform this person's body to be very muscular and athletic, keep the face, clothes, pose and background exactly the same, photorealistic";
+        const result = await fal.run("fal-ai/flux-pro/kontext", {
+          input: {
+            prompt: promptText,
+            image_url: dataUrl
+          }
+        });
+
+        const afterUrl = result?.images?.[0]?.url || result?.image?.url || result?.output?.images?.[0]?.url;
+        if (!afterUrl) {
+          throw new Error('Aucune image retournée par l\'API');
+        }
+
+        resultBefore.src = URL.createObjectURL(currentFile);
+        resultAfter.src = afterUrl;
+        downloadBtn.href = afterUrl;
+        resultZone.style.display = 'block';
+        lucide.createIcons();
+      } catch (err) {
+        showError('Erreur : ' + (err.message || 'Impossible de générer l\'image'));
+      } finally {
         loadingOverlay.classList.remove('is-visible');
-        alert('Génération terminée (placeholder)');
-      }, 2000);
+      }
     });
 
     // ===== Lucide icons =====

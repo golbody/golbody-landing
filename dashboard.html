@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@fal-ai/client/dist/index.umd.js"></script>
   <style>
     * {
       margin: 0;
@@ -553,7 +552,19 @@
     );
 
     // ===== fal.ai =====
-    fal.config({ credentials: "9ed34c75-2e18-42dc-981b-5ecab4ddddc0:5b4683b2bfd89d3ae1601fa74c60a339" });
+    let fal = null;
+    async function initFal() {
+      try {
+        const mod = await import('https://esm.sh/@fal-ai/client');
+        fal = mod.fal || mod.default || mod;
+        if (fal && fal.config) {
+          fal.config({ credentials: "9ed34c75-2e18-42dc-981b-5ecab4ddddc0:5b4683b2bfd89d3ae1601fa74c60a339" });
+        }
+      } catch (err) {
+        console.error('Failed to load fal.ai SDK:', err);
+      }
+    }
+    initFal();
 
     // ===== DOM refs =====
     const uploadZone = document.getElementById('uploadZone');
@@ -691,6 +702,14 @@
       loadingOverlay.classList.add('is-visible');
 
       try {
+        if (!fal || !fal.run) {
+          await initFal();
+          await new Promise(r => setTimeout(r, 500));
+        }
+        if (!fal || !fal.run) {
+          throw new Error('Le SDK fal.ai n\'a pas pu \u00eatre charg\u00e9. Veuillez r\u00e9essayer.');
+        }
+
         const dataUrl = await fileToDataUrl(currentFile);
         const promptText = promptField.value.trim() || "Transform this person's body to be very muscular and athletic, keep the face, clothes, pose and background exactly the same, photorealistic";
         const result = await fal.run("fal-ai/flux-pro/kontext", {

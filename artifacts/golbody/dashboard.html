@@ -374,30 +374,26 @@
       margin-bottom: 16px;
     }
 
-    .result-comparison {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
     .result-image-wrapper {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      justify-content: center;
     }
 
     .result-image-wrapper img {
       width: 100%;
-      max-width: 100%;
+      max-width: 480px;
       border-radius: 12px;
       display: block;
     }
 
-    .result-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #8ab0a8;
-      text-align: center;
+    .result-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .result-actions .download-btn {
+      margin-top: 0;
     }
 
     .download-btn {
@@ -413,7 +409,6 @@
       font-weight: 700;
       font-family: 'Inter', sans-serif;
       cursor: pointer;
-      margin-top: 24px;
       transition: opacity 0.2s;
       text-decoration: none;
     }
@@ -425,6 +420,27 @@
     .download-btn i {
       width: 18px;
       height: 18px;
+    }
+
+    .newgen-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid rgba(16, 145, 141, 0.3);
+      border-radius: 12px;
+      padding: 12px 24px;
+      color: #8ab0a8;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .newgen-btn:hover {
+      border-color: rgba(16, 145, 141, 0.6);
+      color: #b8d4cf;
     }
 
     .error-msg {
@@ -525,20 +541,18 @@
         <!-- Result Zone -->
         <div class="result-zone" id="resultZone" style="display: none;">
           <div class="result-title">Résultat</div>
-          <div class="result-comparison">
-            <div class="result-image-wrapper">
-              <img id="resultBefore" src="" alt="Avant">
-              <div class="result-label">Avant</div>
-            </div>
-            <div class="result-image-wrapper">
-              <img id="resultAfter" src="" alt="Après">
-              <div class="result-label">Après</div>
-            </div>
+          <div class="result-image-wrapper">
+            <img id="resultImage" src="" alt="Résultat">
           </div>
-          <a class="download-btn" id="downloadBtn" href="#" download="golbody-result.jpg">
-            <i data-lucide="download"></i>
-            Télécharger le résultat
-          </a>
+          <div class="result-actions">
+            <a class="download-btn" id="downloadBtn" href="#" download="golbody-result.jpg">
+              <i data-lucide="download"></i>
+              Télécharger
+            </a>
+            <button class="newgen-btn" id="newGenBtn" type="button">
+              Nouvelle génération
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -582,9 +596,9 @@
     const loadingOverlay = document.getElementById('loadingOverlay');
     const errorMsg = document.getElementById('errorMsg');
     const resultZone = document.getElementById('resultZone');
-    const resultBefore = document.getElementById('resultBefore');
-    const resultAfter = document.getElementById('resultAfter');
+    const resultImage = document.getElementById('resultImage');
     const downloadBtn = document.getElementById('downloadBtn');
+    const newGenBtn = document.getElementById('newGenBtn');
 
     let currentFile = null;
     let currentMode = 'image';
@@ -605,6 +619,15 @@
     logoutBtn.addEventListener('click', async () => {
       await supabaseClient.auth.signOut();
       window.location.href = 'login.html';
+    });
+
+    // ===== New generation =====
+    newGenBtn.addEventListener('click', () => {
+      clearFile();
+      promptField.value = '';
+      resultZone.style.display = 'none';
+      resultImage.src = '';
+      downloadBtn.href = '#';
     });
 
     // ===== Mode toggle =====
@@ -748,8 +771,7 @@
           throw new Error('Aucune image retournée par l\'API');
         }
 
-        resultBefore.src = URL.createObjectURL(currentFile);
-        resultAfter.src = afterUrl;
+        resultImage.src = afterUrl;
         downloadBtn.href = afterUrl;
         resultZone.style.display = 'block';
         lucide.createIcons();

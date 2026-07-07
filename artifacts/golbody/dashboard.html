@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — GolBody</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0D1F2D;
+      min-height: 100vh;
+      color: #f0f6f4;
+    }
+
+    /* ========== LAYOUT ========== */
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 240px;
+      background: #122433;
+      border-right: 1px solid rgba(16, 145, 141, 0.1);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #10918d, #0f734e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 32px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: #8ab0a8;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .sidebar-nav a:hover {
+      background: rgba(16, 145, 141, 0.06);
+      color: #b8d4cf;
+    }
+
+    .sidebar-nav a.active {
+      background: rgba(16, 145, 141, 0.1);
+      color: #10918d;
+    }
+
+    .sidebar-nav a i {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .plan-card {
+      background: rgba(16, 145, 141, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .plan-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f0f6f4;
+      margin-bottom: 4px;
+    }
+
+    .plan-credits {
+      font-size: 13px;
+      color: #8ab0a8;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f0f6f4;
+      margin-bottom: 8px;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      padding: 8px 0;
+      color: #8ab0a8;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .logout-btn:hover {
+      color: #b8d4cf;
+    }
+
+    .logout-btn i {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ========== MAIN ========== */
+    .main {
+      margin-left: 240px;
+      flex: 1;
+      background: #0D1F2D;
+      padding: 48px;
+      min-height: 100vh;
+    }
+
+    .main-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* ========== TOGGLE ========== */
+    .mode-toggle {
+      display: inline-flex;
+      background: #122433;
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 32px;
+    }
+
+    .mode-toggle button {
+      padding: 8px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      color: #8ab0a8;
+      background: transparent;
+    }
+
+    .mode-toggle button.active {
+      background: #10918d;
+      color: #f0f6f4;
+    }
+
+    /* ========== UPLOAD ZONE ========== */
+    .upload-zone {
+      background: #122433;
+      border: 2px dashed rgba(16, 145, 141, 0.3);
+      border-radius: 16px;
+      padding: 64px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .upload-zone:hover {
+      border-color: rgba(16, 145, 141, 0.5);
+      background: rgba(16, 145, 141, 0.02);
+    }
+
+    .upload-zone.has-file {
+      border-style: solid;
+      border-color: rgba(16, 145, 141, 0.3);
+    }
+
+    .upload-zone i {
+      width: 48px;
+      height: 48px;
+      color: #10918d;
+      margin-bottom: 16px;
+    }
+
+    .upload-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f0f6f4;
+      margin-bottom: 8px;
+    }
+
+    .upload-hint {
+      font-size: 14px;
+      color: #8ab0a8;
+    }
+
+    .upload-input {
+      display: none;
+    }
+
+    .preview-wrapper {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .preview-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+    }
+
+    .remove-file {
+      margin-top: 12px;
+      background: none;
+      border: none;
+      color: #8ab0a8;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    .remove-file:hover {
+      color: #b8d4cf;
+    }
+
+    /* ========== PROMPT FIELD ========== */
+    .prompt-field {
+      width: 100%;
+      background: #122433;
+      border: 1px solid rgba(16, 145, 141, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      color: #f0f6f4;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      margin-top: 24px;
+      resize: vertical;
+      min-height: 96px;
+      transition: border-color 0.2s;
+    }
+
+    .prompt-field::placeholder {
+      color: #5a7a72;
+    }
+
+    .prompt-field:focus {
+      border-color: #10918d;
+    }
+
+    /* ========== GENERATE BUTTON ========== */
+    .generate-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #10918d, #0f734e);
+      border: none;
+      border-radius: 12px;
+      padding: 16px 32px;
+      color: #f0f6f4;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .generate-btn:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .generate-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .generate-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ========== LOADING ========== */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 31, 45, 0.8);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .loading-overlay.is-visible {
+      display: flex;
+    }
+
+    .loading-overlay p {
+      color: #8ab0a8;
+      font-size: 14px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(16, 145, 141, 0.2);
+      border-top-color: #10918d;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 767px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Génération en cours...</p>
+  </div>
+
+  <div class="dashboard">
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+      <a href="index.html" class="sidebar-logo">GolBody</a>
+
+      <nav>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="dashboard.html" class="active">
+              <i data-lucide="zap"></i>
+              Génération
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i data-lucide="user"></i>
+              Mon compte
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="plan-card">
+          <div class="plan-title">Plan Gratuit</div>
+          <div class="plan-credits" id="creditsText">10 crédits restants</div>
+        </div>
+        <div class="user-name" id="userName">Utilisateur</div>
+        <button class="logout-btn" id="logoutBtn" type="button">
+          <i data-lucide="log-out"></i>
+          Déconnexion
+        </button>
+      </div>
+    </aside>
+
+    <!-- ========== MAIN ========== -->
+    <main class="main">
+      <div class="main-inner">
+        <!-- Toggle Image / Vidéo -->
+        <div class="mode-toggle" id="modeToggle">
+          <button type="button" class="active" data-mode="image">Image</button>
+          <button type="button" data-mode="video">Vidéo</button>
+        </div>
+
+        <!-- Upload Zone -->
+        <div class="upload-zone" id="uploadZone">
+          <div class="upload-placeholder" id="uploadPlaceholder">
+            <i data-lucide="upload-cloud"></i>
+            <div class="upload-title">Ta photo</div>
+            <div class="upload-hint">Touche pour importer</div>
+          </div>
+          <div class="preview-wrapper" id="previewWrapper" style="display: none;">
+            <img id="previewImg" src="" alt="Aperçu">
+          </div>
+          <button class="remove-file" id="removeFile" type="button" style="display: none;">Supprimer la photo</button>
+          <input type="file" class="upload-input" id="uploadInput" accept="image/*">
+        </div>
+
+        <!-- Prompt -->
+        <textarea class="prompt-field" id="promptField" placeholder="Décris ta transformation souhaitée..."></textarea>
+
+        <!-- Generate Button -->
+        <button class="generate-btn" id="generateBtn" type="button" disabled>
+          Générer →
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ===== Supabase =====
+    const supabaseClient = window.supabase.createClient(
+      'https://quvqqxrfewrsbajsllzk.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4NzUzMzUsImV4cCI6MjA2MjQ1MTMzNX0.kSiwD3dq1qTv3xVxQE0hXCp4sA9IgYkAIEknlqkq3K0'
+    );
+
+    // ===== DOM refs =====
+    const uploadZone = document.getElementById('uploadZone');
+    const uploadInput = document.getElementById('uploadInput');
+    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    const previewWrapper = document.getElementById('previewWrapper');
+    const previewImg = document.getElementById('previewImg');
+    const removeFile = document.getElementById('removeFile');
+    const generateBtn = document.getElementById('generateBtn');
+    const promptField = document.getElementById('promptField');
+    const modeToggle = document.getElementById('modeToggle');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userName = document.getElementById('userName');
+    const creditsText = document.getElementById('creditsText');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    let currentFile = null;
+    let currentMode = 'image';
+
+    // ===== Auth check =====
+    async function checkSession() {
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      if (error || !session) {
+        window.location.href = 'login.html';
+        return;
+      }
+      // Display user name
+      const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
+      userName.textContent = name;
+    }
+
+    checkSession();
+
+    // ===== Logout =====
+    logoutBtn.addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    // ===== Mode toggle =====
+    modeToggle.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        modeToggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMode = btn.dataset.mode;
+      });
+    });
+
+    // ===== Upload zone =====
+    function handleFile(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      currentFile = file;
+      const url = URL.createObjectURL(file);
+      previewImg.src = url;
+      uploadPlaceholder.style.display = 'none';
+      previewWrapper.style.display = 'block';
+      removeFile.style.display = 'block';
+      uploadZone.classList.add('has-file');
+      generateBtn.disabled = false;
+    }
+
+    function clearFile() {
+      currentFile = null;
+      previewImg.src = '';
+      uploadPlaceholder.style.display = 'flex';
+      previewWrapper.style.display = 'none';
+      removeFile.style.display = 'none';
+      uploadZone.classList.remove('has-file');
+      generateBtn.disabled = true;
+      uploadInput.value = '';
+    }
+
+    uploadZone.addEventListener('click', (e) => {
+      if (e.target === removeFile || e.target.closest('.remove-file')) return;
+      uploadInput.click();
+    });
+
+    uploadInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    removeFile.addEventListener('click', (e) => {
+      e.stopPropagation();
+      clearFile();
+    });
+
+    // Drag & drop
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.style.borderColor = '#10918d';
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.style.borderColor = '';
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.style.borderColor = '';
+      if (e.dataTransfer.files.length > 0) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    // ===== Generate =====
+    generateBtn.addEventListener('click', async () => {
+      if (!currentFile) return;
+      loadingOverlay.classList.add('is-visible');
+      // Placeholder: simulate generation delay
+      setTimeout(() => {
+        loadingOverlay.classList.remove('is-visible');
+        alert('Génération terminée (placeholder)');
+      }, 2000);
+    });
+
+    // ===== Lucide icons =====
+    lucide.createIcons();
+  </script>
+</body>
+</html>

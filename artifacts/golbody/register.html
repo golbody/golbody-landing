@@ -293,7 +293,7 @@
       clearError();
       const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: 'https://70ea1e66-f4e3-4119-a647-6dda3f76eb00-00-33xydmu24yfz3.picard.replit.dev/dashboard.html' }
+        options: { redirectTo: window.location.origin + '/dashboard.html' }
       });
       if (error) showError(error.message);
     });
@@ -303,10 +303,23 @@
       clearError();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const { error } = await supabaseClient.auth.signUp({ email, password });
+      const { data, error } = await supabaseClient.auth.signUp({ email, password });
       if (error) {
         showError(error.message);
       } else {
+        // Create profile with free plan and 100 credits
+        const userId = data.user?.id;
+        if (userId) {
+          try {
+            await supabaseClient.from('profiles').insert({
+              id: userId,
+              credits: 100,
+              plan: 'free',
+            });
+          } catch (err) {
+            console.error('Profile creation error:', err);
+          }
+        }
         window.location.href = 'dashboard.html';
       }
     });

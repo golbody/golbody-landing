@@ -500,6 +500,119 @@
       flex-shrink: 0;
     }
 
+    /* ============ TÉMOIGNAGES ============ */
+    .gol-testimonials {
+      padding: 96px 0;
+      overflow: hidden;
+    }
+
+    .gol-testimonials-header {
+      text-align: center;
+      margin-bottom: 48px;
+      padding: 0 48px;
+    }
+
+    @media (max-width: 639px) {
+      .gol-testimonials {
+        padding: 64px 0;
+      }
+
+      .gol-testimonials-header {
+        padding: 0 24px;
+      }
+    }
+
+    .gol-testimonials-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(16, 145, 141, 0.1);
+      border: 1px solid rgba(16, 145, 141, 0.25);
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .gol-testimonials h2 {
+      font-size: 40px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .gol-testimonials-track {
+      display: flex;
+      gap: 16px;
+      width: max-content;
+      will-change: transform;
+    }
+
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @keyframes scroll-right {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    .gol-testimonials-row {
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .gol-testimonials-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .gol-testimonials-row .gol-testimonials-track {
+      animation: scroll-left 50s linear infinite;
+    }
+
+    .gol-testimonials-row:nth-child(2) .gol-testimonials-track {
+      animation: scroll-right 50s linear infinite;
+    }
+
+    .gol-testimonials-row:hover .gol-testimonials-track {
+      animation-play-state: paused;
+    }
+
+    .gol-testimonial-card {
+      flex-shrink: 0;
+      width: 300px;
+      background: #122433;
+      border: 1px solid rgba(16, 145, 141, 0.12);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .gol-testimonial-stars {
+      color: var(--color-accent);
+      font-size: 16px;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+
+    .gol-testimonial-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #f0f6f4;
+      margin-bottom: 16px;
+    }
+
+    .gol-testimonial-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+
     /* Scroll padding for anchor links */
     html {
       scroll-padding-top: 80px;
@@ -640,17 +753,192 @@
     </div>
   </section>
 
+  <!-- ============ TÉMOIGNAGES ============ -->
+  <section class="gol-testimonials" id="avis">
+    <div class="gol-testimonials-header">
+      <div class="gol-testimonials-badge">AVIS</div>
+      <h2>Ce qu'ils en pensent</h2>
+    </div>
+
+    <!-- Rangée 1 : défile vers la gauche -->
+    <div class="gol-testimonials-row">
+      <div class="gol-testimonials-track">
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !</p>
+          <span class="gol-testimonial-name">@muscu_alex</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.</p>
+          <span class="gol-testimonial-name">Julien K.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.</p>
+          <span class="gol-testimonial-name">Thomas_B</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.</p>
+          <span class="gol-testimonial-name">@fit_laura</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.</p>
+          <span class="gol-testimonial-name">Kevin M.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.</p>
+          <span class="gol-testimonial-name">@romain_f</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.</p>
+          <span class="gol-testimonial-name">Sophie L.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.</p>
+          <span class="gol-testimonial-name">@startup_marc</span>
+        </div>
+        <!-- Duplication pour boucle seamless -->
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !</p>
+          <span class="gol-testimonial-name">@muscu_alex</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.</p>
+          <span class="gol-testimonial-name">Julien K.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.</p>
+          <span class="gol-testimonial-name">Thomas_B</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.</p>
+          <span class="gol-testimonial-name">@fit_laura</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.</p>
+          <span class="gol-testimonial-name">Kevin M.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.</p>
+          <span class="gol-testimonial-name">@romain_f</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.</p>
+          <span class="gol-testimonial-name">Sophie L.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.</p>
+          <span class="gol-testimonial-name">@startup_marc</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rangée 2 : défile vers la droite (ordre inversé) -->
+    <div class="gol-testimonials-row">
+      <div class="gol-testimonials-track">
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.</p>
+          <span class="gol-testimonial-name">@startup_marc</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.</p>
+          <span class="gol-testimonial-name">Sophie L.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.</p>
+          <span class="gol-testimonial-name">@romain_f</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.</p>
+          <span class="gol-testimonial-name">Kevin M.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.</p>
+          <span class="gol-testimonial-name">@fit_laura</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.</p>
+          <span class="gol-testimonial-name">Thomas_B</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.</p>
+          <span class="gol-testimonial-name">Julien K.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !</p>
+          <span class="gol-testimonial-name">@muscu_alex</span>
+        </div>
+        <!-- Duplication pour boucle seamless -->
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.</p>
+          <span class="gol-testimonial-name">@startup_marc</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.</p>
+          <span class="gol-testimonial-name">Sophie L.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.</p>
+          <span class="gol-testimonial-name">@romain_f</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.</p>
+          <span class="gol-testimonial-name">Kevin M.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.</p>
+          <span class="gol-testimonial-name">@fit_laura</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.</p>
+          <span class="gol-testimonial-name">Thomas_B</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.</p>
+          <span class="gol-testimonial-name">Julien K.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !</p>
+          <span class="gol-testimonial-name">@muscu_alex</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="gol-section" id="exemples">
     <h2 class="gol-section-title">Exemples</h2>
     <p class="gol-section-text">
       D&eacute;couvrez les transformations r&eacute;elles de nos membres et laissez-vous inspirer par leurs parcours.
-    </p>
-  </section>
-
-  <section class="gol-section" id="avis">
-    <h2 class="gol-section-title">Avis</h2>
-    <p class="gol-section-text">
-      Ce que nos utilisateurs disent de leur exp&eacute;rience GolBody au quotidien.
     </p>
   </section>
 

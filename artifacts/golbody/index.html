@@ -644,6 +644,117 @@
       line-height: 1.7;
       max-width: 640px;
     }
+
+    /* ============ FAQ ============ */
+    .gol-faq {
+      padding: 96px 48px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 639px) {
+      .gol-faq {
+        padding: 64px 24px;
+      }
+    }
+
+    .gol-faq-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .gol-faq-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(16, 145, 141, 0.1);
+      border: 1px solid rgba(16, 145, 141, 0.25);
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .gol-faq h2 {
+      font-size: 40px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+
+    .gol-faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .gol-faq-item {
+      background: #122433;
+      border: 1px solid rgba(16, 145, 141, 0.12);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .gol-faq-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      width: 100%;
+      padding: 24px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #f0f6f4;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      text-align: left;
+      transition: background 0.2s ease;
+    }
+
+    .gol-faq-question:hover {
+      background: rgba(16, 145, 141, 0.04);
+    }
+
+    .gol-faq-question:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -4px;
+      border-radius: 16px;
+    }
+
+    .gol-faq-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--color-accent);
+      transition: transform 0.3s ease;
+    }
+
+    .gol-faq-item.is-open .gol-faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .gol-faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+    }
+
+    .gol-faq-item.is-open .gol-faq-answer {
+      max-height: 400px;
+      padding: 0 24px 24px;
+    }
+
+    .gol-faq-answer-inner {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--color-text-muted);
+    }
   </style>
 </head>
 <body>
@@ -942,11 +1053,74 @@
     </p>
   </section>
 
-  <section class="gol-section" id="faq">
-    <h2 class="gol-section-title">FAQ</h2>
-    <p class="gol-section-text">
-      Toutes les r&eacute;ponses &agrave; vos questions sur le programme, les tarifs et l'accompagnement.
-    </p>
+  <!-- ============ FAQ ============ -->
+  <section class="gol-faq" id="faq">
+    <div class="gol-faq-header">
+      <div class="gol-faq-badge">FAQ</div>
+      <h2>Questions fr&eacute;quentes</h2>
+    </div>
+
+    <div class="gol-faq-list">
+      <div class="gol-faq-item">
+        <button class="gol-faq-question" aria-expanded="false" aria-controls="faq-answer-1">
+          <span>Comment fonctionne la transformation ?</span>
+          <svg class="gol-faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="gol-faq-answer" id="faq-answer-1">
+          <div class="gol-faq-answer-inner">
+            Tu upload ta photo, notre IA analyse ton physique et g&eacute;n&egrave;re une version muscl&eacute;e en conservant ton visage, ta tenue et l'&eacute;clairage. R&eacute;sultat en 10 secondes, qualit&eacute; 4K.
+          </div>
+        </div>
+      </div>
+
+      <div class="gol-faq-item">
+        <button class="gol-faq-question" aria-expanded="false" aria-controls="faq-answer-2">
+          <span>Le r&eacute;sultat est-il ind&eacute;tectable ?</span>
+          <svg class="gol-faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="gol-faq-answer" id="faq-answer-2">
+          <div class="gol-faq-answer-inner">
+            Oui. Notre IA pr&eacute;serve les moindres d&eacute;tails de ton visage et de l'environnement. M&ecirc;me tes proches ne verront pas la diff&eacute;rence. 99% des utilisateurs ne sont jamais d&eacute;masqu&eacute;s.
+          </div>
+        </div>
+      </div>
+
+      <div class="gol-faq-item">
+        <button class="gol-faq-question" aria-expanded="false" aria-controls="faq-answer-3">
+          <span>Mes photos restent-elles confidentielles ?</span>
+          <svg class="gol-faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="gol-faq-answer" id="faq-answer-3">
+          <div class="gol-faq-answer-inner">
+            Absolument. Tes photos sont trait&eacute;es en temps r&eacute;el puis supprim&eacute;es de nos serveurs dans l'heure. Nous ne stockons jamais tes images et ne les partageons avec personne.
+          </div>
+        </div>
+      </div>
+
+      <div class="gol-faq-item">
+        <button class="gol-faq-question" aria-expanded="false" aria-controls="faq-answer-4">
+          <span>Combien de temps prend une g&eacute;n&eacute;ration ?</span>
+          <svg class="gol-faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="gol-faq-answer" id="faq-answer-4">
+          <div class="gol-faq-answer-inner">
+            Entre 8 et 12 secondes en moyenne. Notre infrastructure GPU de pointe te garantit un r&eacute;sultat instantan&eacute;, m&ecirc;me aux heures de pointe.
+          </div>
+        </div>
+      </div>
+
+      <div class="gol-faq-item">
+        <button class="gol-faq-question" aria-expanded="false" aria-controls="faq-answer-5">
+          <span>Puis-je annuler mon abonnement ?</span>
+          <svg class="gol-faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="gol-faq-answer" id="faq-answer-5">
+          <div class="gol-faq-answer-inner">
+            Oui, &agrave; tout moment. Pas de p&eacute;riode d'engagement, pas de frais cach&eacute;s. Tu peux annuler depuis ton compte en un clic et conserver l'acc&egrave;s jusqu'&agrave; la fin de ta p&eacute;riode pay&eacute;e.
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <script>
@@ -1007,6 +1181,31 @@
       if (isOpen && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
         closeMenu();
       }
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.gol-faq-question').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var item = btn.closest('.gol-faq-item');
+        var isOpen = item.classList.contains('is-open');
+
+        // Close all other items
+        document.querySelectorAll('.gol-faq-item.is-open').forEach(function (openItem) {
+          if (openItem !== item) {
+            openItem.classList.remove('is-open');
+            openItem.querySelector('.gol-faq-question').setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        // Toggle current item
+        if (isOpen) {
+          item.classList.remove('is-open');
+          btn.setAttribute('aria-expanded', 'false');
+        } else {
+          item.classList.add('is-open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
     });
   </script>
 

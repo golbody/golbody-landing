@@ -1,0 +1,65 @@
+Dans dashboard.html, l'onglet "Mon compte" n'affiche rien. Il doit afficher :
+
+Email de l'utilisateur
+Plan actuel (Gratuit / Starter / Pro / Ultra)
+Nombre de générations restantes
+Un bouton "Gérer mon abonnement" qui redirige vers le portail Stripe
+Voici le code à mettre dans la section Mon compte :
+
+<div id="account-section">
+  <h2>Mon compte</h2>
+  
+  <div class="account-card">
+    <label>Email</label>
+    <p id="account-email">—</p>
+  </div>
+
+  <div class="account-card">
+    <label>Plan actuel</label>
+    <p id="account-plan">—</p>
+  </div>
+
+  <div class="account-card">
+    <label>Générations restantes</label>
+    <p id="account-credits">—</p>
+  </div>
+
+  <button id="btn-portal" onclick="openStripePortal()">
+    Gérer mon abonnement
+  </button>
+</div>
+Et dans le JS, ajoute la fonction qui remplit ces champs depuis le profil chargé, et la fonction pour ouvrir le portail Stripe :
+
+function updateAccountSection(profile) {
+  const planNames = { free: 'Plan Gratuit', starter: 'Starter', pro: 'Pro', ultra: 'Ultra' };
+  document.getElementById('account-email').textContent = currentUser.email;
+  document.getElementById('account-plan').textContent = planNames[profile.plan] || 'Plan Gratuit';
+  document.getElementById('account-credits').textContent = profile.credits + ' génération' + (profile.credits > 1 ? 's' : '') + ' restante' + (profile.credits > 1 ? 's' : '');
+}
+
+async function openStripePortal() {
+  const res = await fetch('/create-portal-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: currentUser.id })
+  });
+  const { url } = await res.json();
+  window.location.href = url;
+}
+Et dans server.cjs, ajoute la route :
+
+app.post('/create-portal-session', async (req, res) => {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('stripe_customer_id')
+    .eq('id', req.body.user_id)
+    .single();
+  
+  const session = await stripe.billingPortal.sessions.create({
+    customer: profile.stripe_customer_id,
+    return_url: 'https://golbody.com/dashboard.html'
+  });
+  
+  res.json({ url: session.url });
+});
+Appelle updateAccountSection(profile) à la fin de loadProfile(). Republish.

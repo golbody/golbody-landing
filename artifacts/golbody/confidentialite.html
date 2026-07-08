@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Politique de confidentialit&eacute; — GolBody</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --color-bg: #0D1F2D;
+      --color-accent: #10918d;
+      --color-accent-hover: #0e7f7b;
+      --color-accent-dark: #0f734e;
+      --color-text-muted: #8ab0a8;
+      --color-text-muted-hover: #b8d4cf;
+      --color-border: rgba(16, 145, 141, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--color-bg);
+      min-height: 100vh;
+      color: #ffffff;
+    }
+
+    /* ============ NAVIGATION ============ */
+    .gol-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 48px;
+      background: rgba(13, 31, 45, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      z-index: 1000;
+    }
+
+    .gol-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .gol-logo {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+
+    .gol-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .gol-links a {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .gol-links a:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    .gol-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .gol-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 24px;
+      background: var(--color-accent);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .gol-btn:hover {
+      background: var(--color-accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .gol-menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      padding: 8px;
+      border-radius: 8px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .gol-menu-toggle:hover {
+      color: var(--color-text-muted-hover);
+      background: rgba(16, 145, 141, 0.08);
+    }
+
+    .gol-menu-toggle svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* ============ MOBILE MENU ============ */
+    .gol-mobile-menu {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: rgba(13, 31, 45, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 48px 24px;
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+    }
+
+    .gol-mobile-menu.is-open {
+      display: flex;
+    }
+
+    .gol-mobile-link {
+      display: block;
+      padding: 16px 0;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(16, 145, 141, 0.08);
+      cursor: pointer;
+      transition: color 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .gol-mobile-link:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    .gol-mobile-link:last-child {
+      border-bottom: none;
+    }
+
+    @media (max-width: 639px) {
+      .gol-nav {
+        padding: 0 24px;
+      }
+
+      .gol-links {
+        display: none;
+      }
+
+      .gol-menu-toggle {
+        display: flex;
+      }
+
+      .gol-mobile-menu {
+        padding: 16px 24px 24px;
+      }
+    }
+
+    /* ============ LEGAL CONTENT ============ */
+    .legal-main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 120px 48px 64px;
+    }
+
+    @media (max-width: 639px) {
+      .legal-main {
+        padding: 100px 24px 48px;
+      }
+    }
+
+    .legal-main h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .legal-main .last-updated {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-bottom: 48px;
+    }
+
+    .legal-main h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 40px 0 16px;
+    }
+
+    .legal-main p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+    }
+
+    .legal-main ul {
+      margin: 0 0 16px 20px;
+      padding: 0;
+      color: var(--color-text-muted);
+    }
+
+    .legal-main li {
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .legal-main a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    .legal-main a:hover {
+      text-decoration: underline;
+    }
+
+    .legal-main .placeholder {
+      color: #ff6b6b;
+      font-style: italic;
+    }
+
+    /* ============ FOOTER ============ */
+    .gol-footer {
+      background: #0D1F2D;
+      border-top: 1px solid rgba(16, 145, 141, 0.08);
+      padding: 32px 48px;
+    }
+
+    .gol-footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .gol-footer-logo {
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+
+    .gol-footer-copy {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-align: center;
+      flex: 1;
+      padding: 0 24px;
+    }
+
+    .gol-footer-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-shrink: 0;
+    }
+
+    .gol-footer-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .gol-footer-links a:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    @media (max-width: 639px) {
+      .gol-footer {
+        padding: 32px 24px;
+      }
+
+      .gol-footer-inner {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .gol-footer-copy {
+        padding: 0;
+        order: 2;
+      }
+
+      .gol-footer-links {
+        order: 3;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAVIGATION ============ -->
+  <nav class="gol-nav" role="navigation" aria-label="Navigation principale">
+    <div class="gol-nav-inner">
+      <a href="index.html" class="gol-logo"><img src="/logos/golbody-primary.svg" alt="GolBody" style="height: 36px;"></a>
+
+      <ul class="gol-links">
+        <li><a href="index.html#diff">Fonctionnalit&eacute;s</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+        <li><a href="index.html#pricing">Tarifs</a></li>
+      </ul>
+
+      <div class="gol-cta">
+        <a href="login.html" class="gol-btn">Se connecter</a>
+      </div>
+
+      <button class="gol-menu-toggle" id="menuToggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="gol-mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="index.html#diff" class="gol-mobile-link">Fonctionnalit&eacute;s</a>
+    <a href="index.html#faq" class="gol-mobile-link">FAQ</a>
+    <a href="index.html#pricing" class="gol-mobile-link">Tarifs</a>
+    <a href="login.html" class="gol-mobile-link">Se connecter</a>
+  </div>
+
+  <!-- ============ CONTENT ============ -->
+  <main class="legal-main">
+    <h1>Politique de confidentialit&eacute;</h1>
+    <p class="last-updated">Derni&egrave;re mise &agrave; jour : 8 juillet 2026</p>
+
+    <h2>Responsable du traitement</h2>
+    <p>
+      Le responsable du traitement des donn&eacute;es &agrave; caract&egrave;re personnel collect&eacute;es sur GolBody est :<br>
+      <strong>GolBody</strong> &mdash; Jean Tondut<br>
+      Email : <a href="mailto:golbodyyy@gmail.com">golbodyyy@gmail.com</a><br>
+      Adresse : <span class="placeholder">[ADRESSE &agrave; compl&eacute;ter]</span>
+    </p>
+
+    <h2>Donn&eacute;es collect&eacute;es</h2>
+    <p>Nous collectons les cat&eacute;gories de donn&eacute;es suivantes :</p>
+    <ul>
+      <li><strong>Adresse email</strong> : lors de la cr&eacute;ation du compte, pour l'authentification et les communications li&eacute;es au service ;</li>
+      <li><strong>Photos upload&eacute;es</strong> : transmises temporairement pour le traitement par IA ;</li>
+      <li><strong>Donn&eacute;es de paiement</strong> : g&eacute;r&eacute;es exclusivement par notre prestataire de paiement Stripe. Nous ne stockons aucun num&eacute;ro de carte bancaire.</li>
+    </ul>
+
+    <h2>Finalit&eacute; du traitement</h2>
+    <p>
+      Les donn&eacute;es collect&eacute;es sont utilis&eacute;es uniquement dans le but de fournir le service GolBody :
+      authentification, traitement des photos par IA, gestion des abonnements et support client.
+    </p>
+
+    <h2>Conservation des donn&eacute;es</h2>
+    <ul>
+      <li><strong>Photos</strong> : supprim&eacute;es automatiquement de nos serveurs dans l'heure suivant le traitement. Nous ne conservons jamais les images originales ou g&eacute;n&eacute;r&eacute;es au-del&agrave; de ce d&eacute;lai ;</li>
+      <li><strong>Compte utilisateur</strong> : conserv&eacute; jusqu'&agrave; ce que l'utilisateur demande sa suppression ou fasse l'objet d'une r&eacute;siliation pour non-respect des CGU ;</li>
+      <li><strong>Donn&eacute;es de facturation</strong> : conserv&eacute;es conform&eacute;ment aux obligations l&eacute;gales fran&ccedil;aises (10 ans).</li>
+    </ul>
+
+    <h2>Vos droits (RGPD)</h2>
+    <p>Conform&eacute;ment au R&egrave;glement G&eacute;n&eacute;ral sur la Protection des Donn&eacute;es (RGPD), vous disposez des droits suivants :</p>
+    <ul>
+      <li><strong>Droit d'acc&egrave;s</strong> : obtenir une copie de vos donn&eacute;es personnelles ;</li>
+      <li><strong>Droit de rectification</strong> : corriger des donn&eacute;es inexactes ;</li>
+      <li><strong>Droit &agrave; l'effacement</strong> (&laquo; droit &agrave; l'oubli &raquo;) : demander la suppression de votre compte et de vos donn&eacute;es ;</li>
+      <li><strong>Droit &agrave; la portabilit&eacute;</strong> : recevoir vos donn&eacute;es dans un format structur&eacute; ;</li>
+      <li><strong>Droit d'opposition</strong> : vous opposer au traitement de vos donn&eacute;es dans certains cas.</li>
+    </ul>
+    <p>
+      Pour exercer ces droits, contactez-nous &agrave; : <a href="mailto:golbodyyy@gmail.com">golbodyyy@gmail.com</a>.<br>
+      Vous disposez &eacute;galement du droit d'introduire une r&eacute;clamation aupr&egrave;s de la CNIL (cnil.fr).
+    </p>
+
+    <h2>Absence de revente de donn&eacute;es</h2>
+    <p>
+      GolBody ne vend, ne loue et ne c&egrave;de en aucun cas vos donn&eacute;es personnelles &agrave; des tiers &agrave; des fins
+      commerciales. Vos donn&eacute;es ne sont jamais partag&eacute;es avec des partenaires publicitaires.
+    </p>
+
+    <h2>Cookies</h2>
+    <p>
+      GolBody utilise des cookies strictement n&eacute;cessaires au fonctionnement du service (authentification, session).
+      Aucun cookie de traçage &agrave; des fins publicitaires ou analytiques n'est d&eacute;pos&eacute; sans votre consentement explicite.
+    </p>
+
+    <h2>S&eacute;curit&eacute;</h2>
+    <p>
+      Nous mettons en œuvre des mesures techniques et organisationnelles appropri&eacute;es pour prot&eacute;ger vos donn&eacute;es
+      contre tout acc&egrave;s non autoris&eacute;, alt&eacute;ration, divulgation ou destruction. Les communications sont chiffr&eacute;es
+      en HTTPS.
+    </p>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="gol-footer">
+    <div class="gol-footer-inner">
+      <a href="index.html" class="gol-footer-logo">GolBody</a>
+      <span class="gol-footer-copy">&copy; 2026 GolBody. Tous droits r&eacute;serv&eacute;s.</span>
+      <div class="gol-footer-links">
+        <a href="mentions-legales.html">Mentions l&eacute;gales</a>
+        <a href="cgu.html">CGU</a>
+        <a href="confidentialite.html">Confidentialit&eacute;</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIcon = menuToggle.querySelector('[data-lucide]');
+    let isOpen = false;
+
+    function updateMenuIcon() {
+      menuIcon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+      lucide.createIcons();
+    }
+
+    function closeMenu() {
+      isOpen = false;
+      mobileMenu.classList.remove('is-open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Ouvrir le menu');
+      updateMenuIcon();
+    }
+
+    function openMenu() {
+      isOpen = true;
+      mobileMenu.classList.add('is-open');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      menuToggle.setAttribute('aria-expanded', 'true');
+      menuToggle.setAttribute('aria-label', 'Fermer le menu');
+      updateMenuIcon();
+    }
+
+    menuToggle.addEventListener('click', function () {
+      if (isOpen) closeMenu(); else openMenu();
+    });
+
+    document.querySelectorAll('.gol-mobile-link').forEach(function (link) {
+      link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isOpen) closeMenu();
+    });
+
+    document.addEventListener('click', function (e) {
+      if (isOpen && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) closeMenu();
+    });
+  </script>
+
+</body>
+</html>

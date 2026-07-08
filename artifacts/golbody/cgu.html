@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conditions g&eacute;n&eacute;rales d'utilisation — GolBody</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --color-bg: #0D1F2D;
+      --color-accent: #10918d;
+      --color-accent-hover: #0e7f7b;
+      --color-accent-dark: #0f734e;
+      --color-text-muted: #8ab0a8;
+      --color-text-muted-hover: #b8d4cf;
+      --color-border: rgba(16, 145, 141, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--color-bg);
+      min-height: 100vh;
+      color: #ffffff;
+    }
+
+    /* ============ NAVIGATION ============ */
+    .gol-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 48px;
+      background: rgba(13, 31, 45, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      z-index: 1000;
+    }
+
+    .gol-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .gol-logo {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+
+    .gol-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .gol-links a {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .gol-links a:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    .gol-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .gol-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 24px;
+      background: var(--color-accent);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .gol-btn:hover {
+      background: var(--color-accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .gol-menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      padding: 8px;
+      border-radius: 8px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .gol-menu-toggle:hover {
+      color: var(--color-text-muted-hover);
+      background: rgba(16, 145, 141, 0.08);
+    }
+
+    .gol-menu-toggle svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* ============ MOBILE MENU ============ */
+    .gol-mobile-menu {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: rgba(13, 31, 45, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 48px 24px;
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+    }
+
+    .gol-mobile-menu.is-open {
+      display: flex;
+    }
+
+    .gol-mobile-link {
+      display: block;
+      padding: 16px 0;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(16, 145, 141, 0.08);
+      cursor: pointer;
+      transition: color 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .gol-mobile-link:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    .gol-mobile-link:last-child {
+      border-bottom: none;
+    }
+
+    @media (max-width: 639px) {
+      .gol-nav {
+        padding: 0 24px;
+      }
+
+      .gol-links {
+        display: none;
+      }
+
+      .gol-menu-toggle {
+        display: flex;
+      }
+
+      .gol-mobile-menu {
+        padding: 16px 24px 24px;
+      }
+    }
+
+    /* ============ LEGAL CONTENT ============ */
+    .legal-main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 120px 48px 64px;
+    }
+
+    @media (max-width: 639px) {
+      .legal-main {
+        padding: 100px 24px 48px;
+      }
+    }
+
+    .legal-main h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .legal-main .last-updated {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-bottom: 48px;
+    }
+
+    .legal-main h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 40px 0 16px;
+    }
+
+    .legal-main p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+    }
+
+    .legal-main ul {
+      margin: 0 0 16px 20px;
+      padding: 0;
+      color: var(--color-text-muted);
+    }
+
+    .legal-main li {
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+
+    .legal-main a {
+      color: var(--color-accent);
+      text-decoration: none;
+    }
+
+    .legal-main a:hover {
+      text-decoration: underline;
+    }
+
+    .legal-main .placeholder {
+      color: #ff6b6b;
+      font-style: italic;
+    }
+
+    /* ============ FOOTER ============ */
+    .gol-footer {
+      background: #0D1F2D;
+      border-top: 1px solid rgba(16, 145, 141, 0.08);
+      padding: 32px 48px;
+    }
+
+    .gol-footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .gol-footer-logo {
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+
+    .gol-footer-copy {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-align: center;
+      flex: 1;
+      padding: 0 24px;
+    }
+
+    .gol-footer-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-shrink: 0;
+    }
+
+    .gol-footer-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .gol-footer-links a:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    @media (max-width: 639px) {
+      .gol-footer {
+        padding: 32px 24px;
+      }
+
+      .gol-footer-inner {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .gol-footer-copy {
+        padding: 0;
+        order: 2;
+      }
+
+      .gol-footer-links {
+        order: 3;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAVIGATION ============ -->
+  <nav class="gol-nav" role="navigation" aria-label="Navigation principale">
+    <div class="gol-nav-inner">
+      <a href="index.html" class="gol-logo"><img src="/logos/golbody-primary.svg" alt="GolBody" style="height: 36px;"></a>
+
+      <ul class="gol-links">
+        <li><a href="index.html#diff">Fonctionnalit&eacute;s</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+        <li><a href="index.html#pricing">Tarifs</a></li>
+      </ul>
+
+      <div class="gol-cta">
+        <a href="login.html" class="gol-btn">Se connecter</a>
+      </div>
+
+      <button class="gol-menu-toggle" id="menuToggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="gol-mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="index.html#diff" class="gol-mobile-link">Fonctionnalit&eacute;s</a>
+    <a href="index.html#faq" class="gol-mobile-link">FAQ</a>
+    <a href="index.html#pricing" class="gol-mobile-link">Tarifs</a>
+    <a href="login.html" class="gol-mobile-link">Se connecter</a>
+  </div>
+
+  <!-- ============ CONTENT ============ -->
+  <main class="legal-main">
+    <h1>Conditions g&eacute;n&eacute;rales d'utilisation</h1>
+    <p class="last-updated">Derni&egrave;re mise &agrave; jour : 8 juillet 2026</p>
+
+    <h2>1. Objet du service</h2>
+    <p>
+      GolBody est un service SaaS en ligne qui permet &agrave; ses utilisateurs de transformer leurs photos personnelles
+      gr&acirc;ce &agrave; une intelligence artificielle. Le service g&eacute;n&egrave;re des images modifi&eacute;es en fonction des
+      demandes formul&eacute;es par l'utilisateur (musculation, d&eacute;finition corporelle, etc.).
+    </p>
+
+    <h2>2. Conditions d'acc&egrave;s</h2>
+    <p>
+      L'utilisation du service est strictement r&eacute;serv&eacute;e aux personnes majeures (18 ans et plus). En cr&eacute;ant un compte,
+      l'utilisateur atteste &ecirc;tre majeur et capable de contracter. Le service est strictement destin&eacute; &agrave; un usage
+      personnel et non commercial, sauf accord &eacute;crit pr&eacute;alable avec GolBody.
+    </p>
+
+    <h2>3. Utilisation acceptable</h2>
+    <p>L'utilisateur s'engage &agrave; ne pas utiliser le service pour :</p>
+    <ul>
+      <li>Usurper l'identit&eacute; d'autrui ou cr&eacute;er des images visant &agrave; tromper des tiers ;</li>
+      <li>G&eacute;n&eacute;rer du contenu &agrave; caract&egrave;re pornographique, p&eacute;dopornographique, violent, discriminatoire ou ill&eacute;gal ;</li>
+      <li>Harceler, diffamer ou porter atteinte &agrave; la vie priv&eacute;e ou &agrave; l'image d'autrui ;</li>
+      <li>Contourner les limitations techniques du service ou effectuer des actions susceptibles de perturber son bon fonctionnement.</li>
+    </ul>
+    <p>
+      Tout manquement &agrave; ces obligations pourra entra&icirc;ner la suspension imm&eacute;diate et d&eacute;finitive du compte,
+      sans pr&eacute;judice des &eacute;ventuelles actions judiciaires.
+    </p>
+
+    <h2>4. Propri&eacute;t&eacute; intellectuelle</h2>
+    <p>
+      GolBody conserve l'int&eacute;gralit&eacute; des droits de propri&eacute;t&eacute; intellectuelle sur le service, son code source,
+      ses algorithmes et ses marques. L'utilisateur reste propri&eacute;taire des photos qu'il upload sur la plateforme.
+      Le r&eacute;sultat g&eacute;n&eacute;r&eacute; par l'IA est conc&eacute;d&eacute; &agrave; l'utilisateur pour un usage strictement personnel.
+    </p>
+
+    <h2>5. Responsabilit&eacute; limit&eacute;e</h2>
+    <p>
+      Les images g&eacute;n&eacute;r&eacute;es par intelligence artificielle sont fournies &laquo; en l'&eacute;tat &raquo;, sans garantie de
+      r&eacute;sultat sp&eacute;cifique. GolBody ne peut garantir que le rendu sera exactement conforme &agrave; la demande de
+      l'utilisateur. L'utilisateur reconna&icirc;t que les r&eacute;sultats sont g&eacute;n&eacute;r&eacute;s automatiquement par un mod&egrave;le IA
+      et n'ont pas de valeur contractuelle. GolBody d&eacute;cline toute responsabilit&eacute; en cas d'utilisation frauduleuse
+      ou illicite des images produites par l'utilisateur.
+    </p>
+
+    <h2>6. R&eacute;siliation et remboursement</h2>
+    <p>
+      L'utilisateur peut r&eacute;silier son abonnement &agrave; tout moment depuis son espace personnel ou via le portail
+      Stripe. L'acc&egrave;s au service reste actif jusqu'&agrave; la fin de la p&eacute;riode de facturation en cours. Aucun
+      remboursement prorata n'est effectu&eacute;. En cas de violation des pr&eacute;sentes CGU, GolBody se r&eacute;serve le droit de
+      r&eacute;silier le compte sans indemnit&eacute;.
+    </p>
+
+    <h2>7. Droit applicable et juridiction comp&eacute;tente</h2>
+    <p>
+      Les pr&eacute;sentes conditions g&eacute;n&eacute;rales d'utilisation sont soumises au droit fran&ccedil;ais. En cas de litige,
+      les parties s'efforceront de trouver une solution amiable. &Agrave; d&eacute;faut, le litige sera port&eacute; devant les
+      tribunaux comp&eacute;tents de Paris, France.
+    </p>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="gol-footer">
+    <div class="gol-footer-inner">
+      <a href="index.html" class="gol-footer-logo">GolBody</a>
+      <span class="gol-footer-copy">&copy; 2026 GolBody. Tous droits r&eacute;serv&eacute;s.</span>
+      <div class="gol-footer-links">
+        <a href="mentions-legales.html">Mentions l&eacute;gales</a>
+        <a href="cgu.html">CGU</a>
+        <a href="confidentialite.html">Confidentialit&eacute;</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIcon = menuToggle.querySelector('[data-lucide]');
+    let isOpen = false;
+
+    function updateMenuIcon() {
+      menuIcon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+      lucide.createIcons();
+    }
+
+    function closeMenu() {
+      isOpen = false;
+      mobileMenu.classList.remove('is-open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Ouvrir le menu');
+      updateMenuIcon();
+    }
+
+    function openMenu() {
+      isOpen = true;
+      mobileMenu.classList.add('is-open');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      menuToggle.setAttribute('aria-expanded', 'true');
+      menuToggle.setAttribute('aria-label', 'Fermer le menu');
+      updateMenuIcon();
+    }
+
+    menuToggle.addEventListener('click', function () {
+      if (isOpen) closeMenu(); else openMenu();
+    });
+
+    document.querySelectorAll('.gol-mobile-link').forEach(function (link) {
+      link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isOpen) closeMenu();
+    });
+
+    document.addEventListener('click', function (e) {
+      if (isOpen && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) closeMenu();
+    });
+  </script>
+
+</body>
+</html>

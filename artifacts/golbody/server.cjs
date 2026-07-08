@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
 
@@ -338,6 +339,89 @@ app.get('/profile/:userId', async (req, res) => {
     res.json(profile);
   } catch (err) {
     console.error('Get profile error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Native HTTPS helpers ---
+function httpsRequest(options, body = null) {
+  return new Promise((resolve, reject) => {
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        try {
+          resolve({ status: res.statusCode, body: JSON.parse(data) });
+        } catch {
+          resolve({ status: res.statusCode, body: data });
+        }
+      });
+    });
+    req.on('error', reject);
+    if (body) req.write(body);
+    req.end();
+  });
+}
+
+async function validateSupabaseToken(token) {
+  const result = await httpsRequest({
+    hostname: 'quvqqxrfewrsbajsllzk.supabase.co',
+    path: '/auth/v1/user',
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'apikey': SUPABASE_ANON_KEY,
+    },
+  });
+  return result.status === 200 ? result.body : null;
+}
+
+async function callFalAi(apiKey, imageUrl, prompt) {
+  const body = JSON.stringify({ prompt, image_url: imageUrl });
+  const result = await httpsRequest({
+    hostname: 'fal.run',
+    path: '/fal-ai/flux-pro/kontext',
+    method: 'POST',
+    headers: {
+      'Authorization': `Key ${apiKey}`,
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(body),
+    },
+  }, body);
+  if (result.status >= 200 && result.status < 300) {
+    return result.body;
+  }
+  throw new Error(`fal.ai error ${result.status}: ${JSON.stringify(result.body)}`);
+}
+
+// POST /api/generate — proxy image generation through fal.ai
+app.post('/api/generate', async (req, res) => {
+  try {
+    const { imageUrl, prompt } = req.body;
+    if (!imageUrl || !prompt) {
+      return res.status(400).json({ error: 'Missing imageUrl or prompt' });
+    }
+
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '');
+    if (!token) {
+      return res.status(401).json({ error: 'Missing Authorization header' });
+    }
+
+    const user = await validateSupabaseToken(token);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid or expired token' });
+    }
+
+    const falKey = process.env.FAL_API_KEY;
+    if (!falKey) {
+      return res.status(500).json({ error: 'FAL_API_KEY not configured' });
+    }
+
+    const result = await callFalAi(falKey, imageUrl, prompt);
+    res.json(result);
+  } catch (err) {
+    console.error('Generate error:', err);
     res.status(500).json({ error: err.message });
   }
 });

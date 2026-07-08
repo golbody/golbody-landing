@@ -794,6 +794,25 @@
       });
     }
 
+    function resizeImageIfNeeded(file, maxSize = 1024) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          const w = img.naturalWidth;
+          const h = img.naturalHeight;
+          if (w <= maxSize && h <= maxSize) { resolve(file); return; }
+          const scale = maxSize / Math.max(w, h);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(w * scale);
+          canvas.height = Math.round(h * scale);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob((blob) => resolve(new File([blob], file.name, { type: 'image/jpeg' })), 'image/jpeg', 0.9);
+        };
+        img.src = url;
+      });
+    }
+
     // ===== Generate =====
     generateBtn.addEventListener('click', async () => {
       if (!currentFile) return;
@@ -813,7 +832,8 @@
         // Upload to fal.ai storage to get a public URL
         let imageUrl;
         if (fal.storage && fal.storage.upload) {
-          imageUrl = await fal.storage.upload(currentFile);
+          const resizedFile = await resizeImageIfNeeded(currentFile);
+          imageUrl = await fal.storage.upload(resizedFile);
         } else {
           imageUrl = await fileToDataUrl(currentFile);
         }

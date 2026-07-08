@@ -58,6 +58,19 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
 
   try {
     switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object;
+        const customerId = session.customer;
+        const userId = session.metadata?.user_id;
+
+        if (userId && customerId) {
+          await supabase.from('profiles').update({
+            stripe_customer_id: customerId,
+          }).eq('id', userId);
+        }
+        break;
+      }
+
       case 'customer.subscription.created':
       case 'customer.subscription.updated': {
         const subscription = event.data.object;
@@ -173,7 +186,7 @@ app.post('/create-checkout-session', async (req, res) => {
       return res.status(500).json({ error: 'Stripe not configured' });
     }
 
-    const { plan, customerEmail, userId } = req.body;
+    const { plan, customerEmail, user_id } = req.body;
     const priceId = PRICE_MAP[plan];
     if (!priceId) {
       return res.status(400).json({ error: 'Invalid plan' });
@@ -184,7 +197,7 @@ app.post('/create-checkout-session', async (req, res) => {
     const { data: profiles } = await supabase
       .from('profiles')
       .select('stripe_customer_id')
-      .eq('id', userId)
+      .eq('id', user_id)
       .single();
 
     if (profiles && profiles.stripe_customer_id) {
@@ -192,12 +205,12 @@ app.post('/create-checkout-session', async (req, res) => {
     } else {
       const customer = await stripe.customers.create({
         email: customerEmail,
-        metadata: { userId },
+        metadata: { user_id },
       });
       customerId = customer.id;
       await supabase.from('profiles').update({
         stripe_customer_id: customerId,
-      }).eq('id', userId);
+      }).eq('id', user_id);
     }
 
     const origin = req.headers.origin || req.headers.referer || `https://${process.env.REPLIT_DEV_DOMAIN || 'golbody.com'}`;
@@ -207,7 +220,7 @@ app.post('/create-checkout-session', async (req, res) => {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}${BASE_PATH}dashboard.html?success=true`,
       cancel_url: `${origin}${BASE_PATH}dashboard.html?canceled=true`,
-      metadata: { userId, plan },
+      metadata: { user_id, plan },
     });
 
     res.json({ url: session.url });

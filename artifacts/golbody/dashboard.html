@@ -1238,11 +1238,8 @@
 
           <!-- Billing toggle -->
           <div class="billing-toggle">
-            <button type="button" class="billing-toggle-btn active" id="btnMonthly" onclick="setBilling('monthly')">MENSUEL</button>
-            <button type="button" class="billing-toggle-btn" id="btnYearly" onclick="setBilling('yearly')">
-              ANNUEL
-              <span class="billing-discount-badge">Réduction exclusive de 12%</span>
-            </button>
+            <button type="button" class="billing-toggle-btn" id="btnMonthly" onclick="setBilling('monthly')">MENSUEL</button>
+            <button type="button" class="billing-toggle-btn active" id="btnYearly" onclick="setBilling('yearly')">ANNUEL</button>
           </div>
 
           <div class="plans-grid">
@@ -1738,7 +1735,7 @@
     }
 
     // ===== Billing toggle =====
-    let billingMode = 'monthly';
+    let billingMode = 'yearly';
 
     const BILLING_PRICES = {
       monthly: {
@@ -1747,9 +1744,9 @@
         ultra:   { price: '74,90€', original: '', billing: '' },
       },
       yearly: {
-        starter: { price: '8,71€', original: '9,90€', billing: 'Facturé 99€ /an' },
-        pro:     { price: '26,31€', original: '29,90€', billing: 'Facturé 299€ /an' },
-        ultra:   { price: '65,91€', original: '74,90€', billing: 'Facturé 799€ /an' },
+        starter: { price: '9,90€', original: '', billing: 'Facturé annuellement' },
+        pro:     { price: '29,90€', original: '', billing: 'Facturé annuellement' },
+        ultra:   { price: '74,90€', original: '', billing: 'Facturé annuellement' },
       },
     };
 

@@ -1,0 +1,61 @@
+
+Réécris complètement scripts/login.html from scratch. Page de connexion Google OAuth simple pour GolBody.
+
+Le fichier doit contenir :
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion — GolBody</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { margin:0; background:#0D1F2D; color:#f0f6f4; font-family:Inter,sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .box { text-align:center; padding:2rem; }
+    h1 { font-size:2rem; font-weight:800; background:linear-gradient(135deg,#10918d,#0f734e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:0.5rem; }
+    p { color:#8ab0a8; margin-bottom:2rem; }
+    button { background:#10918d; color:#fff; border:none; padding:0.9rem 2rem; border-radius:10px; font-size:1rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:0.7rem; margin:0 auto; }
+    button:hover { background:#0d7a76; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>GolBody</h1>
+    <p>Transforme ton physique en 1 clic</p>
+    <button id="btn-google">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"/> Se connecter avec Google
+    </button>
+  </div>
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://quvqqxrfewrsbajsllzk.supabase.co',
+      process.env.SUPABASE_ANON_KEY
+    );
+    document.getElementById('btn-google').addEventListener('click', async () => {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: 'https://golbody.com/dashboard.html' }
+      });
+    });
+  </script>
+</body>
+</html>
+Fais la même chose pour scripts/dashboard.html : garde tout le contenu existant SAUF remplace uniquement le bloc d'auth au chargement par :
+
+const supabase = window.supabase.createClient(
+  'https://quvqqxrfewrsbajsllzk.supabase.co',
+  process.env.SUPABASE_ANON_KEY,
+  { auth: { flowType: 'pkce', detectSessionInUrl: true } }
+);
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { window.location.href = 'login.html'; return; }
+  window.history.replaceState({}, '', window.location.pathname);
+  currentUser = session.user;
+  document.getElementById('auth-loading').style.display = 'none';
+  document.getElementById('main-content').style.display = 'block';
+  await loadProfile();
+});
+Ensuite republish.

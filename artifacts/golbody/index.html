@@ -1405,28 +1405,38 @@
       // 1. Hero title — word by word reveal
       var heroTitle = document.querySelector('.gol-hero h1');
       if (heroTitle) {
-        var walker = document.createTreeWalker(heroTitle, NodeFilter.SHOW_TEXT);
-        var textNodes = [];
-        while (walker.nextNode()) textNodes.push(walker.currentNode);
-        textNodes.forEach(function(node) {
-          var text = node.textContent;
-          var parts = text.split(/(\s+)/);
-          var fragment = document.createDocumentFragment();
-          parts.forEach(function(part) {
-            if (/^\s*$/.test(part)) {
-              fragment.appendChild(document.createTextNode(part));
-            } else {
-              var span = document.createElement('span');
-              span.className = 'word-span';
-              span.textContent = part;
-              span.style.opacity = '0';
-              span.style.transform = 'translateY(20px)';
-              span.style.display = 'inline-block';
-              span.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-              fragment.appendChild(span);
-            }
-          });
-          node.parentNode.replaceChild(fragment, node);
+        var childNodes = Array.prototype.slice.call(heroTitle.childNodes);
+        childNodes.forEach(function(node) {
+          if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN') {
+            // Existing span (e.g. gradient-text) — wrap as a single animated word
+            var wrapper = document.createElement('span');
+            wrapper.className = 'word-span';
+            node.parentNode.insertBefore(wrapper, node);
+            wrapper.appendChild(node);
+            wrapper.style.opacity = '0';
+            wrapper.style.transform = 'translateY(20px)';
+            wrapper.style.display = 'inline-block';
+            wrapper.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          } else if (node.nodeType === Node.TEXT_NODE) {
+            var text = node.textContent;
+            var parts = text.split(/(\s+)/);
+            var fragment = document.createDocumentFragment();
+            parts.forEach(function(part) {
+              if (/^\s*$/.test(part)) {
+                fragment.appendChild(document.createTextNode(part));
+              } else {
+                var span = document.createElement('span');
+                span.className = 'word-span';
+                span.textContent = part;
+                span.style.opacity = '0';
+                span.style.transform = 'translateY(20px)';
+                span.style.display = 'inline-block';
+                span.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                fragment.appendChild(span);
+              }
+            });
+            node.parentNode.replaceChild(fragment, node);
+          }
         });
         var words = heroTitle.querySelectorAll('.word-span');
         words.forEach(function(span, i) {

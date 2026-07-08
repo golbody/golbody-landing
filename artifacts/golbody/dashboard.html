@@ -1007,6 +1007,31 @@
       console.log('[Auth] Initializing...');
       const authLoading = document.getElementById('authLoading');
 
+      // ===== OAuth redirect with token in hash =====
+      const hasAuthHash = window.location.hash.includes('access_token');
+      if (hasAuthHash) {
+        console.log('[Auth] OAuth redirect detected with access_token in hash, waiting for Supabase...');
+        // Wait 2 seconds for Supabase client to extract the session from the hash
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+          console.log('[Auth] Session established after OAuth redirect:', session.user.email);
+          authChecked = true;
+          currentUser = session.user;
+          const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
+          userName.textContent = name;
+          await loadProfile(session.user.id);
+
+          // Clean the hash from the URL so the token is not visible
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+
+          authLoading.classList.add('is-hidden');
+          return;
+        }
+        console.log('[Auth] No session after OAuth redirect wait, falling back to normal flow');
+      }
+
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
         console.log('[Auth] Session found via getSession:', session.user.email);
@@ -1023,6 +1048,11 @@
       if (!session && !authChecked) {
         setTimeout(() => {
           if (!authChecked && !currentUser) {
+            // Never redirect if the URL still has auth hash — Supabase may still be processing
+            if (window.location.hash.includes('access_token')) {
+              console.log('[Auth] Hash still contains access_token, skipping redirect');
+              return;
+            }
             console.log('[Auth] Still no session after timeout, redirecting to login');
             window.location.href = 'login.html';
           } else {
@@ -1045,6 +1075,11 @@
         userName.textContent = name;
         loadProfile(session.user.id);
         document.getElementById('authLoading').classList.add('is-hidden');
+
+        // Clean hash if present (OAuth redirect)
+        if (window.location.hash.includes('access_token')) {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
       }
     });
 

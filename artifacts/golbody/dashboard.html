@@ -340,6 +340,28 @@
       transform: none;
     }
 
+    .generate-hint {
+      text-align: center;
+      font-size: 12px;
+      color: #5a7a72;
+      margin-top: 8px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .generate-hint.is-visible {
+      opacity: 1;
+    }
+
+    @keyframes uploadGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0); border-color: rgba(16, 145, 141, 0.3); }
+      50% { box-shadow: 0 0 20px 4px rgba(13, 148, 136, 0.3); border-color: rgba(13, 148, 136, 0.6); }
+    }
+
+    .upload-zone.glow-pulse {
+      animation: uploadGlow 1.2s ease-in-out 2;
+    }
+
     /* ========== LOADING ========== */
     .loading-overlay {
       display: none;
@@ -1105,6 +1127,7 @@
           <button class="generate-btn" id="generateBtn" type="button" disabled>
             Générer →
           </button>
+          <div class="generate-hint" id="generateHint">↑ Importe une photo pour commencer</div>
         </div>
 
         <!-- Error message -->
@@ -1516,6 +1539,18 @@
     });
 
     // ===== Upload zone =====
+    const generateHint = document.getElementById('generateHint');
+    let generateBtnDisabledAt = Date.now();
+
+    function updateGenerateHint() {
+      if (generateBtn.disabled) {
+        generateHint.classList.add('is-visible');
+      } else {
+        generateHint.classList.remove('is-visible');
+      }
+    }
+    updateGenerateHint();
+
     function handleFile(file) {
       if (!file || !file.type.startsWith('image/')) return;
       currentFile = file;
@@ -1526,6 +1561,7 @@
       removeFile.style.display = 'block';
       uploadZone.classList.add('has-file');
       generateBtn.disabled = false;
+      updateGenerateHint();
     }
 
     function clearFile() {
@@ -1536,11 +1572,19 @@
       removeFile.style.display = 'none';
       uploadZone.classList.remove('has-file');
       generateBtn.disabled = true;
+      generateBtnDisabledAt = Date.now();
       uploadInput.value = '';
+      updateGenerateHint();
     }
 
     uploadZone.addEventListener('click', (e) => {
       if (e.target === removeFile || e.target.closest('.remove-file')) return;
+      if (generateBtn.disabled && Date.now() - generateBtnDisabledAt > 3000) {
+        uploadZone.classList.remove('glow-pulse');
+        void uploadZone.offsetWidth; // force reflow
+        uploadZone.classList.add('glow-pulse');
+        setTimeout(() => uploadZone.classList.remove('glow-pulse'), 2400);
+      }
       uploadInput.click();
     });
 

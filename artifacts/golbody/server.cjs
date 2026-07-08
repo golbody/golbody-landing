@@ -14,14 +14,14 @@ const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
 // Hardcoded Stripe Price IDs
 // Monthly prices
-const STRIPE_PRICE_STARTER_MONTHLY = 'price_1TqduWAa7KFR9IQxxxu5V4Zs';
-const STRIPE_PRICE_PRO_MONTHLY     = 'price_1TqdupAa7KFR9IQxIvFx3Qno';
-const STRIPE_PRICE_ULTRA_MONTHLY   = 'price_1Tqdv7Aa7KFR9IQxC1TG0vNv';
+const STRIPE_PRICE_STARTER_MONTHLY = 'price_1Tqx3UAa7KFR9IQxMYKKKo0R';
+const STRIPE_PRICE_PRO_MONTHLY     = 'price_1Tqx46Aa7KFR9IQxqmcnnpxZ';
+const STRIPE_PRICE_ULTRA_MONTHLY   = 'price_1Tqx4LAa7KFR9IQx6VwgnQ6Z';
 
-// Yearly prices — create these in your Stripe dashboard and paste the IDs here
-const STRIPE_PRICE_STARTER_YEARLY = 'price_1TqduWAa7KFR9IQxxxu5V4Zs'; // TODO: replace with yearly price ID
-const STRIPE_PRICE_PRO_YEARLY     = 'price_1TqdupAa7KFR9IQxIvFx3Qno'; // TODO: replace with yearly price ID
-const STRIPE_PRICE_ULTRA_YEARLY   = 'price_1Tqdv7Aa7KFR9IQxC1TG0vNv'; // TODO: replace with yearly price ID
+// Yearly prices
+const STRIPE_PRICE_STARTER_YEARLY = 'price_1Tqx6OAa7KFR9IQxuDzFeUp8';
+const STRIPE_PRICE_PRO_YEARLY     = 'price_1Tqx72Aa7KFR9IQxWyTp9s0H';
+const STRIPE_PRICE_ULTRA_YEARLY   = 'price_1Tqx84Aa7KFR9IQxAZ6WU7mo';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://quvqqxrfewrsbajsllzk.supabase.co';
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';

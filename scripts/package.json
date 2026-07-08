@@ -7,7 +7,7 @@
     "hello": "tsx ./src/hello.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "check-github-token": "bash ../scripts/check-github-token.sh",
-    "test": "bash ./test-github-sync.sh"
+    "test": "bash ./test-github-sync.sh && bash ./test-check-github-token.sh"
   },
   "devDependencies": {
     "@types/node": "catalog:",

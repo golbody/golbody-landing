@@ -283,6 +283,41 @@ app.post('/use-credit', async (req, res) => {
   }
 });
 
+// Create Stripe portal session
+app.post('/create-portal-session', async (req, res) => {
+  try {
+    if (!stripe) {
+      return res.status(500).json({ error: 'Stripe not configured' });
+    }
+
+    const { user_id } = req.body;
+    if (!user_id) {
+      return res.status(400).json({ error: 'Missing user_id' });
+    }
+
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('stripe_customer_id')
+      .eq('id', user_id)
+      .single();
+
+    if (error || !profile || !profile.stripe_customer_id) {
+      return res.status(404).json({ error: 'No Stripe customer found for this user' });
+    }
+
+    const origin = req.headers.origin || req.headers.referer || `https://${process.env.REPLIT_DEV_DOMAIN || 'golbody.com'}`;
+    const session = await stripe.billingPortal.sessions.create({
+      customer: profile.stripe_customer_id,
+      return_url: `${origin}${BASE_PATH}dashboard.html`,
+    });
+
+    res.json({ url: session.url });
+  } catch (err) {
+    console.error('Portal session error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Get profile endpoint
 app.get('/profile/:userId', async (req, res) => {
   try {

@@ -649,6 +649,61 @@
       font-weight: 600;
     }
 
+    /* ========== ACCOUNT SECTION ========== */
+    .account-section {
+      display: none;
+    }
+
+    .account-section.is-visible {
+      display: block;
+    }
+
+    .account-card {
+      background: #122433;
+      border: 1px solid rgba(16, 145, 141, 0.2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    .account-card label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #8ab0a8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .account-card p {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f0f6f4;
+      margin: 0;
+    }
+
+    #btn-portal {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #10918d, #0f734e);
+      border: none;
+      border-radius: 12px;
+      padding: 14px 28px;
+      color: #f0f6f4;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+
+    #btn-portal:hover {
+      opacity: 0.9;
+    }
+
     /* ========== RESPONSIVE ========== */
     @media (max-width: 767px) {
       .sidebar {
@@ -694,7 +749,7 @@
             </a>
           </li>
           <li>
-            <a href="#">
+            <a href="#" id="navAccount">
               <i data-lucide="user"></i>
               Mon compte
             </a>
@@ -765,6 +820,31 @@
               <button class="subscribe-btn" type="button" data-plan="ultra">S'abonner</button>
             </div>
           </div>
+        </div>
+
+        <!-- ACCOUNT SECTION -->
+        <div class="account-section" id="accountSection">
+          <h1 style="font-size:28px;font-weight:800;color:#f0f6f4;margin-bottom:8px;">Mon compte</h1>
+          <p style="font-size:14px;color:#8ab0a8;margin-bottom:24px;">Vos informations et votre abonnement.</p>
+
+          <div class="account-card">
+            <label>Email</label>
+            <p id="account-email">—</p>
+          </div>
+
+          <div class="account-card">
+            <label>Plan actuel</label>
+            <p id="account-plan">—</p>
+          </div>
+
+          <div class="account-card">
+            <label>Générations restantes</label>
+            <p id="account-credits">—</p>
+          </div>
+
+          <button id="btn-portal" type="button" onclick="openStripePortal()">
+            Gérer mon abonnement
+          </button>
         </div>
 
         <!-- GENERATION SECTION -->
@@ -891,8 +971,10 @@
     const newGenBtn = document.getElementById('newGenBtn');
     const navGenerate = document.getElementById('navGenerate');
     const navSubscription = document.getElementById('navSubscription');
+    const navAccount = document.getElementById('navAccount');
     const subscriptionSection = document.getElementById('subscriptionSection');
     const generationSection = document.getElementById('generationSection');
+    const accountSection = document.getElementById('accountSection');
     const successBanner = document.getElementById('successBanner');
     const canceledBanner = document.getElementById('canceledBanner');
 
@@ -962,11 +1044,45 @@
           currentPlan = profile.plan || 'free';
         }
         updateSidebar();
+        updateAccountSection(profile || { plan: 'free', credits: 100 });
       } catch (err) {
         console.error('[Profile] Load error:', err);
         currentCredits = 100;
         currentPlan = 'free';
         updateSidebar();
+        updateAccountSection({ plan: 'free', credits: 100 });
+      }
+    }
+
+    function updateAccountSection(profile) {
+      const planNames = { free: 'Plan Gratuit', starter: 'Starter', pro: 'Pro', ultra: 'Ultra' };
+      document.getElementById('account-email').textContent = currentUser?.email || '—';
+      document.getElementById('account-plan').textContent = planNames[profile?.plan] || 'Plan Gratuit';
+      const credits = profile?.credits ?? 0;
+      document.getElementById('account-credits').textContent = credits + ' génération' + (credits > 1 ? 's' : '') + ' restante' + (credits > 1 ? 's' : '');
+    }
+
+    async function openStripePortal() {
+      try {
+        const user = await ensureUser();
+        if (!user) {
+          showError('Veuillez vous connecter pour accéder au portail d\'abonnement.');
+          return;
+        }
+        const res = await fetch('/create-portal-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: user.id })
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          showError(data.error || 'Erreur lors de l\'ouverture du portail Stripe.');
+        }
+      } catch (err) {
+        console.error('Portal error:', err);
+        showError('Erreur de connexion. Réessayez.');
       }
     }
 
@@ -1011,16 +1127,29 @@
     function showGeneration() {
       generationSection.style.display = 'block';
       subscriptionSection.classList.remove('is-visible');
+      accountSection.classList.remove('is-visible');
       navGenerate.classList.add('active');
       navSubscription.classList.remove('active');
+      navAccount.classList.remove('active');
     }
 
     function showSubscription() {
       generationSection.style.display = 'none';
       subscriptionSection.classList.add('is-visible');
+      accountSection.classList.remove('is-visible');
       navGenerate.classList.remove('active');
       navSubscription.classList.add('active');
+      navAccount.classList.remove('active');
       lucide.createIcons();
+    }
+
+    function showAccount() {
+      generationSection.style.display = 'none';
+      subscriptionSection.classList.remove('is-visible');
+      accountSection.classList.add('is-visible');
+      navGenerate.classList.remove('active');
+      navSubscription.classList.remove('active');
+      navAccount.classList.add('active');
     }
 
     navGenerate.addEventListener('click', (e) => {
@@ -1031,6 +1160,11 @@
     navSubscription.addEventListener('click', (e) => {
       e.preventDefault();
       showSubscription();
+    });
+
+    navAccount.addEventListener('click', (e) => {
+      e.preventDefault();
+      showAccount();
     });
 
     // ===== Subscribe buttons =====

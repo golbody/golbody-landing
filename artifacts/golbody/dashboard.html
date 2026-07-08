@@ -936,21 +936,6 @@
       }
     );
 
-    // ===== fal.ai =====
-    let fal = null;
-    async function initFal() {
-      try {
-        const mod = await import('https://esm.sh/@fal-ai/client');
-        fal = mod.fal || mod.default || mod;
-        if (fal && fal.config) {
-          fal.config({ credentials: "9ed34c75-2e18-42dc-981b-5ecab4ddddc0:5b4683b2bfd89d3ae1601fa74c60a339" });
-        }
-      } catch (err) {
-        console.error('Failed to load fal.ai SDK:', err);
-      }
-    }
-    initFal();
-
     // ===== DOM refs =====
     const uploadZone = document.getElementById('uploadZone');
     const uploadInput = document.getElementById('uploadInput');
@@ -1381,22 +1366,7 @@
       loadingOverlay.classList.add('is-visible');
 
       try {
-        if (!fal || !fal.run) {
-          await initFal();
-          await new Promise(r => setTimeout(r, 500));
-        }
-        if (!fal || !fal.run) {
-          throw new Error('Le SDK fal.ai n\'a pas pu \u00eatre charg\u00e9. Veuillez r\u00e9essayer.');
-        }
-
-        // Upload to fal.ai storage to get a public URL
-        let imageUrl;
-        if (fal.storage && fal.storage.upload) {
-          const resizedFile = await resizeImageIfNeeded(currentFile);
-          imageUrl = await fal.storage.upload(resizedFile);
-        } else {
-          imageUrl = await fileToDataUrl(currentFile);
-        }
+        const imageUrl = await fileToDataUrl(currentFile);
 
         const selected = Array.from(transformGrid.querySelectorAll('.transform-btn.selected')).map(btn => btn.dataset.value);
         const extra = promptExtra.value.trim();
@@ -1408,32 +1378,27 @@
         if (extra) {
           promptText += '. ' + extra;
         }
-        const result = await fal.run("fal-ai/flux-pro/kontext", {
-          input: {
-            prompt: promptText,
-            image_url: imageUrl
-          }
+
+        const session = await supabaseClient.auth.getSession();
+        const token = session.data.session?.access_token;
+        const response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ imageUrl, prompt: promptText })
         });
-
-        console.log(JSON.stringify(result));
-
-        // Try common response shapes from fal.ai
-        let afterUrl = null;
-        if (result && typeof result === 'object') {
-          if (result.images && result.images[0]) {
-            afterUrl = result.images[0].url || result.images[0];
-          } else if (result.image) {
-            afterUrl = result.image.url || result.image;
-          } else if (result.output && result.output.images) {
-            afterUrl = result.output.images[0].url || result.output.images[0];
-          } else if (result.url) {
-            afterUrl = result.url;
-          } else if (result.data && result.data.images) {
-            afterUrl = result.data.images[0].url || result.data.images[0];
-          }
+        if (response.status === 401) {
+          window.location.href = 'login.html';
+          return;
         }
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || 'Erreur lors de la génération');
+        }
+        const afterUrl = result.imageUrl;
         if (!afterUrl) {
-          console.error('No image URL found in result:', result);
           throw new Error('Aucune image retournée par l\'API');
         }
 

@@ -74,6 +74,24 @@
       font-weight: 500;
       text-decoration: none;
       transition: background 0.2s, color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar-nav a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      background: rgba(45,212,191,0.6);
+      border-radius: 8px 0 0 8px;
+      transition: width 0.25s ease;
+    }
+
+    .sidebar-nav a:hover::before {
+      width: 3px;
     }
 
     .sidebar-nav a:hover {
@@ -163,6 +181,11 @@
     }
 
     /* ========== UPLOAD ZONE ========== */
+    @keyframes borderPulse {
+      0%, 100% { border-color: rgba(45,212,191,0.3); }
+      50% { border-color: rgba(45,212,191,0.8); }
+    }
+
     .upload-zone {
       background: #122433;
       border: 2px dashed rgba(16, 145, 141, 0.3);
@@ -175,6 +198,7 @@
       text-align: center;
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s;
+      animation: borderPulse 2s ease infinite;
     }
 
     .upload-zone:hover {
@@ -185,6 +209,7 @@
     .upload-zone.has-file {
       border-style: solid;
       border-color: rgba(16, 145, 141, 0.3);
+      animation: none;
     }
 
     .upload-zone i {
@@ -269,11 +294,13 @@
       font-weight: 600;
       font-family: 'Inter', sans-serif;
       cursor: pointer;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s, border-color 0.2s, color 0.2s;
       text-align: center;
     }
 
     .transform-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(45,212,191,0.2);
       border-color: rgba(16, 145, 141, 0.5);
       color: #b8d4cf;
     }
@@ -282,6 +309,7 @@
       background: #10918d;
       border-color: #10918d;
       color: #f0f6f4;
+      box-shadow: 0 0 0 2px rgba(45,212,191,0.6);
     }
 
     /* ========== EXTRA PROMPT ========== */
@@ -308,6 +336,11 @@
     }
 
     /* ========== GENERATE BUTTON ========== */
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
     .generate-btn {
       display: inline-flex;
       align-items: center;
@@ -323,6 +356,12 @@
       cursor: pointer;
       margin-top: 24px;
       transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .generate-btn:not(:disabled) {
+      background: linear-gradient(90deg, #2dd4bf 30%, #5eead4 50%, #2dd4bf 70%);
+      background-size: 200% auto;
+      animation: shimmer 2s linear infinite;
     }
 
     .generate-btn:hover:not(:disabled) {
@@ -437,11 +476,17 @@
       justify-content: center;
     }
 
+    @keyframes revealImage {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
     .result-image-wrapper img {
       width: 100%;
       max-width: 480px;
       border-radius: 12px;
       display: block;
+      animation: revealImage 0.6s ease forwards;
     }
 
     .result-actions {
@@ -850,6 +895,11 @@
       border-color: #ffffff40;
     }
 
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
     .success-banner {
       display: none;
       background: rgba(16, 145, 141, 0.15);
@@ -862,6 +912,7 @@
 
     .success-banner.is-visible {
       display: block;
+      animation: slideDown 0.4s ease forwards;
     }
 
     .success-banner p {
@@ -882,6 +933,7 @@
 
     .canceled-banner.is-visible {
       display: block;
+      animation: slideDown 0.4s ease forwards;
     }
 
     .canceled-banner p {
@@ -1036,6 +1088,24 @@
       font-weight: 500;
       text-decoration: none;
       transition: background 0.2s, color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mobile-nav .sidebar-nav a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      background: rgba(45,212,191,0.6);
+      border-radius: 8px 0 0 8px;
+      transition: width 0.25s ease;
+    }
+
+    .mobile-nav .sidebar-nav a:hover::before {
+      width: 3px;
     }
 
     .mobile-nav .sidebar-nav a:hover {
@@ -1123,6 +1193,13 @@
     @media (max-width: 767px) {
       .mobile-nav-btn {
         display: flex;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
       }
     }
   </style>

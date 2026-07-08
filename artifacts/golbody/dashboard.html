@@ -162,33 +162,6 @@
       margin: 0 auto;
     }
 
-    /* ========== TOGGLE ========== */
-    .mode-toggle {
-      display: inline-flex;
-      background: #122433;
-      border-radius: 8px;
-      padding: 4px;
-      margin-bottom: 32px;
-    }
-
-    .mode-toggle button {
-      padding: 8px 24px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      font-family: 'Inter', sans-serif;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-      color: #8ab0a8;
-      background: transparent;
-    }
-
-    .mode-toggle button.active {
-      background: #10918d;
-      color: #f0f6f4;
-    }
-
     /* ========== UPLOAD ZONE ========== */
     .upload-zone {
       background: #122433;
@@ -796,13 +769,7 @@
 
         <!-- GENERATION SECTION -->
         <div id="generationSection">
-          <!-- Toggle Image / Vidéo -->
-          <div class="mode-toggle" id="modeToggle">
-          <button type="button" class="active" data-mode="image">Image</button>
-          <button type="button" data-mode="video">Vidéo</button>
-        </div>
-
-        <!-- Form Zone -->
+          <!-- Form Zone -->
         <div id="formZone">
           <!-- Upload Zone -->
           <div class="upload-zone" id="uploadZone">
@@ -911,7 +878,6 @@
     const generateBtn = document.getElementById('generateBtn');
     const transformGrid = document.getElementById('transformGrid');
     const promptExtra = document.getElementById('promptExtra');
-    const modeToggle = document.getElementById('modeToggle');
     const logoutBtn = document.getElementById('logoutBtn');
     const userName = document.getElementById('userName');
     const creditsText = document.getElementById('creditsText');
@@ -931,7 +897,6 @@
     const canceledBanner = document.getElementById('canceledBanner');
 
     let currentFile = null;
-    let currentMode = 'image';
     let currentUser = null;
     let currentCredits = 0;
     let currentPlan = 'free';
@@ -1147,15 +1112,6 @@
       resultImage.src = '';
       downloadBtn.href = '#';
       formZone.style.display = 'block';
-    });
-
-    // ===== Mode toggle =====
-    modeToggle.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        modeToggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentMode = btn.dataset.mode;
-      });
     });
 
     // ===== Transformation selection =====

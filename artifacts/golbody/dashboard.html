@@ -877,7 +877,13 @@
     // ===== Supabase =====
     const supabaseClient = window.supabase.createClient(
       'https://quvqqxrfewrsbajsllzk.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4NzUzMzUsImV4cCI6MjA2MjQ1MTMzNX0.kSiwD3dq1qTv3xVxQE0hXCp4sA9IgYkAIEknlqkq3K0'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4NzUzMzUsImV4cCI6MjA2MjQ1MTMzNX0.kSiwD3dq1qTv3xVxQE0hXCp4sA9IgYkAIEknlqkq3K0',
+      {
+        auth: {
+          flowType: 'pkce',
+          detectSessionInUrl: true
+        }
+      }
     );
 
     // ===== fal.ai =====
@@ -1001,39 +1007,36 @@
     }
 
     // ===== Auth check =====
-    let authChecked = false;
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasOAuthCode = urlParams.has('code');
 
-    async function initAuth() {
-      console.log('[Auth] Initializing...');
-      const authLoading = document.getElementById('authLoading');
+    // If OAuth code is present, Supabase needs time to exchange it — skip timeout
+    const AUTH_TIMEOUT = hasOAuthCode ? 30000 : 5000;
 
-      // Wait up to 5 seconds for Supabase to fire a session event (PKCE, stored session, etc.)
-      setTimeout(() => {
-        if (!authChecked && !currentUser) {
-          console.log('[Auth] No session after 5s timeout, redirecting to login');
-          window.location.href = 'login.html';
+    const authTimeout = setTimeout(() => {
+      window.location.href = 'login.html';
+    }, AUTH_TIMEOUT);
+
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
+      clearTimeout(authTimeout);
+      if (session) {
+        // Clean URL if OAuth code present
+        if (hasOAuthCode) {
+          window.history.replaceState({}, document.title, window.location.pathname);
         }
-      }, 5000);
-    }
-
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      console.log('[Auth] State change:', event);
-      if (event === 'SIGNED_OUT') {
-        window.location.href = 'login.html';
-        return;
-      }
-      if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED')) {
-        authChecked = true;
+        // Show dashboard (hide spinner, show content)
+        document.getElementById('authLoading').classList.add('is-hidden');
+        // Load user data
         currentUser = session.user;
         const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
         userName.textContent = name;
-        loadProfile(session.user.id);
-        document.getElementById('authLoading').classList.add('is-hidden');
+        await loadProfile(session.user.id);
+      } else {
+        window.location.href = 'login.html';
       }
     });
 
     // ===== URL params =====
-    const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === 'true') {
       successBanner.classList.add('is-visible');
       setTimeout(() => successBanner.classList.remove('is-visible'), 6000);

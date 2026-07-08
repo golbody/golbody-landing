@@ -704,10 +704,10 @@
 
       <div class="sidebar-bottom">
         <div class="plan-card">
-          <div class="plan-title" id="planTitle">--</div>
-          <div class="plan-credits" id="creditsText">--</div>
+          <div class="plan-title" id="user-plan">--</div>
+          <div class="plan-credits" id="user-credits">--</div>
         </div>
-        <div class="user-name" id="userName">Utilisateur</div>
+        <div class="user-name" id="user-email">Utilisateur</div>
         <button class="logout-btn" id="logoutBtn" type="button">
           <i data-lucide="log-out"></i>
           Déconnexion
@@ -879,9 +879,9 @@
     const transformGrid = document.getElementById('transformGrid');
     const promptExtra = document.getElementById('promptExtra');
     const logoutBtn = document.getElementById('logoutBtn');
-    const userName = document.getElementById('userName');
-    const creditsText = document.getElementById('creditsText');
-    const planTitle = document.getElementById('planTitle');
+    const userEmail = document.getElementById('user-email');
+    const userCredits = document.getElementById('user-credits');
+    const userPlan = document.getElementById('user-plan');
     const loadingOverlay = document.getElementById('loadingOverlay');
     const errorMsg = document.getElementById('errorMsg');
     const formZone = document.getElementById('formZone');
@@ -920,9 +920,9 @@
     }
 
     function updateSidebar() {
-      planTitle.textContent = PLAN_NAMES[currentPlan] || 'Plan Gratuit';
+      userPlan.textContent = PLAN_NAMES[currentPlan] || 'Plan Gratuit';
       const gens = generationsFromCredits(currentCredits);
-      creditsText.textContent = `${gens} génération${gens > 1 ? 's' : ''} restante${gens > 1 ? 's' : ''}`;
+      userCredits.textContent = `${gens} génération${gens > 1 ? 's' : ''} restante${gens > 1 ? 's' : ''}`;
 
       // Highlight active plan card
       document.querySelectorAll('.plan-card-big').forEach(card => {
@@ -994,7 +994,7 @@
       // Load user data
       currentUser = session.user;
       const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
-      userName.textContent = name;
+      userEmail.textContent = currentUser.email || name;
       await loadProfile(session.user.id);
     }
 

@@ -18,15 +18,30 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: #0D1F2D;
-      min-height: 100vh;
+      background: #0a1520;
+      height: 100vh;
       color: #f0f6f4;
+      overflow: hidden;
+    }
+
+    /* ========== GLOW ========== */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 75% 40%, rgba(45,212,191,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 20% 80%, rgba(45,212,191,0.03) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     /* ========== LAYOUT ========== */
     .dashboard {
       display: flex;
-      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
     }
 
     /* ========== SIDEBAR ========== */
@@ -35,24 +50,24 @@
       top: 0;
       left: 0;
       bottom: 0;
-      width: 240px;
-      background: #122433;
-      border-right: 1px solid rgba(16, 145, 141, 0.1);
-      padding: 24px;
+      width: 56px;
+      background: #070f18;
+      border-right: 1px solid rgba(255,255,255,0.05);
+      padding: 16px 0;
       display: flex;
       flex-direction: column;
+      align-items: center;
       z-index: 100;
     }
 
     .sidebar-logo {
-      font-size: 20px;
-      font-weight: 800;
-      background: linear-gradient(135deg, #10918d, #0f734e);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
       text-decoration: none;
+      display: block;
+    }
+
+    .sidebar-logo img {
+      height: 28px;
       display: block;
     }
 
@@ -61,52 +76,42 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      width: 100%;
+      align-items: center;
+    }
+
+    .sidebar-nav li {
+      width: 100%;
+      display: flex;
+      justify-content: center;
     }
 
     .sidebar-nav a {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      border-radius: 8px;
-      color: #8ab0a8;
-      font-size: 14px;
-      font-weight: 500;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      color: #3a5060;
       text-decoration: none;
       transition: background 0.2s, color 0.2s;
       position: relative;
-      overflow: hidden;
-    }
-
-    .sidebar-nav a::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 0;
-      background: rgba(45,212,191,0.6);
-      border-radius: 8px 0 0 8px;
-      transition: width 0.25s ease;
-    }
-
-    .sidebar-nav a:hover::before {
-      width: 3px;
     }
 
     .sidebar-nav a:hover {
-      background: rgba(16, 145, 141, 0.06);
-      color: #b8d4cf;
+      background: rgba(45,212,191,0.06);
+      color: #5a8090;
     }
 
     .sidebar-nav a.active {
-      background: rgba(16, 145, 141, 0.1);
-      color: #10918d;
+      background: rgba(45,212,191,0.1);
+      color: #2dd4bf;
     }
 
     .sidebar-nav a i {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       flex-shrink: 0;
     }
 
@@ -114,65 +119,70 @@
       margin-top: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-    }
-
-    .plan-card {
-      background: rgba(16, 145, 141, 0.08);
-      border-radius: 12px;
-      padding: 16px;
-    }
-
-    .plan-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #f0f6f4;
-      margin-bottom: 4px;
-    }
-
-    .plan-credits {
-      font-size: 13px;
-      color: #8ab0a8;
-    }
-
-    .user-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: #f0f6f4;
-      margin-bottom: 8px;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
     }
 
     .logout-btn {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
       background: none;
       border: none;
-      padding: 8px 0;
-      color: #8ab0a8;
-      font-size: 13px;
-      font-weight: 500;
+      color: #3a5060;
       font-family: 'Inter', sans-serif;
       cursor: pointer;
       transition: color 0.2s;
+      border-radius: 10px;
     }
 
     .logout-btn:hover {
-      color: #b8d4cf;
+      color: #5a8090;
+      background: rgba(45,212,191,0.06);
     }
 
     .logout-btn i {
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
+    }
+
+    /* ========== PLAN BADGE ========== */
+    .plan-badge-top {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      background: rgba(10,20,32,0.9);
+      border: 1px solid rgba(45,212,191,0.2);
+      border-radius: 20px;
+      padding: 4px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #8ab0a8;
+      z-index: 10;
+    }
+
+    .plan-badge-top .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #2dd4bf;
     }
 
     /* ========== MAIN ========== */
     .main {
-      margin-left: 240px;
+      margin-left: 56px;
       flex: 1;
-      background: #0D1F2D;
+      background: #0a1520;
       padding: 48px;
-      min-height: 100vh;
+      height: 100vh;
+      overflow-y: auto;
+      position: relative;
     }
 
     .main-inner {
@@ -442,7 +452,7 @@
       display: flex;
       position: fixed;
       inset: 0;
-      background: #0D1F2D;
+      background: #0a1520;
       z-index: 200;
       align-items: center;
       justify-content: center;
@@ -1205,6 +1215,7 @@
   </style>
 </head>
 <body>
+  <div class="bg-glow"></div>
 
   <div class="auth-loading" id="authLoading">
     <div class="spinner"></div>
@@ -1258,46 +1269,41 @@
   <div class="dashboard">
     <!-- ========== SIDEBAR ========== -->
     <aside class="sidebar">
-      <a href="index.html" class="sidebar-logo"><img src="/logos/golbody-primary.svg" alt="GolBody" style="height: 36px;"></a>
+      <a href="index.html" class="sidebar-logo"><img src="/logos/golbody-primary.svg" alt="GolBody"></a>
 
       <nav>
         <ul class="sidebar-nav">
           <li>
-            <a href="dashboard.html" class="active" id="navGenerate">
+            <a href="dashboard.html" class="active" id="navGenerate" title="Génération">
               <i data-lucide="zap"></i>
-              Génération
             </a>
           </li>
           <li>
-            <a href="#" id="navSubscription">
+            <a href="#" id="navSubscription" title="Abonnement">
               <i data-lucide="credit-card"></i>
-              Abonnement
             </a>
           </li>
           <li>
-            <a href="#" id="navAccount">
+            <a href="#" id="navAccount" title="Mon compte">
               <i data-lucide="user"></i>
-              Mon compte
             </a>
           </li>
         </ul>
       </nav>
 
       <div class="sidebar-bottom">
-        <div class="plan-card">
-          <div class="plan-title" id="user-plan">--</div>
-          <div class="plan-credits" id="user-credits">--</div>
-        </div>
-        <div class="user-name" id="user-email">Utilisateur</div>
-        <button class="logout-btn" id="logoutBtn" type="button">
+        <button class="logout-btn" id="logoutBtn" type="button" title="Déconnexion">
           <i data-lucide="log-out"></i>
-          Déconnexion
         </button>
       </div>
     </aside>
 
     <!-- ========== MAIN ========== -->
     <main class="main">
+      <div class="plan-badge-top">
+        <span class="dot"></span>
+        <span>Plan Ultra — 68 générations</span>
+      </div>
       <div class="main-inner">
         <!-- Success banner -->
         <div class="success-banner" id="successBanner">

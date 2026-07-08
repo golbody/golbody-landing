@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 40" fill="none">
-  <text x="0" y="30" font-family="Inter, sans-serif" font-size="28" font-weight="800" fill="#10918d">G</text>
-  <text x="28" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#f0f6f4" letter-spacing="-0.5">ol</text>
-  <text x="62" y="30" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#10918d" letter-spacing="-0.5">Body</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 40" width="160" height="40">
+  <text x="0" y="30" font-family="Arial, sans-serif" font-weight="800" font-size="28">
+    <tspan fill="#2dd4bf">Gol</tspan><tspan fill="#ffffff">Body</tspan>
+  </text>
 </svg>

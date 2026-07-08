@@ -715,6 +715,175 @@
         padding: 24px;
       }
     }
+
+    /* ========== MOBILE NAV ========== */
+    .mobile-nav-btn {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 300;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #122433;
+      border: 1px solid rgba(16, 145, 141, 0.2);
+      color: #10918d;
+      font-size: 20px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .mobile-nav-btn:hover {
+      background: rgba(16, 145, 141, 0.1);
+    }
+
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 31, 45, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 250;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .mobile-overlay.is-visible {
+      display: block;
+    }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #122433;
+      border-right: 1px solid rgba(16, 145, 141, 0.1);
+      padding: 24px;
+      z-index: 260;
+      flex-direction: column;
+      animation: slideInLeft 0.25s ease;
+    }
+
+    .mobile-nav.is-visible {
+      display: flex;
+    }
+
+    .mobile-nav .sidebar-logo {
+      margin-bottom: 32px;
+    }
+
+    .mobile-nav .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mobile-nav .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: #8ab0a8;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .mobile-nav .sidebar-nav a:hover {
+      background: rgba(16, 145, 141, 0.06);
+      color: #b8d4cf;
+    }
+
+    .mobile-nav .sidebar-nav a.active {
+      background: rgba(16, 145, 141, 0.1);
+      color: #10918d;
+    }
+
+    .mobile-nav .sidebar-nav a i {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .mobile-nav .sidebar-bottom {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mobile-nav .plan-card {
+      background: rgba(16, 145, 141, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .mobile-nav .plan-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f0f6f4;
+      margin-bottom: 4px;
+    }
+
+    .mobile-nav .plan-credits {
+      font-size: 13px;
+      color: #8ab0a8;
+    }
+
+    .mobile-nav .user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #f0f6f4;
+      margin-bottom: 8px;
+    }
+
+    .mobile-nav .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      padding: 8px 0;
+      color: #8ab0a8;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .mobile-nav .logout-btn:hover {
+      color: #b8d4cf;
+    }
+
+    .mobile-nav .logout-btn i {
+      width: 16px;
+      height: 16px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+
+    @media (max-width: 767px) {
+      .mobile-nav-btn {
+        display: flex;
+      }
+    }
   </style>
 </head>
 <body>
@@ -728,6 +897,45 @@
     <div class="spinner"></div>
     <p>Génération en cours...</p>
   </div>
+
+  <button class="mobile-nav-btn" id="mobileNavBtn" type="button" aria-label="Ouvrir le menu">☰</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-nav" id="mobileNav">
+    <a href="index.html" class="sidebar-logo"><img src="/logos/golbody-primary.svg" alt="GolBody" style="height: 36px;"></a>
+    <nav>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="dashboard.html" class="active" id="mobileNavGenerate">
+            <i data-lucide="zap"></i>
+            Génération
+          </a>
+        </li>
+        <li>
+          <a href="#" id="mobileNavSubscription">
+            <i data-lucide="credit-card"></i>
+            Abonnement
+          </a>
+        </li>
+        <li>
+          <a href="#" id="mobileNavAccount">
+            <i data-lucide="user"></i>
+            Mon compte
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="plan-card">
+        <div class="plan-title" id="mobileUserPlan">--</div>
+        <div class="plan-credits" id="mobileUserCredits">--</div>
+      </div>
+      <div class="user-name" id="mobileUserEmail">Utilisateur</div>
+      <button class="logout-btn" id="mobileLogoutBtn" type="button">
+        <i data-lucide="log-out"></i>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
 
   <div class="dashboard">
     <!-- ========== SIDEBAR ========== -->
@@ -991,8 +1199,12 @@
 
     function updateSidebar() {
       const gens = creditsToGenerations(currentCredits);
-      userPlan.textContent = PLAN_NAMES[currentPlan] || 'Plan Gratuit';
-      userCredits.textContent = gens + ' génération' + (gens > 1 ? 's' : '') + ' restante' + (gens > 1 ? 's' : '');
+      const planLabel = PLAN_NAMES[currentPlan] || 'Plan Gratuit';
+      const creditsText = gens + ' génération' + (gens > 1 ? 's' : '') + ' restante' + (gens > 1 ? 's' : '');
+      userPlan.textContent = planLabel;
+      userCredits.textContent = creditsText;
+      mobileUserPlan.textContent = planLabel;
+      mobileUserCredits.textContent = creditsText;
 
       // Highlight active plan card
       document.querySelectorAll('.plan-card-big').forEach(card => {
@@ -1099,6 +1311,7 @@
       currentUser = session.user;
       const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
       userEmail.textContent = currentUser.email || name;
+      mobileUserEmail.textContent = currentUser.email || name;
       await loadProfile(session.user.id);
     }
 
@@ -1112,6 +1325,38 @@
       setTimeout(() => canceledBanner.classList.remove('is-visible'), 6000);
     }
 
+    // ===== Mobile nav =====
+    const mobileNavBtn = document.getElementById('mobileNavBtn');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+    const mobileNav = document.getElementById('mobileNav');
+    const mobileNavGenerate = document.getElementById('mobileNavGenerate');
+    const mobileNavSubscription = document.getElementById('mobileNavSubscription');
+    const mobileNavAccount = document.getElementById('mobileNavAccount');
+    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+    const mobileUserPlan = document.getElementById('mobileUserPlan');
+    const mobileUserCredits = document.getElementById('mobileUserCredits');
+    const mobileUserEmail = document.getElementById('mobileUserEmail');
+
+    function openMobileNav() {
+      mobileNav.classList.add('is-visible');
+      mobileOverlay.classList.add('is-visible');
+      lucide.createIcons();
+    }
+
+    function closeMobileNav() {
+      mobileNav.classList.remove('is-visible');
+      mobileOverlay.classList.remove('is-visible');
+    }
+
+    mobileNavBtn.addEventListener('click', openMobileNav);
+    mobileOverlay.addEventListener('click', closeMobileNav);
+
+    mobileLogoutBtn.addEventListener('click', async () => {
+      closeMobileNav();
+      await supabaseClient.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
     // ===== Navigation =====
     function showGeneration() {
       generationSection.style.display = 'block';
@@ -1120,6 +1365,9 @@
       navGenerate.classList.add('active');
       navSubscription.classList.remove('active');
       navAccount.classList.remove('active');
+      mobileNavGenerate.classList.add('active');
+      mobileNavSubscription.classList.remove('active');
+      mobileNavAccount.classList.remove('active');
     }
 
     function showSubscription() {
@@ -1129,6 +1377,9 @@
       navGenerate.classList.remove('active');
       navSubscription.classList.add('active');
       navAccount.classList.remove('active');
+      mobileNavGenerate.classList.remove('active');
+      mobileNavSubscription.classList.add('active');
+      mobileNavAccount.classList.remove('active');
       lucide.createIcons();
     }
 
@@ -1139,6 +1390,9 @@
       navGenerate.classList.remove('active');
       navSubscription.classList.remove('active');
       navAccount.classList.add('active');
+      mobileNavGenerate.classList.remove('active');
+      mobileNavSubscription.classList.remove('active');
+      mobileNavAccount.classList.add('active');
     }
 
     navGenerate.addEventListener('click', (e) => {
@@ -1153,6 +1407,24 @@
 
     navAccount.addEventListener('click', (e) => {
       e.preventDefault();
+      showAccount();
+    });
+
+    mobileNavGenerate.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMobileNav();
+      showGeneration();
+    });
+
+    mobileNavSubscription.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMobileNav();
+      showSubscription();
+    });
+
+    mobileNavAccount.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMobileNav();
       showAccount();
     });
 

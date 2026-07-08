@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Request, type Response as ExpressResponse } from "express";
 import { logger } from "../lib/logger";
 
 const router = Router();
@@ -6,7 +6,7 @@ const router = Router();
 const FAL_API_KEY = process.env["FAL_API_KEY"];
 const FAL_ENDPOINT = "https://fal.run/fal-ai/flux-pro/kontext";
 
-router.post("/generate", async (req, res) => {
+router.post("/generate", async (req: Request, res: ExpressResponse) => {
   try {
     const { imageUrl, prompt } = req.body;
 

@@ -83,7 +83,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
 
         // Find plan by price ID
         let plan = 'free';
-        let credits = 100;
+        let credits = 200;
         if (priceId === STRIPE_PRICE_STARTER) { plan = 'starter'; credits = 1000; }
         else if (priceId === STRIPE_PRICE_PRO) { plan = 'pro'; credits = 3000; }
         else if (priceId === STRIPE_PRICE_ULTRA) { plan = 'ultra'; credits = 7500; }
@@ -136,7 +136,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
             await supabase.from('profiles').update({
               plan: 'free',
               stripe_subscription_id: null,
-              credits: 100,
+              credits: 200,
               credits_reset_date: null,
             }).eq('id', p.id);
           }
@@ -153,7 +153,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
         // Get subscription to find price/plan
         const sub = await stripe.subscriptions.retrieve(subscriptionId);
         const priceId = sub.items?.data?.[0]?.price?.id;
-        let credits = 100;
+        let credits = 200;
         let plan = 'free';
         if (priceId === STRIPE_PRICE_STARTER) { plan = 'starter'; credits = 1000; }
         else if (priceId === STRIPE_PRICE_PRO) { plan = 'pro'; credits = 3000; }

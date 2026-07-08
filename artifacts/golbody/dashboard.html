@@ -997,13 +997,14 @@
       ultra: 7500,
     };
 
-    function generationsFromCredits(credits) {
+    function creditsToGenerations(credits) {
       return Math.floor(credits / 100);
     }
 
     function updateSidebar() {
+      const gens = creditsToGenerations(currentCredits);
       userPlan.textContent = PLAN_NAMES[currentPlan] || 'Plan Gratuit';
-      userCredits.textContent = currentCredits + ' génération' + (currentCredits > 1 ? 's' : '') + ' restante' + (currentCredits > 1 ? 's' : '');
+      userCredits.textContent = gens + ' génération' + (gens > 1 ? 's' : '') + ' restante' + (gens > 1 ? 's' : '');
 
       // Highlight active plan card
       document.querySelectorAll('.plan-card-big').forEach(card => {
@@ -1035,8 +1036,8 @@
 
         if (error || !profile) {
           console.log('[Profile] No profile found, creating default');
-          await supabaseClient.from('profiles').insert({ id: userId, credits: 100, plan: 'free' });
-          currentCredits = 100;
+          await supabaseClient.from('profiles').insert({ id: userId, credits: 200, plan: 'free' });
+          currentCredits = 200;
           currentPlan = 'free';
         } else {
           console.log('[Profile] Loaded:', profile.plan, profile.credits, 'credits');
@@ -1047,10 +1048,10 @@
         updateAccountSection(profile || { plan: 'free', credits: 100 });
       } catch (err) {
         console.error('[Profile] Load error:', err);
-        currentCredits = 100;
+        currentCredits = 200;
         currentPlan = 'free';
         updateSidebar();
-        updateAccountSection({ plan: 'free', credits: 100 });
+        updateAccountSection({ plan: 'free', credits: 200 });
       }
     }
 
@@ -1058,8 +1059,8 @@
       const planNames = { free: 'Plan Gratuit', starter: 'Starter', pro: 'Pro', ultra: 'Ultra' };
       document.getElementById('account-email').textContent = currentUser?.email || '—';
       document.getElementById('account-plan').textContent = planNames[profile?.plan] || 'Plan Gratuit';
-      const credits = profile?.credits ?? 0;
-      document.getElementById('account-credits').textContent = credits + ' génération' + (credits > 1 ? 's' : '') + ' restante' + (credits > 1 ? 's' : '');
+      const gens = creditsToGenerations(profile?.credits ?? 0);
+      document.getElementById('account-credits').textContent = gens + ' génération' + (gens > 1 ? 's' : '') + ' restante' + (gens > 1 ? 's' : '');
     }
 
     async function openStripePortal() {

@@ -75,12 +75,6 @@
       font-size: 0.9rem;
       margin-top: 0.75rem;
     }
-    #success-msg {
-      color: #10918d;
-      display: none;
-      font-size: 0.9rem;
-      margin-top: 0.75rem;
-    }
     .login-text {
       margin-top: 1rem;
       color: #8ab0a8;
@@ -105,7 +99,6 @@
       <input type="password" id="password" placeholder="Mot de passe" required/>
       <button type="submit">S'inscrire</button>
       <p id="error-msg"></p>
-      <p id="success-msg"></p>
     </form>
 
     <p class="login-text">Déjà un compte ? <a href="login.html">Se connecter</a></p>
@@ -125,7 +118,6 @@
       if (error) {
         document.getElementById('error-msg').textContent = error.message;
         document.getElementById('error-msg').style.display = 'block';
-        document.getElementById('success-msg').style.display = 'none';
       } else {
         // Create profile with free plan and 100 credits
         const userId = data.user?.id;
@@ -140,10 +132,7 @@
             console.error('Profile creation error:', err);
           }
         }
-        document.getElementById('error-msg').style.display = 'none';
-        document.getElementById('success-msg').textContent = 'Compte créé ! Vérifiez votre email, puis connectez-vous.';
-        document.getElementById('success-msg').style.display = 'block';
-        document.getElementById('register-form').reset();
+        window.location.href = 'dashboard.html';
       }
     });
   </script>

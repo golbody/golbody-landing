@@ -921,8 +921,7 @@
 
     function updateSidebar() {
       userPlan.textContent = PLAN_NAMES[currentPlan] || 'Plan Gratuit';
-      const gens = generationsFromCredits(currentCredits);
-      userCredits.textContent = `${gens} génération${gens > 1 ? 's' : ''} restante${gens > 1 ? 's' : ''}`;
+      userCredits.textContent = currentCredits + ' génération' + (currentCredits > 1 ? 's' : '') + ' restante' + (currentCredits > 1 ? 's' : '');
 
       // Highlight active plan card
       document.querySelectorAll('.plan-card-big').forEach(card => {

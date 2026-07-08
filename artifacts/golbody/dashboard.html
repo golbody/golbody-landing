@@ -1007,41 +1007,13 @@
       console.log('[Auth] Initializing...');
       const authLoading = document.getElementById('authLoading');
 
-      // 1. Try getSession() immediately — Supabase may already have a stored session
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session) {
-        console.log('[Auth] Session found via getSession:', session.user.email);
-        authChecked = true;
-        currentUser = session.user;
-        const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
-        userName.textContent = name;
-        await loadProfile(session.user.id);
-        authLoading.classList.add('is-hidden');
-        return;
-      }
-
-      // 2. No stored session. If URL has #access_token, Supabase is still processing the OAuth redirect.
-      const hasAuthHash = window.location.hash.includes('access_token');
-      if (hasAuthHash) {
-        console.log('[Auth] OAuth hash detected, waiting for SIGNED_IN event...');
-        // Wait up to 5 seconds for onAuthStateChange(SIGNED_IN) to fire
-        setTimeout(() => {
-          if (!authChecked && !currentUser) {
-            console.log('[Auth] No session after 5s OAuth wait, redirecting to login');
-            window.location.href = 'login.html';
-          }
-        }, 5000);
-        return;
-      }
-
-      // 3. No session, no OAuth hash — wait for INITIAL_SESSION (max 3s) then redirect
-      console.log('[Auth] No session, waiting for INITIAL_SESSION...');
+      // Wait up to 5 seconds for Supabase to fire a session event (PKCE, stored session, etc.)
       setTimeout(() => {
         if (!authChecked && !currentUser) {
-          console.log('[Auth] Still no session after timeout, redirecting to login');
+          console.log('[Auth] No session after 5s timeout, redirecting to login');
           window.location.href = 'login.html';
         }
-      }, 3000);
+      }, 5000);
     }
 
     supabaseClient.auth.onAuthStateChange((event, session) => {
@@ -1057,11 +1029,6 @@
         userName.textContent = name;
         loadProfile(session.user.id);
         document.getElementById('authLoading').classList.add('is-hidden');
-
-        // Clean hash if present (OAuth redirect)
-        if (window.location.hash.includes('access_token')) {
-          history.replaceState(null, '', window.location.pathname + window.location.search);
-        }
       }
     });
 

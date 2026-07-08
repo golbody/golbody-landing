@@ -213,6 +213,9 @@
       align-items: center;
       text-align: center;
       padding: 160px 24px 96px;
+      background: linear-gradient(135deg, #0f1923 0%, #0d2a2a 40%, #0f1923 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease infinite;
     }
 
     .gol-hero-badge {
@@ -245,6 +248,13 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+    }
+
+    .gol-hero h1 .word-span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
 
     .gol-hero-subtitle {
@@ -318,6 +328,7 @@
       box-shadow: 0 8px 32px rgba(16, 145, 141, 0.35);
       transition: transform 0.15s ease, box-shadow 0.2s ease;
       margin-bottom: 16px;
+      animation: glowPulse 2s ease infinite;
     }
 
     .gol-hero-cta:hover {
@@ -471,6 +482,12 @@
       border: 1px solid rgba(16, 145, 141, 0.15);
       border-radius: 16px;
       overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .gol-diff-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(45,212,191,0.12);
     }
 
     .gol-diff-card-label {
@@ -563,6 +580,17 @@
       100% { transform: translateX(0); }
     }
 
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(45,212,191,0.4); }
+      50% { box-shadow: 0 0 0 14px rgba(45,212,191,0); }
+    }
+
     .gol-testimonials-row {
       overflow: hidden;
       margin-bottom: 16px;
@@ -591,6 +619,12 @@
       border: 1px solid rgba(16, 145, 141, 0.12);
       border-radius: 16px;
       padding: 24px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .gol-testimonial-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(45,212,191,0.12);
     }
 
     .gol-testimonial-stars {
@@ -611,6 +645,17 @@
       font-size: 13px;
       font-weight: 600;
       color: var(--color-text-muted);
+    }
+
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* Scroll padding for anchor links */
@@ -884,6 +929,13 @@
 
       .gol-footer-links {
         order: 3;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
       }
     }
   </style>
@@ -1347,6 +1399,109 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    (function() {
+      // 1. Hero title — word by word reveal
+      var heroTitle = document.querySelector('.gol-hero h1');
+      if (heroTitle) {
+        var walker = document.createTreeWalker(heroTitle, NodeFilter.SHOW_TEXT);
+        var textNodes = [];
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+        textNodes.forEach(function(node) {
+          var text = node.textContent;
+          var parts = text.split(/(\s+)/);
+          var fragment = document.createDocumentFragment();
+          parts.forEach(function(part) {
+            if (/^\s*$/.test(part)) {
+              fragment.appendChild(document.createTextNode(part));
+            } else {
+              var span = document.createElement('span');
+              span.className = 'word-span';
+              span.textContent = part;
+              span.style.opacity = '0';
+              span.style.transform = 'translateY(20px)';
+              span.style.display = 'inline-block';
+              span.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+              fragment.appendChild(span);
+            }
+          });
+          node.parentNode.replaceChild(fragment, node);
+        });
+        var words = heroTitle.querySelectorAll('.word-span');
+        words.forEach(function(span, i) {
+          setTimeout(function() {
+            span.style.opacity = '1';
+            span.style.transform = 'translateY(0)';
+          }, 100 * i);
+        });
+      }
+
+      // 2. Stats counter
+      var stats = document.querySelectorAll('.gol-stats-value');
+      stats.forEach(function(stat) {
+        var fullText = stat.textContent;
+        var match = fullText.match(/([\d\.]+)(.*)/);
+        if (!match) return;
+        var target = parseFloat(match[1]);
+        var suffix = match[2];
+        stat.textContent = '0' + suffix;
+        var current = 0;
+        var duration = 1500;
+        var steps = 30;
+        var increment = target / steps;
+        var interval = duration / steps;
+        var timer = null;
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              timer = setInterval(function() {
+                current += increment;
+                if (current >= target) {
+                  current = target;
+                  clearInterval(timer);
+                }
+                stat.textContent = Math.floor(current) + suffix;
+              }, interval);
+              observer.unobserve(stat);
+            }
+          });
+        }, { threshold: 0.5 });
+        observer.observe(stat);
+      });
+
+      // 3. Scroll reveal
+      var revealSelectors = [
+        '.gol-diff',
+        '.gol-testimonials',
+        '.gol-faq',
+        '.gol-final-cta',
+        '.gol-section',
+        '.gol-stats',
+        '.gol-diff-card',
+        '.gol-testimonial-card',
+        '.gol-stats-item'
+      ];
+      var revealElements = [];
+      revealSelectors.forEach(function(sel) {
+        document.querySelectorAll(sel).forEach(function(el) {
+          el.classList.add('scroll-reveal');
+          revealElements.push(el);
+        });
+      });
+      var revealObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      revealElements.forEach(function(el) {
+        revealObserver.observe(el);
+      });
+    })();
+  </script>
 
 </body>
 </html>

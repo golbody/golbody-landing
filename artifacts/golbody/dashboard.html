@@ -885,10 +885,13 @@
             <button type="button" class="transform-btn" data-value="Make the body leaner and more defined">
               📐 Corps plus sec
             </button>
+            <button type="button" class="transform-btn" data-value="Make the back more muscular">
+              🔙 Dos musclé
+            </button>
           </div>
 
           <!-- Optional custom prompt -->
-          <input type="text" class="prompt-extra" id="promptExtra" placeholder="Précisions optionnelles...">
+          <textarea class="prompt-extra" id="promptExtra" placeholder="Précisions optionnelles..." rows="3"></textarea>
 
           <!-- Generate Button -->
           <button class="generate-btn" id="generateBtn" type="button" disabled>
@@ -1352,6 +1355,17 @@
       });
     }
 
+    // ===== Prompt mapping =====
+    const PROMPTS = {
+      "Make the biceps bigger": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the biceps: slightly more visible bicep peak and arm thickness, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the shoulders wider": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the shoulders: slightly broader deltoids and more visible shoulder caps, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the abs visible": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle abdominal definition: slightly more visible abs with natural lighting, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the pectorals more developed": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the chest: slightly more visible pectorals with natural shape, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the thighs more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the thighs: slightly more visible quadriceps and leg tone, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the body leaner and more defined": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only make the body slightly leaner with subtle muscle definition and reduced body fat, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the back more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the back: slightly more visible trapezius and latissimus dorsi, as if the person works out occasionally. Do not change body size or proportions."
+    };
+
     // ===== Generate =====
     generateBtn.addEventListener('click', async () => {
       if (!currentFile) return;
@@ -1388,10 +1402,11 @@
         const extra = promptExtra.value.trim();
         let promptText = "Transform this person's body to be very muscular and athletic, keep the face, clothes, pose and background exactly the same, photorealistic";
         if (selected.length > 0) {
-          promptText = selected.join(', ') + ', keep all other details of the photo identical, photorealistic';
+          const detailedPrompts = selected.map(key => PROMPTS[key] || key);
+          promptText = detailedPrompts.join('. ') + '. Keep all other details of the photo identical, photorealistic';
         }
         if (extra) {
-          promptText += ', ' + extra;
+          promptText += '. ' + extra;
         }
         const result = await fal.run("fal-ai/flux-pro/kontext", {
           input: {

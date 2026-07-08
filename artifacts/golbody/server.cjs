@@ -306,6 +306,12 @@ function serveFile(res, filePath) {
       return;
     }
     res.setHeader('Content-Type', contentType);
+    // Force no-cache for HTML files to prevent stale auth redirects in browser cache
+    if (ext === '.html') {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
     res.send(data);
   });
 }

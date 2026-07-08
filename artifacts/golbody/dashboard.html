@@ -1008,33 +1008,30 @@
 
     // ===== Auth check =====
     const urlParams = new URLSearchParams(window.location.search);
-    const hasOAuthCode = urlParams.has('code');
 
-    // If OAuth code is present, Supabase needs time to exchange it — skip timeout
-    const AUTH_TIMEOUT = hasOAuthCode ? 30000 : 5000;
+    async function initAuth() {
+      const hasOAuthCode = urlParams.has('code');
 
-    const authTimeout = setTimeout(() => {
-      window.location.href = 'login.html';
-    }, AUTH_TIMEOUT);
-
-    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
-      clearTimeout(authTimeout);
-      if (session) {
-        // Clean URL if OAuth code present
-        if (hasOAuthCode) {
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
-        // Show dashboard (hide spinner, show content)
-        document.getElementById('authLoading').classList.add('is-hidden');
-        // Load user data
-        currentUser = session.user;
-        const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
-        userName.textContent = name;
-        await loadProfile(session.user.id);
-      } else {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
         window.location.href = 'login.html';
+        return;
       }
-    });
+
+      // Clean URL if OAuth code present
+      if (hasOAuthCode) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      // Show dashboard (hide spinner, show content)
+      document.getElementById('authLoading').classList.add('is-hidden');
+
+      // Load user data
+      currentUser = session.user;
+      const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
+      userName.textContent = name;
+      await loadProfile(session.user.id);
+    }
 
     // ===== URL params =====
     if (urlParams.get('success') === 'true') {

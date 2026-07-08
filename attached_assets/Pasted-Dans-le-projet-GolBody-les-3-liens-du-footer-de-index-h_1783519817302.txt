@@ -1,0 +1,87 @@
+Dans le projet GolBody, les 3 liens du footer de index.html pointent vers "#" 
+
+et il n'existe aucune page légale. En France, mentions légales et politique de 
+
+confidentialité sont obligatoires pour un SaaS.
+
+
+
+Crée 3 nouvelles pages HTML et mets à jour les liens :
+
+
+
+**1. mentions-legales.html**
+
+Contenu obligatoire en France :
+
+- Éditeur : GolBody (raison sociale ou nom de l'auto-entrepreneur)
+
+- Directeur de publication : [Jean Tondut]
+
+- Hébergeur : Replit Inc., 875 Howard St, San Francisco, CA 94103, USA
+
+- Contact : golbodyyy@gmail.com
+
+
+
+**2. cgu.html** (Conditions Générales d'Utilisation)
+
+Contenu essentiel pour un SaaS de transformation photo IA :
+
+- Objet du service (transformation photo par IA)
+
+- Conditions d'accès (majeurs uniquement, usage personnel)
+
+- Utilisation acceptable (interdit d'usurper l'identité d'autrui, de tromper des tiers)
+
+- Propriété intellectuelle
+
+- Responsabilité limitée (les résultats sont générés par IA, non contractuels)
+
+- Résiliation et remboursement
+
+- Droit applicable : droit français, tribunal de Paris
+
+
+
+**3. confidentialite.html** (Politique de confidentialité — RGPD)
+
+Contenu obligatoire RGPD :
+
+- Responsable du traitement : GolBody / Jean Tondut
+
+- Données collectées : email, photos uploadées, données de paiement (Stripe)
+
+- Finalité : fourniture du service
+
+- Conservation : photos supprimées dans l'heure après traitement, compte jusqu'à suppression
+
+- Droits : accès, rectification, suppression via golbodyyy@gmail.com
+
+- Pas de revente de données
+
+
+
+**Design de chaque page :**
+
+- Reprendre exactement le header/footer de index.html (même navbar, même footer avec les 3 liens)
+
+- Contenu dans un container centré max-width 800px, padding confortable
+
+- Même dark theme, même police Inter
+
+- Titres h1/h2 clairs, texte lisible
+
+
+
+**Mettre à jour les liens dans :**
+
+- index.html : les 3 liens du footer → mentions-legales.html, cgu.html, confidentialite.html
+
+- dashboard.html : si des liens légaux existent dans le footer, les mettre à jour aussi
+
+
+
+Ne génère pas de contenu fictif pour les informations que je n'ai pas fournies — 
+
+laisse des placeholders clairs comme [SIRET] ou [ADRESSE] si besoin.

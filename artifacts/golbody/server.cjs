@@ -13,9 +13,15 @@ const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY_TEST || process.env.STRI
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
 // Hardcoded Stripe Price IDs
-const STRIPE_PRICE_STARTER = 'price_1TqduWAa7KFR9IQxxxu5V4Zs';
-const STRIPE_PRICE_PRO = 'price_1TqdupAa7KFR9IQxIvFx3Qno';
-const STRIPE_PRICE_ULTRA = 'price_1Tqdv7Aa7KFR9IQxC1TG0vNv';
+// Monthly prices
+const STRIPE_PRICE_STARTER_MONTHLY = 'price_1TqduWAa7KFR9IQxxxu5V4Zs';
+const STRIPE_PRICE_PRO_MONTHLY     = 'price_1TqdupAa7KFR9IQxIvFx3Qno';
+const STRIPE_PRICE_ULTRA_MONTHLY   = 'price_1Tqdv7Aa7KFR9IQxC1TG0vNv';
+
+// Yearly prices — create these in your Stripe dashboard and paste the IDs here
+const STRIPE_PRICE_STARTER_YEARLY = 'price_1TqduWAa7KFR9IQxxxu5V4Zs'; // TODO: replace with yearly price ID
+const STRIPE_PRICE_PRO_YEARLY     = 'price_1TqdupAa7KFR9IQxIvFx3Qno'; // TODO: replace with yearly price ID
+const STRIPE_PRICE_ULTRA_YEARLY   = 'price_1Tqdv7Aa7KFR9IQxC1TG0vNv'; // TODO: replace with yearly price ID
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://quvqqxrfewrsbajsllzk.supabase.co';
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -28,10 +34,16 @@ const supabase = createClient(
 );
 
 const PRICE_MAP = {
-  starter: STRIPE_PRICE_STARTER,
-  pro: STRIPE_PRICE_PRO,
-  ultra: STRIPE_PRICE_ULTRA,
+  starter: { monthly: STRIPE_PRICE_STARTER_MONTHLY, yearly: STRIPE_PRICE_STARTER_YEARLY },
+  pro:     { monthly: STRIPE_PRICE_PRO_MONTHLY,     yearly: STRIPE_PRICE_PRO_YEARLY },
+  ultra:   { monthly: STRIPE_PRICE_ULTRA_MONTHLY,   yearly: STRIPE_PRICE_ULTRA_YEARLY },
 };
+
+function getPriceId(plan, billing) {
+  const entry = PRICE_MAP[plan];
+  if (!entry) return null;
+  return entry[billing] || entry.monthly;
+}
 
 const PLAN_CREDITS = {
   free: 100,
@@ -106,12 +118,12 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
         const priceId = subscription.items?.data?.[0]?.price?.id;
         const status = subscription.status;
 
-        // Find plan by price ID
+        // Find plan by price ID (monthly or yearly)
         let plan = 'free';
         let credits = 200;
-        if (priceId === STRIPE_PRICE_STARTER) { plan = 'starter'; credits = 1000; }
-        else if (priceId === STRIPE_PRICE_PRO) { plan = 'pro'; credits = 3000; }
-        else if (priceId === STRIPE_PRICE_ULTRA) { plan = 'ultra'; credits = 7500; }
+        if (priceId === STRIPE_PRICE_STARTER_MONTHLY || priceId === STRIPE_PRICE_STARTER_YEARLY) { plan = 'starter'; credits = 1000; }
+        else if (priceId === STRIPE_PRICE_PRO_MONTHLY || priceId === STRIPE_PRICE_PRO_YEARLY) { plan = 'pro'; credits = 3000; }
+        else if (priceId === STRIPE_PRICE_ULTRA_MONTHLY || priceId === STRIPE_PRICE_ULTRA_YEARLY) { plan = 'ultra'; credits = 7500; }
 
         if (status === 'active' || status === 'trialing') {
           // Get customer email from Stripe
@@ -180,9 +192,9 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
         const priceId = sub.items?.data?.[0]?.price?.id;
         let credits = 200;
         let plan = 'free';
-        if (priceId === STRIPE_PRICE_STARTER) { plan = 'starter'; credits = 1000; }
-        else if (priceId === STRIPE_PRICE_PRO) { plan = 'pro'; credits = 3000; }
-        else if (priceId === STRIPE_PRICE_ULTRA) { plan = 'ultra'; credits = 7500; }
+        if (priceId === STRIPE_PRICE_STARTER_MONTHLY || priceId === STRIPE_PRICE_STARTER_YEARLY) { plan = 'starter'; credits = 1000; }
+        else if (priceId === STRIPE_PRICE_PRO_MONTHLY || priceId === STRIPE_PRICE_PRO_YEARLY) { plan = 'pro'; credits = 3000; }
+        else if (priceId === STRIPE_PRICE_ULTRA_MONTHLY || priceId === STRIPE_PRICE_ULTRA_YEARLY) { plan = 'ultra'; credits = 7500; }
 
         const { data: profiles } = await supabase
           .from('profiles')
@@ -227,7 +239,7 @@ app.post('/create-checkout-session', async (req, res) => {
       return res.status(500).json({ error: 'Stripe not configured' });
     }
 
-    const { plan, pack, customerEmail, user_id } = req.body;
+    const { plan, billing, pack, customerEmail, user_id } = req.body;
 
     // Get or create Stripe customer
     let customerId = null;
@@ -254,9 +266,9 @@ app.post('/create-checkout-session', async (req, res) => {
 
     // Subscription checkout
     if (plan) {
-      const priceId = PRICE_MAP[plan];
+      const priceId = getPriceId(plan, billing);
       if (!priceId) {
-        return res.status(400).json({ error: 'Invalid plan' });
+        return res.status(400).json({ error: 'Invalid plan or billing mode' });
       }
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
@@ -264,7 +276,7 @@ app.post('/create-checkout-session', async (req, res) => {
         line_items: [{ price: priceId, quantity: 1 }],
         success_url: `${origin}${BASE_PATH}dashboard.html?success=true`,
         cancel_url: `${origin}${BASE_PATH}dashboard.html?canceled=true`,
-        metadata: { user_id, plan },
+        metadata: { user_id, plan, billing: billing || 'monthly' },
       });
       return res.json({ url: session.url });
     }

@@ -1782,12 +1782,13 @@
           btn.disabled = true;
           const originalText = btn.textContent;
           btn.textContent = 'Chargement...';
-          console.log('[Subscribe] Calling /create-checkout-session with plan:', plan, 'userId:', user.id);
+          console.log('[Subscribe] Calling /create-checkout-session with plan:', plan, 'billing:', billingMode, 'userId:', user.id);
           const res = await fetch('/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               plan,
+              billing: billingMode,
               customerEmail: user.email,
               user_id: user.id,
             }),

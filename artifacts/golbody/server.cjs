@@ -86,16 +86,29 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
         else if (priceId === STRIPE_PRICE_ULTRA) { plan = 'ultra'; credits = 7500; }
 
         if (status === 'active' || status === 'trialing') {
-          // Update profile
-          const { data: profiles } = await supabase
+          // Get customer email from Stripe
+          const customer = await stripe.customers.retrieve(customerId);
+          const email = customer.email;
+
+          // Chercher par stripe_customer_id OU par email
+          let { data: profiles } = await supabase
             .from('profiles')
             .select('id')
             .eq('stripe_customer_id', customerId);
+
+          if (!profiles || profiles.length === 0) {
+            const result = await supabase
+              .from('profiles')
+              .select('id')
+              .eq('email', email);
+            profiles = result.data;
+          }
 
           if (profiles && profiles.length > 0) {
             for (const p of profiles) {
               await supabase.from('profiles').update({
                 plan: plan,
+                stripe_customer_id: customerId,
                 stripe_subscription_id: subscription.id,
                 credits: credits,
                 credits_reset_date: new Date().toISOString().split('T')[0],

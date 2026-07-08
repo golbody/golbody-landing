@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 40" width="160" height="40">
   <text x="0" y="30" font-family="Arial, sans-serif" font-weight="800" font-size="28">
-    <tspan fill="#2dd4bf">Gol</tspan><tspan fill="#ffffff">Body</tspan>
+    <tspan fill="#FFD600">Gol</tspan><tspan fill="#ffffff">Body</tspan>
   </text>
 </svg>

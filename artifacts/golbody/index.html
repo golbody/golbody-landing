@@ -11,13 +11,13 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
-      --color-bg: #0D1F2D;
-      --color-accent: #10918d;
-      --color-accent-hover: #0e7f7b;
-      --color-accent-dark: #0f734e;
-      --color-text-muted: #8ab0a8;
-      --color-text-muted-hover: #b8d4cf;
-      --color-border: rgba(16, 145, 141, 0.15);
+      --color-bg: #111111;
+      --color-accent: #FFD600;
+      --color-accent-hover: #e6c000;
+      --color-accent-dark: #ccaa00;
+      --color-text-muted: #a0a0a0;
+      --color-text-muted-hover: #c0c0c0;
+      --color-border: rgba(255, 214, 0, 0.15);
     }
 
     * {
@@ -43,7 +43,7 @@
       display: flex;
       align-items: center;
       padding: 0 48px;
-      background: rgba(13, 31, 45, 0.85);
+      background: rgba(17, 17, 17, 0.85);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--color-border);
@@ -106,7 +106,7 @@
       border-radius: 8px;
       font-size: 14px;
       font-weight: 600;
-      color: #ffffff;
+      color: #111111;
       text-decoration: none;
       border: none;
       cursor: pointer;
@@ -139,7 +139,7 @@
 
     .gol-menu-toggle:hover {
       color: var(--color-text-muted-hover);
-      background: rgba(16, 145, 141, 0.08);
+      background: rgba(255, 214, 0, 0.08);
     }
 
     .gol-menu-toggle svg {
@@ -153,7 +153,7 @@
       top: 64px;
       left: 0;
       right: 0;
-      background: rgba(13, 31, 45, 0.98);
+      background: rgba(17, 17, 17, 0.98);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--color-border);
@@ -174,7 +174,7 @@
       font-weight: 400;
       color: var(--color-text-muted);
       text-decoration: none;
-      border-bottom: 1px solid rgba(16, 145, 141, 0.08);
+      border-bottom: 1px solid rgba(255, 214, 0, 0.08);
       cursor: pointer;
       transition: color 0.2s ease;
       font-family: 'Inter', sans-serif;
@@ -214,7 +214,7 @@
       align-items: center;
       text-align: center;
       padding: 160px 24px 96px;
-      background: linear-gradient(135deg, #0f1923 0%, #0d2a2a 40%, #0f1923 100%);
+      background: linear-gradient(135deg, #111111 0%, #111111 40%, #111111 100%);
       background-size: 200% 200%;
       animation: gradientShift 8s ease infinite;
     }
@@ -224,8 +224,8 @@
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: rgba(16, 145, 141, 0.1);
-      border: 1px solid rgba(16, 145, 141, 0.3);
+      background: rgba(255, 214, 0, 0.1);
+      border: 1px solid rgba(255, 214, 0, 0.3);
       border-radius: 40px;
       font-size: 12px;
       font-weight: 600;
@@ -298,9 +298,9 @@
       margin-left: 0;
     }
 
-    .gol-hero-avatars .avatar:nth-child(1) { background: #0f5e4a; }
-    .gol-hero-avatars .avatar:nth-child(2) { background: #107a6e; }
-    .gol-hero-avatars .avatar:nth-child(3) { background: #10918d; }
+    .gol-hero-avatars .avatar:nth-child(1) { background: #b8a000; }
+    .gol-hero-avatars .avatar:nth-child(2) { background: #ccaa00; }
+    .gol-hero-avatars .avatar:nth-child(3) { background: #FFD600; }
 
     .gol-hero-social-text {
       font-size: 14px;
@@ -326,7 +326,7 @@
       border: none;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
-      box-shadow: 0 8px 32px rgba(16, 145, 141, 0.35);
+      box-shadow: 0 8px 32px rgba(255, 214, 0, 0.35);
       transition: transform 0.15s ease, box-shadow 0.2s ease;
       margin-bottom: 16px;
       animation: glowPulse 2s ease infinite;
@@ -334,7 +334,7 @@
 
     .gol-hero-cta:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(16, 145, 141, 0.45);
+      box-shadow: 0 12px 40px rgba(255, 214, 0, 0.45);
     }
 
     .gol-hero-cta:active {
@@ -349,9 +349,9 @@
 
     /* ============ STATS BAR ============ */
     .gol-stats {
-      background: #122433;
-      border-top: 1px solid rgba(16, 145, 141, 0.1);
-      border-bottom: 1px solid rgba(16, 145, 141, 0.1);
+      background: #1a1a2e;
+      border-top: 1px solid rgba(255, 214, 0, 0.1);
+      border-bottom: 1px solid rgba(255, 214, 0, 0.1);
       padding: 32px 48px;
     }
 
@@ -370,7 +370,7 @@
       align-items: center;
       text-align: center;
       padding: 0 24px;
-      border-right: 1px solid rgba(16, 145, 141, 0.1);
+      border-right: 1px solid rgba(255, 214, 0, 0.1);
     }
 
     .gol-stats-item:last-child {
@@ -380,14 +380,14 @@
     .gol-stats-value {
       font-size: 32px;
       font-weight: 800;
-      color: #10918d;
+      color: #FFD600;
       line-height: 1.2;
     }
 
     .gol-stats-label {
       font-size: 13px;
       font-weight: 400;
-      color: #8ab0a8;
+      color: #a0a0a0;
       margin-top: 8px;
     }
 
@@ -403,7 +403,7 @@
 
       .gol-stats-item {
         border-right: none;
-        border-bottom: 1px solid rgba(16, 145, 141, 0.1);
+        border-bottom: 1px solid rgba(255, 214, 0, 0.1);
         padding: 0 0 24px;
       }
 
@@ -436,8 +436,8 @@
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: rgba(16, 145, 141, 0.1);
-      border: 1px solid rgba(16, 145, 141, 0.25);
+      background: rgba(255, 214, 0, 0.1);
+      border: 1px solid rgba(255, 214, 0, 0.25);
       border-radius: 40px;
       font-size: 12px;
       font-weight: 600;
@@ -479,8 +479,8 @@
     }
 
     .gol-diff-card {
-      background: #122433;
-      border: 1px solid rgba(16, 145, 141, 0.15);
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 214, 0, 0.15);
       border-radius: 16px;
       overflow: hidden;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -488,7 +488,7 @@
 
     .gol-diff-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(45,212,191,0.12);
+      box-shadow: 0 20px 40px rgba(255,214,0,0.12);
     }
 
     .gol-diff-card-label {
@@ -497,7 +497,7 @@
       font-size: 14px;
       font-weight: 600;
       color: var(--color-text-muted);
-      border-bottom: 1px solid rgba(16, 145, 141, 0.1);
+      border-bottom: 1px solid rgba(255, 214, 0, 0.1);
     }
 
     .gol-diff-card-label.active {
@@ -506,7 +506,7 @@
 
     .gol-diff-card-img {
       aspect-ratio: 3 / 4;
-      background: #1a3040;
+      background: #222233;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -545,8 +545,8 @@
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: rgba(16, 145, 141, 0.1);
-      border: 1px solid rgba(16, 145, 141, 0.25);
+      background: rgba(255, 214, 0, 0.1);
+      border: 1px solid rgba(255, 214, 0, 0.25);
       border-radius: 40px;
       font-size: 12px;
       font-weight: 600;
@@ -588,8 +588,8 @@
     }
 
     @keyframes glowPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(45,212,191,0.4); }
-      50% { box-shadow: 0 0 0 14px rgba(45,212,191,0); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,214,0,0.4); }
+      50% { box-shadow: 0 0 0 14px rgba(255,214,0,0); }
     }
 
     .gol-testimonials-row {
@@ -616,8 +616,8 @@
     .gol-testimonial-card {
       flex-shrink: 0;
       width: 300px;
-      background: #122433;
-      border: 1px solid rgba(16, 145, 141, 0.12);
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 214, 0, 0.12);
       border-radius: 16px;
       padding: 24px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -625,7 +625,7 @@
 
     .gol-testimonial-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(45,212,191,0.12);
+      box-shadow: 0 20px 40px rgba(255,214,0,0.12);
     }
 
     .gol-testimonial-stars {
@@ -638,7 +638,7 @@
     .gol-testimonial-text {
       font-size: 15px;
       line-height: 1.6;
-      color: #f0f6f4;
+      color: #eeeeee;
       margin-bottom: 16px;
     }
 
@@ -714,8 +714,8 @@
       align-items: center;
       gap: 8px;
       padding: 8px 16px;
-      background: rgba(16, 145, 141, 0.1);
-      border: 1px solid rgba(16, 145, 141, 0.25);
+      background: rgba(255, 214, 0, 0.1);
+      border: 1px solid rgba(255, 214, 0, 0.25);
       border-radius: 40px;
       font-size: 12px;
       font-weight: 600;
@@ -739,8 +739,8 @@
     }
 
     .gol-faq-item {
-      background: #122433;
-      border: 1px solid rgba(16, 145, 141, 0.12);
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 214, 0, 0.12);
       border-radius: 16px;
       overflow: hidden;
     }
@@ -754,7 +754,7 @@
       padding: 24px;
       font-size: 16px;
       font-weight: 600;
-      color: #f0f6f4;
+      color: #eeeeee;
       background: none;
       border: none;
       cursor: pointer;
@@ -764,7 +764,7 @@
     }
 
     .gol-faq-question:hover {
-      background: rgba(16, 145, 141, 0.04);
+      background: rgba(255, 214, 0, 0.04);
     }
 
     .gol-faq-question:focus-visible {
@@ -805,8 +805,8 @@
     /* ============ CTA FINAL ============ */
     .gol-final-cta {
       padding: 96px 48px;
-      background: #122433;
-      border-top: 1px solid rgba(16, 145, 141, 0.1);
+      background: #1a1a2e;
+      border-top: 1px solid rgba(255, 214, 0, 0.1);
       text-align: center;
     }
 
@@ -844,13 +844,13 @@
       border: none;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
-      box-shadow: 0 8px 32px rgba(16, 145, 141, 0.35);
+      box-shadow: 0 8px 32px rgba(255, 214, 0, 0.35);
       transition: transform 0.15s ease, box-shadow 0.2s ease;
     }
 
     .gol-final-cta-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(16, 145, 141, 0.45);
+      box-shadow: 0 12px 40px rgba(255, 214, 0, 0.45);
     }
 
     .gol-final-cta-btn:active {
@@ -859,8 +859,8 @@
 
     /* ============ FOOTER ============ */
     .gol-footer {
-      background: #0D1F2D;
-      border-top: 1px solid rgba(16, 145, 141, 0.08);
+      background: #111111;
+      border-top: 1px solid rgba(255, 214, 0, 0.08);
       padding: 32px 48px;
     }
 

@@ -18,7 +18,7 @@ localPort = 23945
 run = "node server.cjs"
 
 [services.production]
-run = "node server.cjs"
+run = "node artifacts/golbody/server.cjs"
 
 [services.env]
 PORT = "23945"

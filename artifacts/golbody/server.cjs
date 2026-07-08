@@ -21,7 +21,10 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4NzUzMzUsImV4cCI6MjA2MjQ1MTMzNX0.kSiwUpjHFE3wV6vJmCbYmMNv291rEW1SPgkWIO5W6G4';
 
 const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY, { apiVersion: '2025-06-30.basil' }) : null;
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY);
+const supabase = createClient(
+  process.env.SUPABASE_URL || 'https://quvqqxrfewrsbajsllzk.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY  // service role, pas anon key
+);
 
 const PRICE_MAP = {
   starter: STRIPE_PRICE_STARTER,

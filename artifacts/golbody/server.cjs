@@ -42,7 +42,7 @@ const PLAN_CREDITS = {
 const app = express();
 
 // Static files from public/
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Raw body parser for Stripe webhook
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {

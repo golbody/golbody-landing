@@ -40,6 +40,11 @@ const PLAN_CREDITS = {
   ultra: 7500,
 };
 
+const CREDIT_PACKS = {
+  small: { amount: 490, credits: 500, name: 'Pack Légère — 5 générations' },
+  large: { amount: 1490, credits: 1500, name: 'Pack Max — 15 générations' },
+};
+
 const app = express();
 
 // Static files from public/
@@ -69,10 +74,26 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
         const session = event.data.object;
         const customerId = session.customer;
         const userId = session.metadata?.user_id;
+        const pack = session.metadata?.pack;
+        const creditsToAdd = parseInt(session.metadata?.credits, 10);
 
         if (userId && customerId) {
           await supabase.from('profiles').update({
             stripe_customer_id: customerId,
+          }).eq('id', userId);
+        }
+
+        // Credit pack purchase — add credits to user's account
+        if (pack && creditsToAdd && userId) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('credits')
+            .eq('id', userId)
+            .single();
+
+          const currentCredits = profile?.credits || 0;
+          await supabase.from('profiles').update({
+            credits: currentCredits + creditsToAdd,
           }).eq('id', userId);
         }
         break;
@@ -199,18 +220,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Create checkout session
+// Create checkout session (subscriptions or credit packs)
 app.post('/create-checkout-session', async (req, res) => {
   try {
     if (!stripe) {
       return res.status(500).json({ error: 'Stripe not configured' });
     }
 
-    const { plan, customerEmail, user_id } = req.body;
-    const priceId = PRICE_MAP[plan];
-    if (!priceId) {
-      return res.status(400).json({ error: 'Invalid plan' });
-    }
+    const { plan, pack, customerEmail, user_id } = req.body;
 
     // Get or create Stripe customer
     let customerId = null;
@@ -234,16 +251,49 @@ app.post('/create-checkout-session', async (req, res) => {
     }
 
     const origin = req.headers.origin || req.headers.referer || `https://${process.env.REPLIT_DEV_DOMAIN || 'golbody.com'}`;
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      mode: 'subscription',
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${origin}${BASE_PATH}dashboard.html?success=true`,
-      cancel_url: `${origin}${BASE_PATH}dashboard.html?canceled=true`,
-      metadata: { user_id, plan },
-    });
 
-    res.json({ url: session.url });
+    // Subscription checkout
+    if (plan) {
+      const priceId = PRICE_MAP[plan];
+      if (!priceId) {
+        return res.status(400).json({ error: 'Invalid plan' });
+      }
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        mode: 'subscription',
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: `${origin}${BASE_PATH}dashboard.html?success=true`,
+        cancel_url: `${origin}${BASE_PATH}dashboard.html?canceled=true`,
+        metadata: { user_id, plan },
+      });
+      return res.json({ url: session.url });
+    }
+
+    // Credit pack one-time checkout
+    if (pack) {
+      const packData = CREDIT_PACKS[pack];
+      if (!packData) {
+        return res.status(400).json({ error: 'Invalid credit pack' });
+      }
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        mode: 'payment',
+        line_items: [{
+          price_data: {
+            currency: 'eur',
+            product_data: { name: packData.name },
+            unit_amount: packData.amount,
+          },
+          quantity: 1,
+        }],
+        success_url: `${origin}${BASE_PATH}dashboard.html?success=true`,
+        cancel_url: `${origin}${BASE_PATH}dashboard.html?canceled=true`,
+        metadata: { user_id, pack, credits: packData.credits },
+      });
+      return res.json({ url: session.url });
+    }
+
+    return res.status(400).json({ error: 'Missing plan or pack' });
   } catch (err) {
     console.error('Checkout session error:', err);
     res.status(500).json({ error: err.message });

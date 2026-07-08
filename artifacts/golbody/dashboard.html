@@ -1814,6 +1814,46 @@
       });
     });
 
+    // ===== Credit pack buttons =====
+    document.querySelectorAll('.credit-pack-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const pack = btn.dataset.pack;
+        const user = await ensureUser();
+        if (!user) {
+          showError('Veuillez vous connecter pour acheter des crédits.');
+          return;
+        }
+
+        try {
+          btn.disabled = true;
+          const originalText = btn.textContent;
+          btn.textContent = 'Chargement...';
+          const res = await fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              pack,
+              customerEmail: user.email,
+              user_id: user.id,
+            }),
+          });
+          const data = await res.json();
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            showError(data.error || 'Erreur lors de la création de la session de paiement.');
+            btn.disabled = false;
+            btn.textContent = originalText;
+          }
+        } catch (err) {
+          console.error('Credit pack error:', err);
+          showError('Erreur de connexion. Réessayez.');
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      });
+    });
+
     // Run auth initialization
     initAuth();
 

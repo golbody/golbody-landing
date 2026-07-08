@@ -403,6 +403,28 @@
       to { transform: rotate(360deg); }
     }
 
+    /* ========== AUTH LOADING ========== */
+    .auth-loading {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      background: #0D1F2D;
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .auth-loading.is-hidden {
+      display: none;
+    }
+
+    .auth-loading p {
+      color: #8ab0a8;
+      font-size: 14px;
+    }
+
     /* ========== RESULT ZONE ========== */
     .result-zone {
       margin-top: 32px;
@@ -668,6 +690,11 @@
   </style>
 </head>
 <body>
+
+  <div class="auth-loading" id="authLoading">
+    <div class="spinner"></div>
+    <p>Vérification de la session...</p>
+  </div>
 
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
@@ -978,6 +1005,8 @@
 
     async function initAuth() {
       console.log('[Auth] Initializing...');
+      const authLoading = document.getElementById('authLoading');
+
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
         console.log('[Auth] Session found via getSession:', session.user.email);
@@ -986,15 +1015,20 @@
         const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
         userName.textContent = name;
         await loadProfile(session.user.id);
+        authLoading.classList.add('is-hidden');
+        return;
       }
-      // If no session from getSession, wait a bit for INITIAL_SESSION event
+
+      // If no session from getSession, wait for INITIAL_SESSION event (max 3s)
       if (!session && !authChecked) {
         setTimeout(() => {
           if (!authChecked && !currentUser) {
             console.log('[Auth] Still no session after timeout, redirecting to login');
             window.location.href = 'login.html';
+          } else {
+            authLoading.classList.add('is-hidden');
           }
-        }, 2500);
+        }, 3000);
       }
     }
 
@@ -1010,6 +1044,7 @@
         const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
         userName.textContent = name;
         loadProfile(session.user.id);
+        document.getElementById('authLoading').classList.add('is-hidden');
       }
     });
 

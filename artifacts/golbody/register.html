@@ -293,7 +293,7 @@
       clearError();
       const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin + '/dashboard.html' }
+        options: { redirectTo: 'https://golbody.com/dashboard.html' }
       });
       if (error) showError(error.message);
     });

@@ -1,0 +1,55 @@
+Add animations to dashboard.html only
+
+1. Upload zone — bordure pulsante
+La zone "Ta photo / Touche pour importer" : ajouter une bordure pointillée teal qui pulse doucement tant qu'aucune photo n'est importée. Stopper l'animation dès qu'une photo est chargée.
+
+@keyframes borderPulse {
+  0%, 100% { border-color: rgba(45,212,191,0.3); }
+  50% { border-color: rgba(45,212,191,0.8); }
+}
+.upload-zone { animation: borderPulse 2s ease infinite; }
+.upload-zone.has-image { animation: none; }
+2. Boutons de transformation — hover lift
+Les 7 boutons (Biceps, Épaules, Abdos, etc.) :
+
+transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+&:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(45,212,191,0.2); }
+3. Bouton actif — effet sélectionné
+Quand un bouton de transformation est cliqué/actif, il garde un glow teal discret :
+
+.transform-btn.active { box-shadow: 0 0 0 2px rgba(45,212,191,0.6); }
+4. Bouton Générer — shimmer quand actif
+Quand le bouton Générer est actif (photo uploadée), ajouter un shimmer qui traverse le bouton :
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.generate-btn:not(:disabled) {
+  background: linear-gradient(90deg, #2dd4bf 30%, #5eead4 50%, #2dd4bf 70%);
+  background-size: 200% auto;
+  animation: shimmer 2s linear infinite;
+}
+5. Image générée — reveal cinématique
+Quand l'image résultat apparaît, elle fait un fade-in + scale de 0.95 → 1 sur 0.6s :
+
+@keyframes revealImage {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.result-image { animation: revealImage 0.6s ease forwards; }
+6. Sidebar nav — hover animé
+Les liens de navigation ont un highlight teal qui glisse depuis la gauche au hover (pseudo-élément ::before avec width: 0 → 3px en transition).
+
+7. Notifications — slide-down
+Les banners de succès/erreur en haut du dashboard entrent avec un slide-down depuis le haut :
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.notification { animation: slideDown 0.4s ease forwards; }
+Ajoute @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } } à la fin.
+
+Ne touche à aucune logique JS existante ni au contenu HTML.
+

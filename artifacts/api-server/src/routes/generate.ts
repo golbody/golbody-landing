@@ -3,10 +3,10 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 
-// Fix 1: use v1alpha — image output was only available there for Flash at the time of implementation.
-// Fix 2: fallback model name ready if gemini-2.0-flash with v1alpha still fails.
-const GEMINI_MODEL = "gemini-2.0-flash";
-const GEMINI_API_VERSION = "v1alpha";
+// gemini-2.5-flash added native image generation support.
+// API version v1beta is the correct endpoint for image output on this model.
+const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_API_VERSION = "v1beta";
 
 // Synchronous image generation via Gemini REST API
 router.post("/generate", async (req: Request, res: ExpressResponse) => {
@@ -40,7 +40,7 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
           ]
         }],
         generationConfig: {
-          responseModalities: ["TEXT", "IMAGE"]
+          responseModalities: ["image", "text"]
         }
       })
     });

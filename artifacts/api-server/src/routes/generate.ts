@@ -3,6 +3,11 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 
+// Fix 1: use v1alpha — image output was only available there for Flash at the time of implementation.
+// Fix 2: fallback model name ready if gemini-2.0-flash with v1alpha still fails.
+const GEMINI_MODEL = "gemini-2.0-flash";
+const GEMINI_API_VERSION = "v1alpha";
+
 // Synchronous image generation via Gemini REST API
 router.post("/generate", async (req: Request, res: ExpressResponse) => {
   try {
@@ -22,7 +27,7 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
     const base64Data = matches[2];
 
     const apiKey = process.env["GEMINI_API_KEY"];
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/${GEMINI_API_VERSION}/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
     const geminiRes = await fetch(geminiUrl, {
       method: "POST",

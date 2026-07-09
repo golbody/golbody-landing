@@ -5,7 +5,7 @@ const router = Router();
 
 // gemini-2.5-flash added native image generation support.
 // API version v1beta is the correct endpoint for image output on this model.
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-2.5-flash-image";
 const GEMINI_API_VERSION = "v1beta";
 
 // Synchronous image generation via Gemini REST API

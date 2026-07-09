@@ -45894,7 +45894,7 @@ var logger = (0, import_pino.default)({
 
 // src/routes/generate.ts
 var router2 = (0, import_express2.Router)();
-var GEMINI_MODEL = "gemini-2.5-flash";
+var GEMINI_MODEL = "gemini-2.5-flash-image";
 var GEMINI_API_VERSION = "v1beta";
 router2.post("/generate", async (req, res) => {
   try {

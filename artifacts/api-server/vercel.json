@@ -1,3 +1,6 @@
 {
-  "rewrites": [{"source": "/(.*)", "destination": "/dist/index.mjs"}]
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/dist/index.mjs" }
+  ]
 }

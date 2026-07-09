@@ -101,7 +101,7 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
 
 router.get("/generate/status/:requestId", async (req: Request, res: ExpressResponse) => {
   try {
-    const { requestId } = req.params;
+    const requestId = Array.isArray(req.params.requestId) ? req.params.requestId[0] : req.params.requestId;
 
     if (!FAL_API_KEY) {
       res.status(500).json({ error: "Server configuration error" });
@@ -141,7 +141,7 @@ router.get("/generate/status/:requestId", async (req: Request, res: ExpressRespo
 
 router.get("/generate/result/:requestId", async (req: Request, res: ExpressResponse) => {
   try {
-    const { requestId } = req.params;
+    const requestId = Array.isArray(req.params.requestId) ? req.params.requestId[0] : req.params.requestId;
 
     if (!FAL_API_KEY) {
       res.status(500).json({ error: "Server configuration error" });

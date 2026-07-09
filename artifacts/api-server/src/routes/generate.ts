@@ -4,7 +4,7 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 const GEMINI_API_KEY = process.env["GEMINI_API_KEY"];
-const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
+const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY, httpOptions: { apiVersion: "v1alpha" } }) : null;
 
 // Synchronous image generation via Gemini
 router.post("/generate", async (req: Request, res: ExpressResponse) => {
@@ -29,7 +29,7 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
     const base64Data = matches[2];
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-preview-image-generation",
+      model: "gemini-2.0-flash-exp",
       contents: [{
         parts: [
           { inlineData: { mimeType, data: base64Data } },

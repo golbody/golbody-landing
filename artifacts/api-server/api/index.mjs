@@ -45896,7 +45896,7 @@ var logger = (0, import_pino.default)({
 // src/routes/generate.ts
 var router2 = (0, import_express2.Router)();
 var GEMINI_API_KEY = process.env["GEMINI_API_KEY"];
-var ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
+var ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY, httpOptions: { apiVersion: "v1alpha" } }) : null;
 router2.post("/generate", async (req, res) => {
   try {
     const { imageUrl, prompt } = req.body;
@@ -45916,7 +45916,7 @@ router2.post("/generate", async (req, res) => {
     const mimeType = matches[1];
     const base64Data = matches[2];
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-preview-image-generation",
+      model: "gemini-2.0-flash-exp",
       contents: [{
         parts: [
           { inlineData: { mimeType, data: base64Data } },

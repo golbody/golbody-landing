@@ -1,0 +1,105 @@
+The generation is still broken. The root cause is that fal-ai/flux-pro/kontext does NOT accept base64 data URIs in the image_url field — it needs a real HTTP URL. fal.ai provides an upload endpoint for this.
+
+Fix artifacts/api-server/src/routes/generate.ts to upload the image first, then submit the generation job.
+
+Step 1 — Install the fal.ai client:
+
+cd artifacts/api-server && npm install @fal-ai/client
+Step 2 — Replace the generate route with this logic:
+
+import { Router, type Request, type Response as ExpressResponse } from "express";
+import { fal } from "@fal-ai/client";
+import { logger } from "../lib/logger";
+
+const router = Router();
+const FAL_API_KEY = process.env["FAL_API_KEY"];
+
+// Submit job — uploads image to fal.ai storage, then queues generation
+router.post("/generate", async (req: Request, res: ExpressResponse) => {
+  try {
+    const { imageUrl, prompt } = req.body;
+    if (!imageUrl || !prompt) {
+      res.status(400).json({ error: "Missing imageUrl or prompt" });
+      return;
+    }
+    if (!FAL_API_KEY) {
+      res.status(500).json({ error: "Server configuration error" });
+      return;
+    }
+
+    fal.config({ credentials: FAL_API_KEY });
+
+    // imageUrl is a base64 data URI — convert to Blob and upload to fal.ai storage
+    const matches = imageUrl.match(/^data:([^;]+);base64,(.+)$/);
+    if (!matches) {
+      res.status(400).json({ error: "Invalid image format" });
+      return;
+    }
+    const mimeType = matches[1];
+    const buffer = Buffer.from(matches[2], "base64");
+    const blob = new Blob([buffer], { type: mimeType });
+    const uploadedUrl = await fal.storage.upload(blob);
+    logger.info({ uploadedUrl }, "Image uploaded to fal.ai storage");
+
+    // Submit to queue — returns requestId immediately
+    const { request_id } = await fal.queue.submit("fal-ai/flux-pro/kontext", {
+      input: { prompt, image_url: uploadedUrl },
+    });
+
+    res.json({ requestId: request_id });
+  } catch (err) {
+    logger.error({ err }, "Error in POST /api/generate");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Poll job status
+router.get("/generate/status/:requestId", async (req: Request, res: ExpressResponse) => {
+  try {
+    if (!FAL_API_KEY) {
+      res.status(500).json({ error: "Server configuration error" });
+      return;
+    }
+    fal.config({ credentials: FAL_API_KEY });
+    const { requestId } = req.params;
+    const statusResult = await fal.queue.status("fal-ai/flux-pro/kontext", {
+      requestId,
+      logs: false,
+    });
+    res.json({ status: statusResult.status });
+  } catch (err) {
+    logger.error({ err }, "Error in GET /api/generate/status");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Fetch completed result
+router.get("/generate/result/:requestId", async (req: Request, res: ExpressResponse) => {
+  try {
+    if (!FAL_API_KEY) {
+      res.status(500).json({ error: "Server configuration error" });
+      return;
+    }
+    fal.config({ credentials: FAL_API_KEY });
+    const { requestId } = req.params;
+    const result = await fal.queue.result("fal-ai/flux-pro/kontext", { requestId });
+    const data = result.data as { images?: Array<{ url: string } | string> };
+    const first = data?.images?.[0];
+    const imageUrl = typeof first === "string" ? first : first?.url;
+    if (!imageUrl) {
+      res.status(502).json({ error: "No image returned" });
+      return;
+    }
+    res.json({ imageUrl });
+  } catch (err) {
+    logger.error({ err }, "Error in GET /api/generate/result");
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+export default router;
+Step 3 — Rebuild and push:
+
+cd artifacts/api-server && npm install @fal-ai/client
+Rebuild the bundle with node build.mjs (or the existing build command)
+Push via GitHub REST API (NOT git push — use the Python script / Trees API method used before)

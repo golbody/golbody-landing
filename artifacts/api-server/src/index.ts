@@ -11,6 +11,8 @@ if (!rawPort) {
 
 const port = Number(rawPort);
 
+export default app;
+
 if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }

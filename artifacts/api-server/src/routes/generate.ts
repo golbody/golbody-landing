@@ -1,10 +1,9 @@
 import { Router, type Request, type Response as ExpressResponse } from "express";
 import { logger } from "../lib/logger";
-import { fal } from "@fal-ai/client";
 
 const router = Router();
 
-const FAL_MODEL = "fal-ai/nano-banana-2/edit";
+const FAL_URL = "https://fal.run/fal-ai/nano-banana-2/edit";
 
 router.post("/generate", async (req: Request, res: ExpressResponse) => {
   try {
@@ -21,17 +20,31 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
       return;
     }
 
-    const result = await fal.subscribe(FAL_MODEL, {
-      input: {
-        image_urls: [imageUrl],
-        prompt: prompt,
+    const falRes = await fetch(FAL_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Key ${apiKey}`,
       },
+      body: JSON.stringify({
+        prompt,
+        image_urls: [imageUrl],
+      }),
     });
 
-    const images = (result.data as Record<string, unknown>)?.images as Array<{ url: string }> | undefined;
+    const falData = await falRes.json() as Record<string, unknown>;
+    logger.info({ status: falRes.status, data: JSON.stringify(falData).slice(0, 500) }, "fal raw response");
+
+    if (!falRes.ok) {
+      logger.error({ status: falRes.status, data: falData }, "fal API error");
+      res.status(502).json({ error: "fal API error", details: falData });
+      return;
+    }
+
+    const images = falData.images as Array<{ url: string }> | undefined;
     const outputImageUrl = images?.[0]?.url;
     if (!outputImageUrl) {
-      logger.error({ result: JSON.stringify(result).slice(0, 500) }, "No image in fal response");
+      logger.error({ images: JSON.stringify(images).slice(0, 500) }, "No image in fal response");
       res.status(502).json({ error: "No image returned by fal" });
       return;
     }

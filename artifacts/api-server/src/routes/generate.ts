@@ -3,8 +3,12 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 
-const FAL_URL = "https://fal.run/fal-ai/nano-banana-2/edit";
+// gemini-2.5-flash added native image generation support.
+// API version v1beta is the correct endpoint for image output on this model.
+const GEMINI_MODEL = "gemini-2.5-flash-image";
+const GEMINI_API_VERSION = "v1beta";
 
+// Synchronous image generation via Gemini REST API
 router.post("/generate", async (req: Request, res: ExpressResponse) => {
   try {
     const { imageUrl, prompt } = req.body;
@@ -13,57 +17,53 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
       return;
     }
 
-    const apiKey = process.env["FAL_API_KEY"];
-    if (!apiKey) {
-      logger.error({}, "FAL_API_KEY not set");
-      res.status(500).json({ error: "FAL_API_KEY not configured" });
+    // Convert base64 data URI to inline image part
+    const matches = imageUrl.match(/^data:([^;]+);base64,(.+)$/);
+    if (!matches) {
+      res.status(400).json({ error: "Invalid image format" });
       return;
     }
+    const mimeType = matches[1];
+    const base64Data = matches[2];
 
-    const safePrompt = prompt
-      .replace(/reduce\s+body\s+fat/gi, 'sculpt a more toned physique')
-      .replace(/reduce\s+belly\s+fat/gi, 'tone the midsection')
-      .replace(/reduce\s+fat/gi, 'tone and sculpt')
-      .replace(/\bbody\s+fat\b/gi, 'silhouette')
-      .replace(/\bbelly\s+fat\b/gi, 'midsection')
-      .replace(/\bfat\b/gi, 'softness')
-      .replace(/lose\s+weight/gi, 'get more toned')
-      .replace(/weight\s+loss/gi, 'toning');
+    const apiKey = process.env["GEMINI_API_KEY"];
+    const geminiUrl = `https://generativelanguage.googleapis.com/${GEMINI_API_VERSION}/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
-    const falRes = await fetch(FAL_URL, {
+    const geminiRes = await fetch(geminiUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Key ${apiKey}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        prompt: safePrompt,
-        image_urls: [imageUrl],
-      }),
+        contents: [{
+          parts: [
+            { inline_data: { mime_type: mimeType, data: base64Data } },
+            { text: prompt }
+          ]
+        }],
+        generationConfig: {
+          responseModalities: ["image", "text"]
+        }
+      })
     });
 
-    const falData = await falRes.json() as Record<string, unknown>;
-    logger.info({ status: falRes.status, promptLength: safePrompt.length, data: JSON.stringify(falData).slice(0, 500) }, "fal raw response");
+    const geminiData = await geminiRes.json() as Record<string, unknown>;
+    logger.info({ status: geminiRes.status, data: JSON.stringify(geminiData).slice(0, 500) }, "Gemini raw response");
 
-    if (!falRes.ok) {
-      const detail = (falData as any)?.detail?.[0];
-      if (detail?.type === 'no_media_generated') {
-        res.status(422).json({ error: 'Le modèle n\'a pas pu générer l\'image. Essayez un prompt différent.' });
-      } else {
-        res.status(502).json({ error: 'fal.ai API error', details: falData });
-      }
+    if (!geminiRes.ok) {
+      logger.error({ status: geminiRes.status, data: geminiData }, "Gemini API error");
+      res.status(502).json({ error: "Gemini API error", details: geminiData });
       return;
     }
 
-    const images = falData.images as Array<{ url: string }> | undefined;
-    const outputImageUrl = images?.[0]?.url;
-    if (!outputImageUrl) {
-      logger.error({ images: JSON.stringify(images).slice(0, 500) }, "No image in fal response");
-      res.status(502).json({ error: "No image returned by fal" });
+    const candidates = geminiData.candidates as Array<{ content: { parts: Array<{ inlineData?: { data: string; mimeType: string }; text?: string }> } }>;
+    const imagePart = candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+    if (!imagePart?.inlineData?.data) {
+      logger.error({ candidates: JSON.stringify(candidates).slice(0, 500) }, "No image in Gemini response");
+      res.status(502).json({ error: "No image returned by Gemini" });
       return;
     }
 
-    res.json({ imageUrl: outputImageUrl });
+    const resultDataUrl = `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`;
+    res.json({ imageUrl: resultDataUrl });
   } catch (err) {
     logger.error({ err }, "Error in POST /api/generate");
     res.status(500).json({ error: "Internal server error" });

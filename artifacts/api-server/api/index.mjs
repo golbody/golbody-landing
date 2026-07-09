@@ -45894,7 +45894,8 @@ var logger = (0, import_pino.default)({
 
 // src/routes/generate.ts
 var router2 = (0, import_express2.Router)();
-var FAL_URL = "https://fal.run/fal-ai/nano-banana-2/edit";
+var GEMINI_MODEL = "gemini-2.5-flash-image";
+var GEMINI_API_VERSION = "v1beta";
 router2.post("/generate", async (req, res) => {
   try {
     const { imageUrl, prompt } = req.body;
@@ -45902,43 +45903,46 @@ router2.post("/generate", async (req, res) => {
       res.status(400).json({ error: "Missing imageUrl or prompt" });
       return;
     }
-    const apiKey = process.env["FAL_API_KEY"];
-    if (!apiKey) {
-      logger.error({}, "FAL_API_KEY not set");
-      res.status(500).json({ error: "FAL_API_KEY not configured" });
+    const matches = imageUrl.match(/^data:([^;]+);base64,(.+)$/);
+    if (!matches) {
+      res.status(400).json({ error: "Invalid image format" });
       return;
     }
-    const safePrompt = prompt.replace(/reduce\s+body\s+fat/gi, "sculpt a more toned physique").replace(/reduce\s+belly\s+fat/gi, "tone the midsection").replace(/reduce\s+fat/gi, "tone and sculpt").replace(/\bbody\s+fat\b/gi, "silhouette").replace(/\bbelly\s+fat\b/gi, "midsection").replace(/\bfat\b/gi, "softness").replace(/lose\s+weight/gi, "get more toned").replace(/weight\s+loss/gi, "toning");
-    const falRes = await fetch(FAL_URL, {
+    const mimeType = matches[1];
+    const base64Data = matches[2];
+    const apiKey = process.env["GEMINI_API_KEY"];
+    const geminiUrl = `https://generativelanguage.googleapis.com/${GEMINI_API_VERSION}/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+    const geminiRes = await fetch(geminiUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Key ${apiKey}`
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        prompt: safePrompt,
-        image_urls: [imageUrl]
+        contents: [{
+          parts: [
+            { inline_data: { mime_type: mimeType, data: base64Data } },
+            { text: prompt }
+          ]
+        }],
+        generationConfig: {
+          responseModalities: ["image", "text"]
+        }
       })
     });
-    const falData = await falRes.json();
-    logger.info({ status: falRes.status, promptLength: safePrompt.length, data: JSON.stringify(falData).slice(0, 500) }, "fal raw response");
-    if (!falRes.ok) {
-      const detail = falData?.detail?.[0];
-      if (detail?.type === "no_media_generated") {
-        res.status(422).json({ error: "Le mod\xE8le n'a pas pu g\xE9n\xE9rer l'image. Essayez un prompt diff\xE9rent." });
-      } else {
-        res.status(502).json({ error: "fal.ai API error", details: falData });
-      }
+    const geminiData = await geminiRes.json();
+    logger.info({ status: geminiRes.status, data: JSON.stringify(geminiData).slice(0, 500) }, "Gemini raw response");
+    if (!geminiRes.ok) {
+      logger.error({ status: geminiRes.status, data: geminiData }, "Gemini API error");
+      res.status(502).json({ error: "Gemini API error", details: geminiData });
       return;
     }
-    const images = falData.images;
-    const outputImageUrl = images?.[0]?.url;
-    if (!outputImageUrl) {
-      logger.error({ images: JSON.stringify(images).slice(0, 500) }, "No image in fal response");
-      res.status(502).json({ error: "No image returned by fal" });
+    const candidates = geminiData.candidates;
+    const imagePart = candidates?.[0]?.content?.parts?.find((p) => p.inlineData);
+    if (!imagePart?.inlineData?.data) {
+      logger.error({ candidates: JSON.stringify(candidates).slice(0, 500) }, "No image in Gemini response");
+      res.status(502).json({ error: "No image returned by Gemini" });
       return;
     }
-    res.json({ imageUrl: outputImageUrl });
+    const resultDataUrl = `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`;
+    res.json({ imageUrl: resultDataUrl });
   } catch (err) {
     logger.error({ err }, "Error in POST /api/generate");
     res.status(500).json({ error: "Internal server error" });

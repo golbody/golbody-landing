@@ -1,21 +1,14 @@
 import { Router, type Request, type Response as ExpressResponse } from "express";
-import { GoogleGenAI } from "@google/genai";
 import { logger } from "../lib/logger";
 
 const router = Router();
-const GEMINI_API_KEY = process.env["GEMINI_API_KEY"];
-const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY, httpOptions: { apiVersion: "v1alpha" } }) : null;
 
-// Synchronous image generation via Gemini
+// Synchronous image generation via Gemini REST API
 router.post("/generate", async (req: Request, res: ExpressResponse) => {
   try {
     const { imageUrl, prompt } = req.body;
     if (!imageUrl || !prompt) {
       res.status(400).json({ error: "Missing imageUrl or prompt" });
-      return;
-    }
-    if (!ai) {
-      res.status(500).json({ error: "Server configuration error" });
       return;
     }
 
@@ -28,29 +21,43 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
     const mimeType = matches[1];
     const base64Data = matches[2];
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
-      contents: [{
-        parts: [
-          { inlineData: { mimeType, data: base64Data } },
-          { text: prompt }
-        ]
-      }],
-      config: {
-        responseModalities: ["TEXT", "IMAGE"],
-      }
+    const apiKey = process.env["GEMINI_API_KEY"];
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+    const geminiRes = await fetch(geminiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            { inline_data: { mime_type: mimeType, data: base64Data } },
+            { text: prompt }
+          ]
+        }],
+        generationConfig: {
+          responseModalities: ["TEXT", "IMAGE"]
+        }
+      })
     });
 
-    const part = response.candidates?.[0]?.content?.parts?.[0];
-    if (!part?.inlineData?.data) {
+    const geminiData = await geminiRes.json() as Record<string, unknown>;
+    logger.info({ status: geminiRes.status, data: JSON.stringify(geminiData).slice(0, 500) }, "Gemini raw response");
+
+    if (!geminiRes.ok) {
+      logger.error({ status: geminiRes.status, data: geminiData }, "Gemini API error");
+      res.status(502).json({ error: "Gemini API error", details: geminiData });
+      return;
+    }
+
+    const candidates = geminiData.candidates as Array<{ content: { parts: Array<{ inlineData?: { data: string; mimeType: string }; text?: string }> } }>;
+    const imagePart = candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+    if (!imagePart?.inlineData?.data) {
+      logger.error({ candidates: JSON.stringify(candidates).slice(0, 500) }, "No image in Gemini response");
       res.status(502).json({ error: "No image returned by Gemini" });
       return;
     }
 
-    const resultBase64 = part.inlineData.data;
-    const resultMime = part.inlineData.mimeType || "image/png";
-    const resultDataUrl = `data:${resultMime};base64,${resultBase64}`;
-
+    const resultDataUrl = `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`;
     res.json({ imageUrl: resultDataUrl });
   } catch (err) {
     logger.error({ err }, "Error in POST /api/generate");

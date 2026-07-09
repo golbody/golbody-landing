@@ -29,7 +29,7 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
     const base64Data = matches[2];
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-preview-05-20",
+      model: "gemini-2.0-flash-exp",
       contents: [{
         parts: [
           { inlineData: { mimeType, data: base64Data } },

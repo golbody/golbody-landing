@@ -126,6 +126,16 @@ globalThis.__dirname = __bannerPath.dirname(globalThis.__filename);
   // Create public directory for Vercel deployment
   mkdirSync(path.resolve(artifactDir, "public"), { recursive: true });
   writeFileSync(path.resolve(artifactDir, "public", ".keep"), "");
+  // Copy golbody frontend to public/
+  const { cpSync } = await import('node:fs');
+  const golbodyDir = path.resolve(artifactDir, '../golbody');
+  const publicDir2 = path.resolve(artifactDir, 'public');
+  for (const f of ['index.html','dashboard.html','login.html','register.html','cgu.html','confidentialite.html','mentions-legales.html']) {
+    try { cpSync(path.join(golbodyDir, f), path.join(publicDir2, f)); } catch {}
+  }
+  cpSync(path.join(golbodyDir, 'public'), publicDir2, { recursive: true });
+  cpSync(path.join(golbodyDir, 'public'), path.join(publicDir2, 'public'), { recursive: true });
+
 
   // Build Vercel serverless function — standalone bundle in api/
   // Vercel bundles each function separately and cannot resolve relative imports

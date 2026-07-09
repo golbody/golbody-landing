@@ -29,14 +29,16 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
     const base64Data = matches[2];
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.0-flash-preview-image-generation",
       contents: [{
         parts: [
           { inlineData: { mimeType, data: base64Data } },
           { text: prompt }
         ]
       }],
-      config: { responseModalities: ["image"] }
+      config: {
+        responseModalities: ["TEXT", "IMAGE"],
+      }
     });
 
     const part = response.candidates?.[0]?.content?.parts?.[0];

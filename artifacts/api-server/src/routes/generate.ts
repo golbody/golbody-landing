@@ -20,6 +20,16 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
       return;
     }
 
+    const safePrompt = prompt
+      .replace(/reduce\s+body\s+fat/gi, 'sculpt a more toned physique')
+      .replace(/reduce\s+belly\s+fat/gi, 'tone the midsection')
+      .replace(/reduce\s+fat/gi, 'tone and sculpt')
+      .replace(/\bbody\s+fat\b/gi, 'silhouette')
+      .replace(/\bbelly\s+fat\b/gi, 'midsection')
+      .replace(/\bfat\b/gi, 'softness')
+      .replace(/lose\s+weight/gi, 'get more toned')
+      .replace(/weight\s+loss/gi, 'toning');
+
     const falRes = await fetch(FAL_URL, {
       method: "POST",
       headers: {
@@ -27,17 +37,21 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
         "Authorization": `Key ${apiKey}`,
       },
       body: JSON.stringify({
-        prompt,
+        prompt: safePrompt,
         image_urls: [imageUrl],
       }),
     });
 
     const falData = await falRes.json() as Record<string, unknown>;
-    logger.info({ status: falRes.status, data: JSON.stringify(falData).slice(0, 500) }, "fal raw response");
+    logger.info({ status: falRes.status, promptLength: safePrompt.length, data: JSON.stringify(falData).slice(0, 500) }, "fal raw response");
 
     if (!falRes.ok) {
-      logger.error({ status: falRes.status, data: falData }, "fal API error");
-      res.status(502).json({ error: "fal API error", details: falData });
+      const detail = (falData as any)?.detail?.[0];
+      if (detail?.type === 'no_media_generated') {
+        res.status(422).json({ error: 'Le modèle n\'a pas pu générer l\'image. Essayez un prompt différent.' });
+      } else {
+        res.status(502).json({ error: 'fal.ai API error', details: falData });
+      }
       return;
     }
 

@@ -45908,6 +45908,7 @@ router2.post("/generate", async (req, res) => {
       res.status(500).json({ error: "FAL_API_KEY not configured" });
       return;
     }
+    const safePrompt = prompt.replace(/reduce\s+body\s+fat/gi, "sculpt a more toned physique").replace(/reduce\s+belly\s+fat/gi, "tone the midsection").replace(/reduce\s+fat/gi, "tone and sculpt").replace(/\bbody\s+fat\b/gi, "silhouette").replace(/\bbelly\s+fat\b/gi, "midsection").replace(/\bfat\b/gi, "softness").replace(/lose\s+weight/gi, "get more toned").replace(/weight\s+loss/gi, "toning");
     const falRes = await fetch(FAL_URL, {
       method: "POST",
       headers: {
@@ -45915,15 +45916,19 @@ router2.post("/generate", async (req, res) => {
         "Authorization": `Key ${apiKey}`
       },
       body: JSON.stringify({
-        prompt,
+        prompt: safePrompt,
         image_urls: [imageUrl]
       })
     });
     const falData = await falRes.json();
-    logger.info({ status: falRes.status, data: JSON.stringify(falData).slice(0, 500) }, "fal raw response");
+    logger.info({ status: falRes.status, promptLength: safePrompt.length, data: JSON.stringify(falData).slice(0, 500) }, "fal raw response");
     if (!falRes.ok) {
-      logger.error({ status: falRes.status, data: falData }, "fal API error");
-      res.status(502).json({ error: "fal API error", details: falData });
+      const detail = falData?.detail?.[0];
+      if (detail?.type === "no_media_generated") {
+        res.status(422).json({ error: "Le mod\xE8le n'a pas pu g\xE9n\xE9rer l'image. Essayez un prompt diff\xE9rent." });
+      } else {
+        res.status(502).json({ error: "fal.ai API error", details: falData });
+      }
       return;
     }
     const images = falData.images;

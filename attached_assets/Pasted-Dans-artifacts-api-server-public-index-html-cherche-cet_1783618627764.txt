@@ -1,0 +1,20 @@
+Dans artifacts/api-server/public/index.html, cherche cette ligne exacte :
+▎ <p class="gol-results-sub">Généré en quelques secondes avec GolBody</p>
+▎
+▎ Juste après cette ligne (avant <div class="gol-slider" id="slider">), insère exactement ceci :
+▎ <div class="gol-slider-gender">
+▎   <button class="gol-slider-gender-btn active" data-gender="f">Femmes</button>
+▎   <button class="gol-slider-gender-btn" data-gender="m">Hommes</button>
+▎ </div>
+▎ <div class="gol-slider-tabs" id="sliderTabs">
+▎   <button class="gol-slider-tab active" data-index="0">Plage</button>
+▎   <button class="gol-slider-tab" data-index="1">Salle de sport</button>
+▎   <button class="gol-slider-tab" data-index="2">Pilates</button>
+▎ </div>
+▎
+▎ Ensuite sur l'img avec class="gol-slider-after" ajoute id="sliderAfterImg", et sur l'img avec src="/before_1.jpg" ajoute id="sliderBeforeImg".
+▎
+▎ Puis juste avant })(); à la fin du script ajoute :
+▎ var ALL_PAIRS={f:[{before:'/before_1.jpg',after:'/after_1.jpg'},{before:'/before_2.jpg',after:'/after_2.jpg'},{before:'/before_3.jpg',after:'/after_3.jpg'}],m:[{before:'/before_4.jpg',after:'/after_4.jpg'},{before:'/before_5.jpg',after:'/after_5.jpg'},{before:'/before_6.jpg',after:'/after_6.jpg'}]};var TAB_LABELS={f:['Plage','Salle de sport','Pilates'],m:['Plage','Salle de sport','Casual']};var currentGender='f',currentIdx=0,autoTimer=null;function showPair(g,i){currentGender=g;currentIdx=i;var p=ALL_PAIRS[g][i];document.getElementById('sliderAfterImg').src=p.after;document.getElementById('sliderBeforeImg').src=p.before;setPos(50);document.querySelectorAll('.gol-slider-gender-btn').forEach(function(b){b.classList.toggle('active',b.dataset.gender===g);});var tabs=document.querySelectorAll('#sliderTabs .gol-slider-tab');TAB_LABELS[g].forEach(function(l,j){tabs[j].textContent=l;tabs[j].classList.toggle('active',j===i);});}function startAuto(){stopAuto();autoTimer=setInterval(function(){showPair(currentGender,(currentIdx+1)%3);},4000);}function stopAuto(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;}}document.querySelectorAll('.gol-slider-gender-btn').forEach(function(b){b.addEventListener('click',function(){showPair(b.dataset.gender,0);stopAuto();startAuto();});});document.querySelectorAll('#sliderTabs .gol-slider-tab').forEach(function(t){t.addEventListener('click',function(){showPair(currentGender,parseInt(t.dataset.index));stopAuto();startAuto();});});slider.addEventListener('mousedown',stopAuto);slider.addEventListener('touchstart',stopAuto,{passive:true});startAuto();
+▎
+▎ Commit et push sur GitHub.

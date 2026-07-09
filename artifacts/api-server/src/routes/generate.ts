@@ -1,11 +1,12 @@
 import { Router, type Request, type Response as ExpressResponse } from "express";
-import { fal } from "@fal-ai/client";
+import { GoogleGenAI } from "@google/genai";
 import { logger } from "../lib/logger";
 
 const router = Router();
-const FAL_API_KEY = process.env["FAL_API_KEY"];
+const GEMINI_API_KEY = process.env["GEMINI_API_KEY"];
+const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
 
-// Submit job — uploads image to fal.ai storage, then queues generation
+// Synchronous image generation via Gemini
 router.post("/generate", async (req: Request, res: ExpressResponse) => {
   try {
     const { imageUrl, prompt } = req.body;
@@ -13,81 +14,44 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
       res.status(400).json({ error: "Missing imageUrl or prompt" });
       return;
     }
-    if (!FAL_API_KEY) {
+    if (!ai) {
       res.status(500).json({ error: "Server configuration error" });
       return;
     }
 
-    fal.config({ credentials: FAL_API_KEY });
-
-    // imageUrl is a base64 data URI — convert to Blob and upload to fal.ai storage
+    // Convert base64 data URI to inline image part
     const matches = imageUrl.match(/^data:([^;]+);base64,(.+)$/);
     if (!matches) {
       res.status(400).json({ error: "Invalid image format" });
       return;
     }
     const mimeType = matches[1];
-    const buffer = Buffer.from(matches[2], "base64");
-    const blob = new Blob([buffer], { type: mimeType });
-    const uploadedUrl = await fal.storage.upload(blob);
-    logger.info({ uploadedUrl }, "Image uploaded to fal.ai storage");
+    const base64Data = matches[2];
 
-    // Submit to queue — returns requestId immediately
-    const { request_id } = await fal.queue.submit("fal-ai/flux-pro/kontext", {
-      input: { prompt, image_url: uploadedUrl },
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash-preview-05-20",
+      contents: [{
+        parts: [
+          { inlineData: { mimeType, data: base64Data } },
+          { text: prompt }
+        ]
+      }],
+      config: { responseModalities: ["image"] }
     });
 
-    res.json({ requestId: request_id });
+    const part = response.candidates?.[0]?.content?.parts?.[0];
+    if (!part?.inlineData?.data) {
+      res.status(502).json({ error: "No image returned by Gemini" });
+      return;
+    }
+
+    const resultBase64 = part.inlineData.data;
+    const resultMime = part.inlineData.mimeType || "image/png";
+    const resultDataUrl = `data:${resultMime};base64,${resultBase64}`;
+
+    res.json({ imageUrl: resultDataUrl });
   } catch (err) {
     logger.error({ err }, "Error in POST /api/generate");
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Poll job status
-router.get("/generate/status/:requestId", async (req: Request, res: ExpressResponse) => {
-  try {
-    if (!FAL_API_KEY) {
-      res.status(500).json({ error: "Server configuration error" });
-      return;
-    }
-    fal.config({ credentials: FAL_API_KEY });
-    const requestId = Array.isArray(req.params.requestId)
-      ? req.params.requestId[0]
-      : req.params.requestId;
-    const statusResult = await fal.queue.status("fal-ai/flux-pro/kontext", {
-      requestId,
-      logs: false,
-    });
-    res.json({ status: statusResult.status });
-  } catch (err) {
-    logger.error({ err }, "Error in GET /api/generate/status");
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Fetch completed result
-router.get("/generate/result/:requestId", async (req: Request, res: ExpressResponse) => {
-  try {
-    if (!FAL_API_KEY) {
-      res.status(500).json({ error: "Server configuration error" });
-      return;
-    }
-    fal.config({ credentials: FAL_API_KEY });
-    const requestId = Array.isArray(req.params.requestId)
-      ? req.params.requestId[0]
-      : req.params.requestId;
-    const result = await fal.queue.result("fal-ai/flux-pro/kontext", { requestId });
-    const data = result.data as { images?: Array<{ url: string } | string> };
-    const first = data?.images?.[0];
-    const imageUrl = typeof first === "string" ? first : first?.url;
-    if (!imageUrl) {
-      res.status(502).json({ error: "No image returned" });
-      return;
-    }
-    res.json({ imageUrl });
-  } catch (err) {
-    logger.error({ err }, "Error in GET /api/generate/result");
     res.status(500).json({ error: "Internal server error" });
   }
 });

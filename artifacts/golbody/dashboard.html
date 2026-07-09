@@ -2140,31 +2140,8 @@
         if (submitRes.status === 401) { window.location.href = 'login.html'; return; }
         const submitData = await submitRes.json();
         if (!submitRes.ok) throw new Error(submitData.error || 'Erreur lors de la soumission');
-        const { requestId } = submitData;
-
-        let afterUrl = null;
-        for (let i = 0; i < 90; i++) {
-          await new Promise(r => setTimeout(r, 2000));
-          const statusRes = await fetch('/api/generate/status/' + requestId, {
-            headers: { 'Authorization': 'Bearer ' + token }
-          });
-          const statusData = await statusRes.json();
-          if (statusData.status === 'COMPLETED') {
-            const resultRes = await fetch('/api/generate/result/' + requestId, {
-              headers: { 'Authorization': 'Bearer ' + token }
-            });
-            const resultData = await resultRes.json();
-            if (!resultRes.ok) throw new Error(resultData.error || 'Erreur résultat');
-            afterUrl = resultData.imageUrl;
-            break;
-          } else if (statusData.status === 'FAILED') {
-            throw new Error('La génération a échoué');
-          }
-        }
-        if (!afterUrl) throw new Error('Timeout — génération trop longue');
-        if (!afterUrl) {
-          throw new Error('Aucune image retournée par l\'API');
-        }
+        const afterUrl = submitData.imageUrl;
+        if (!afterUrl) throw new Error('Aucune image retournée par l\'API');
 
         // Deduct credits after successful generation
         if (currentUser) {

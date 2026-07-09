@@ -1,2 +1,1 @@
-- [GitHub push via API](github-api-push.md) — destructive git ops are blocked in main agent; use GitHub REST API for direct file updates instead
-- [Vercel empty public/ fix](vercel-empty-public-fix.md) — Vercel requires at least one file in public/; create a .keep file during build to satisfy this requirement
+- [Vercel empty public/ workaround](vercel-empty-public-fix.md) — Vercel rejects builds when public/ is empty; always create a .keep file during build

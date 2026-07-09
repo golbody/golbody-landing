@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — GolBody</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #111111;
+      min-height: 100vh;
+      color: #eeeeee;
+    }
+
+    /* ========== LAYOUT ========== */
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 240px;
+      background: #1a1a2e;
+      border-right: 1px solid rgba(255, 214, 0, 0.1);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFD600, #ccaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 32px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: #a0a0a0;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar-nav a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      background: rgba(255,214,0,0.6);
+      border-radius: 8px 0 0 8px;
+      transition: width 0.25s ease;
+    }
+
+    .sidebar-nav a:hover::before {
+      width: 3px;
+    }
+
+    .sidebar-nav a:hover {
+      background: rgba(255, 214, 0, 0.06);
+      color: #c0c0c0;
+    }
+
+    .sidebar-nav a.active {
+      background: rgba(255, 214, 0, 0.1);
+      color: #FFD600;
+    }
+
+    .sidebar-nav a i {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .plan-card {
+      background: rgba(255, 214, 0, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .plan-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #eeeeee;
+      margin-bottom: 4px;
+    }
+
+    .plan-credits {
+      font-size: 13px;
+      color: #a0a0a0;
+    }
+
+    .user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #eeeeee;
+      margin-bottom: 8px;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      padding: 8px 0;
+      color: #a0a0a0;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .logout-btn:hover {
+      color: #c0c0c0;
+    }
+
+    .logout-btn i {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ========== MAIN ========== */
+    .main {
+      margin-left: 240px;
+      flex: 1;
+      background: #111111;
+      padding: 48px;
+      min-height: 100vh;
+    }
+
+    .main-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* ========== UPLOAD ZONE ========== */
+    @keyframes borderPulse {
+      0%, 100% { border-color: rgba(255,214,0,0.3); }
+      50% { border-color: rgba(255,214,0,0.8); }
+    }
+
+    .upload-zone {
+      background: #1a1a2e;
+      border: 2px dashed rgba(255, 214, 0, 0.3);
+      border-radius: 16px;
+      padding: 64px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      animation: borderPulse 2s ease infinite;
+    }
+
+    .upload-zone:hover {
+      border-color: rgba(255, 214, 0, 0.5);
+      background: rgba(255, 214, 0, 0.02);
+    }
+
+    .upload-zone.has-file {
+      border-style: solid;
+      border-color: rgba(255, 214, 0, 0.3);
+      animation: none;
+    }
+
+    .upload-zone i {
+      width: 48px;
+      height: 48px;
+      color: #FFD600;
+      margin-bottom: 16px;
+    }
+
+    .upload-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #eeeeee;
+      margin-bottom: 8px;
+    }
+
+    .upload-hint {
+      font-size: 14px;
+      color: #a0a0a0;
+    }
+
+    .upload-input {
+      display: none;
+    }
+
+    .preview-wrapper {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .preview-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+    }
+
+    .remove-file {
+      margin-top: 12px;
+      background: none;
+      border: none;
+      color: #a0a0a0;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    .remove-file:hover {
+      color: #c0c0c0;
+    }
+
+    /* ========== TRANSFORMATION GRID ========== */
+    .transform-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 639px) {
+      .transform-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .transform-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid rgba(255, 214, 0, 0.25);
+      border-radius: 12px;
+      padding: 12px 8px;
+      color: #a0a0a0;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s, border-color 0.2s, color 0.2s;
+      text-align: center;
+    }
+
+    .transform-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(255,214,0,0.2);
+      border-color: rgba(255, 214, 0, 0.5);
+      color: #c0c0c0;
+    }
+
+    .transform-btn.selected {
+      background: #FFD600;
+      border-color: #FFD600;
+      color: #eeeeee;
+      box-shadow: 0 0 0 2px rgba(255,214,0,0.6);
+    }
+
+    /* ========== EXTRA PROMPT ========== */
+    .prompt-extra {
+      width: 100%;
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 214, 0, 0.2);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #eeeeee;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      margin-top: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .prompt-extra::placeholder {
+      color: #6a6a6a;
+    }
+
+    .prompt-extra:focus {
+      border-color: #FFD600;
+    }
+
+    /* ========== GENERATE BUTTON ========== */
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .generate-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #FFD600, #ccaa00);
+      border: none;
+      border-radius: 12px;
+      padding: 16px 32px;
+      color: #eeeeee;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .generate-btn:not(:disabled) {
+      background: linear-gradient(90deg, #FFD600 30%, #FFD600 50%, #FFD600 70%);
+      background-size: 200% auto;
+      animation: shimmer 2s linear infinite;
+    }
+
+    .generate-btn:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .generate-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .generate-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .generate-hint {
+      text-align: center;
+      font-size: 12px;
+      color: #6a6a6a;
+      margin-top: 8px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .generate-hint.is-visible {
+      opacity: 1;
+    }
+
+    @keyframes uploadGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(204, 170, 0, 0); border-color: rgba(255, 214, 0, 0.3); }
+      50% { box-shadow: 0 0 20px 4px rgba(204, 170, 0, 0.3); border-color: rgba(204, 170, 0, 0.6); }
+    }
+
+    .upload-zone.glow-pulse {
+      animation: uploadGlow 1.2s ease-in-out 2;
+    }
+
+    /* ========== LOADING ========== */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.8);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .loading-overlay.is-visible {
+      display: flex;
+    }
+
+    .loading-overlay p {
+      color: #a0a0a0;
+      font-size: 14px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 214, 0, 0.2);
+      border-top-color: #FFD600;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ========== AUTH LOADING ========== */
+    .auth-loading {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      background: #111111;
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .auth-loading.is-hidden {
+      display: none;
+    }
+
+    .auth-loading p {
+      color: #a0a0a0;
+      font-size: 14px;
+    }
+
+    /* ========== RESULT ZONE ========== */
+    .result-zone {
+      margin-top: 32px;
+    }
+
+    .result-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #eeeeee;
+      margin-bottom: 16px;
+    }
+
+    .result-image-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+
+    @keyframes revealImage {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .result-image-wrapper img {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 12px;
+      display: block;
+      animation: revealImage 0.6s ease forwards;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .result-actions .download-btn {
+      margin-top: 0;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #FFD600, #ccaa00);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      color: #eeeeee;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      text-decoration: none;
+    }
+
+    .download-btn:hover {
+      opacity: 0.9;
+    }
+
+    .download-btn i {
+      width: 18px;
+      height: 18px;
+    }
+
+    .newgen-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid rgba(255, 214, 0, 0.3);
+      border-radius: 12px;
+      padding: 12px 24px;
+      color: #a0a0a0;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .newgen-btn:hover {
+      border-color: rgba(255, 214, 0, 0.6);
+      color: #c0c0c0;
+    }
+
+    .error-msg {
+      margin-top: 16px;
+      color: #ff6b6b;
+      font-size: 14px;
+    }
+
+    /* ========== SUBSCRIPTION ========== */
+    .subscription-section {
+      display: none;
+    }
+
+    .subscription-section.is-visible {
+      display: block;
+    }
+
+    /* Billing toggle */
+    .billing-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #222233;
+      border: 1px solid #333344;
+      border-radius: 999px;
+      padding: 4px;
+    }
+
+    .billing-toggle button {
+      border: none;
+      background: transparent;
+      color: #a0a0a0;
+      padding: 8px 24px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+    }
+
+    .billing-toggle button.active {
+      background: #FFD600;
+      color: #eeeeee;
+    }
+
+    .billing-discount-badge {
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(135deg, #FFD600, #ccaa00);
+      color: #eeeeee;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-left: 4px;
+    }
+
+    /* Plans grid */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    @media (max-width: 767px) {
+      .plans-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Premium plan card */
+    .plan-card-big {
+      background: #222233;
+      border: 1px solid #333344;
+      border-radius: 24px;
+      padding: 32px 24px 24px;
+      text-align: center;
+      position: relative;
+      transition: border-color 0.2s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .plan-card-big:hover {
+      border-color: rgba(255, 214, 0, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .plan-card-big.active {
+      border-color: #FFD600;
+      box-shadow: 0 0 0 1px #FFD600;
+    }
+
+    /* Plan badge */
+    .plan-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .plan-badge.best-value {
+      background: linear-gradient(135deg, #FFD600, #ccaa00);
+      color: #eeeeee;
+    }
+
+    .plan-badge.exclusif {
+      background: linear-gradient(135deg, #b8860b, #daa520);
+      color: #fff;
+    }
+
+    /* Plan name */
+    .plan-card-big .plan-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: #eeeeee;
+      margin-bottom: 16px;
+    }
+
+    /* Price area */
+    .plan-price-area {
+      margin-bottom: 24px;
+    }
+
+    .plan-original-price {
+      font-size: 14px;
+      color: #6a6a6a;
+      text-decoration: line-through;
+      margin-bottom: 4px;
+      min-height: 20px;
+    }
+
+    .plan-original-price:empty {
+      visibility: hidden;
+    }
+
+    .plan-price {
+      font-size: 36px;
+      font-weight: 800;
+      color: #eeeeee;
+      line-height: 1.1;
+    }
+
+    .plan-price .currency {
+      font-size: 24px;
+    }
+
+    .plan-price .period {
+      font-size: 14px;
+      font-weight: 500;
+      color: #a0a0a0;
+    }
+
+    .plan-billing-note {
+      font-size: 12px;
+      color: #a0a0a0;
+      margin-top: 4px;
+    }
+
+    /* Features */
+    .plan-card-big .plan-features {
+      list-style: none;
+      text-align: left;
+      margin-bottom: auto;
+      padding: 0;
+    }
+
+    .plan-card-big .plan-features li {
+      font-size: 14px;
+      color: #c0c0c0;
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(40, 40, 50, 0.5);
+    }
+
+    .plan-card-big .plan-features li:last-child {
+      border-bottom: none;
+    }
+
+    .plan-features .check-icon {
+      width: 18px;
+      height: 18px;
+      color: #FFD600;
+      flex-shrink: 0;
+    }
+
+    /* CTA */
+    .subscribe-btn {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid #ffffff30;
+      border-radius: 10px;
+      padding: 14px 20px;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    .subscribe-btn:hover:not(:disabled) {
+      border-color: #ffffff50;
+    }
+
+    .subscribe-btn.teal {
+      background: #FFD600;
+      color: #111111;
+      border: none;
+      font-weight: 600;
+    }
+
+    .subscribe-btn.teal:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+
+    .subscribe-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .plan-active-label {
+      display: none;
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      border: 1px solid #FFD600;
+      border-radius: 10px;
+      color: #FFD600;
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-align: center;
+      margin-top: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Bottom text */
+    .plan-footer-text {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #6a6a6a;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* Credits recharge */
+    .credits-recharge {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid #333344;
+    }
+
+    .credits-recharge-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #eeeeee;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .credits-recharge-subtitle {
+      font-size: 13px;
+      color: #a0a0a0;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .credits-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 767px) {
+      .credits-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .credit-pack {
+      background: #222233;
+      border: 1px solid #333344;
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+
+    .credit-pack:hover {
+      border-color: rgba(255, 214, 0, 0.4);
+    }
+
+    .credit-pack-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #eeeeee;
+      margin-bottom: 8px;
+    }
+
+    .credit-pack-price {
+      font-size: 24px;
+      font-weight: 800;
+      color: #FFD600;
+      margin-bottom: 4px;
+    }
+
+    .credit-pack-desc {
+      font-size: 12px;
+      color: #a0a0a0;
+      margin-bottom: 16px;
+    }
+
+    .credit-pack-btn {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid #ffffff20;
+      border-radius: 10px;
+      padding: 14px 20px;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .credit-pack-btn:hover {
+      border-color: #ffffff40;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .success-banner {
+      display: none;
+      background: rgba(255, 214, 0, 0.15);
+      border: 1px solid rgba(255, 214, 0, 0.4);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .success-banner.is-visible {
+      display: block;
+      animation: slideDown 0.4s ease forwards;
+    }
+
+    .success-banner p {
+      color: #FFD600;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .canceled-banner {
+      display: none;
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .canceled-banner.is-visible {
+      display: block;
+      animation: slideDown 0.4s ease forwards;
+    }
+
+    .canceled-banner p {
+      color: #ff6b6b;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* ========== ACCOUNT SECTION ========== */
+    .account-section {
+      display: none;
+    }
+
+    .account-section.is-visible {
+      display: block;
+    }
+
+    .account-card {
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 214, 0, 0.2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    .account-card label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #a0a0a0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .account-card p {
+      font-size: 16px;
+      font-weight: 600;
+      color: #eeeeee;
+      margin: 0;
+    }
+
+    #btn-portal {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #FFD600, #ccaa00);
+      border: none;
+      border-radius: 12px;
+      padding: 14px 28px;
+      color: #eeeeee;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+
+    #btn-portal:hover {
+      opacity: 0.9;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 767px) {
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 72px 24px 24px;
+      }
+    }
+
+    /* ========== MOBILE NAV ========== */
+    .mobile-nav-btn {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 300;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 214, 0, 0.2);
+      color: #FFD600;
+      font-size: 20px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .mobile-nav-btn:hover {
+      background: rgba(255, 214, 0, 0.1);
+    }
+
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 250;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .mobile-overlay.is-visible {
+      display: block;
+    }
+
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: #1a1a2e;
+      border-right: 1px solid rgba(255, 214, 0, 0.1);
+      padding: 24px;
+      z-index: 260;
+      flex-direction: column;
+      animation: slideInLeft 0.25s ease;
+    }
+
+    .mobile-nav.is-visible {
+      display: flex;
+    }
+
+    .mobile-nav .sidebar-logo {
+      margin-bottom: 32px;
+    }
+
+    .mobile-nav .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mobile-nav .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: #a0a0a0;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mobile-nav .sidebar-nav a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      background: rgba(255,214,0,0.6);
+      border-radius: 8px 0 0 8px;
+      transition: width 0.25s ease;
+    }
+
+    .mobile-nav .sidebar-nav a:hover::before {
+      width: 3px;
+    }
+
+    .mobile-nav .sidebar-nav a:hover {
+      background: rgba(255, 214, 0, 0.06);
+      color: #c0c0c0;
+    }
+
+    .mobile-nav .sidebar-nav a.active {
+      background: rgba(255, 214, 0, 0.1);
+      color: #FFD600;
+    }
+
+    .mobile-nav .sidebar-nav a i {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .mobile-nav .sidebar-bottom {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mobile-nav .plan-card {
+      background: rgba(255, 214, 0, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .mobile-nav .plan-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #eeeeee;
+      margin-bottom: 4px;
+    }
+
+    .mobile-nav .plan-credits {
+      font-size: 13px;
+      color: #a0a0a0;
+    }
+
+    .mobile-nav .user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #eeeeee;
+      margin-bottom: 8px;
+    }
+
+    .mobile-nav .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      padding: 8px 0;
+      color: #a0a0a0;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .mobile-nav .logout-btn:hover {
+      color: #c0c0c0;
+    }
+
+    .mobile-nav .logout-btn i {
+      width: 16px;
+      height: 16px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+
+    @media (max-width: 767px) {
+      .mobile-nav-btn {
+        display: flex;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-loading" id="authLoading">
+    <div class="spinner"></div>
+    <p>Vérification de la session...</p>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Génération en cours...</p>
+  </div>
+
+  <button class="mobile-nav-btn" id="mobileNavBtn" type="button" aria-label="Ouvrir le menu">☰</button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-nav" id="mobileNav">
+    <a href="index.html" class="sidebar-logo"><img src="/logos/golbody-primary.svg" alt="GolBody" style="height: 36px;"></a>
+    <nav>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="dashboard.html" class="active" id="mobileNavGenerate">
+            <i data-lucide="zap"></i>
+            Génération
+          </a>
+        </li>
+        <li>
+          <a href="#" id="mobileNavSubscription">
+            <i data-lucide="credit-card"></i>
+            Abonnement
+          </a>
+        </li>
+        <li>
+          <a href="#" id="mobileNavAccount">
+            <i data-lucide="user"></i>
+            Mon compte
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="plan-card">
+        <div class="plan-title" id="mobileUserPlan">--</div>
+        <div class="plan-credits" id="mobileUserCredits">--</div>
+      </div>
+      <div class="user-name" id="mobileUserEmail">Utilisateur</div>
+      <button class="logout-btn" id="mobileLogoutBtn" type="button">
+        <i data-lucide="log-out"></i>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <div class="dashboard">
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+      <a href="index.html" class="sidebar-logo"><img src="/logos/golbody-primary.svg" alt="GolBody" style="height: 36px;"></a>
+
+      <nav>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="dashboard.html" class="active" id="navGenerate">
+              <i data-lucide="zap"></i>
+              Génération
+            </a>
+          </li>
+          <li>
+            <a href="#" id="navSubscription">
+              <i data-lucide="credit-card"></i>
+              Abonnement
+            </a>
+          </li>
+          <li>
+            <a href="#" id="navAccount">
+              <i data-lucide="user"></i>
+              Mon compte
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="plan-card">
+          <div class="plan-title" id="user-plan">--</div>
+          <div class="plan-credits" id="user-credits">--</div>
+        </div>
+        <div class="user-name" id="user-email">Utilisateur</div>
+        <button class="logout-btn" id="logoutBtn" type="button">
+          <i data-lucide="log-out"></i>
+          Déconnexion
+        </button>
+      </div>
+    </aside>
+
+    <!-- ========== MAIN ========== -->
+    <main class="main">
+      <div class="main-inner">
+        <!-- Success banner -->
+        <div class="success-banner" id="successBanner">
+          <p><i data-lucide="check-circle" style="width:18px;height:18px;vertical-align:middle;margin-right:6px;"></i> Paiement réussi ! Votre abonnement est actif.</p>
+        </div>
+        <div class="canceled-banner" id="canceledBanner">
+          <p><i data-lucide="x-circle" style="width:18px;height:18px;vertical-align:middle;margin-right:6px;"></i> Paiement annulé. Vous pouvez réessayer quand vous voulez.</p>
+        </div>
+
+        <!-- SUBSCRIPTION SECTION -->
+        <div class="subscription-section" id="subscriptionSection">
+          <h1 style="font-size:28px;font-weight:800;color:#eeeeee;margin-bottom:8px;text-align:center;">Abonnement</h1>
+          <p style="font-size:14px;color:#a0a0a0;margin-bottom:24px;text-align:center;">Choisissez le plan qui vous correspond. Changez ou annulez à tout moment.</p>
+
+          <!-- Billing toggle -->
+          <div style="text-align:center;">
+            <div class="billing-toggle">
+              <button type="button" id="btnMonthly" onclick="setBilling('monthly')">MENSUEL</button>
+              <button type="button" class="active" id="btnYearly" onclick="setBilling('yearly')">ANNUEL</button>
+            </div>
+          </div>
+
+          <div class="plans-grid">
+            <!-- Starter -->
+            <div class="plan-card-big" id="planStarter" data-plan="starter">
+              <div class="plan-name">Starter</div>
+              <div class="plan-price-area">
+                <div class="plan-original-price" id="starterOriginal"></div>
+                <div class="plan-price" id="starterPrice">4,90€<span class="period"> /mois</span></div>
+                <div class="plan-billing-note" id="starterBilling"></div>
+              </div>
+              <ul class="plan-features">
+                <li><i data-lucide="check" class="check-icon"></i> 10 générations/mois</li>
+                <li><i data-lucide="check" class="check-icon"></i> Haute qualité</li>
+                <li><i data-lucide="check" class="check-icon"></i> Support email</li>
+                <li><i data-lucide="check" class="check-icon"></i> Satisfait ou remboursé immédiatement</li>
+              </ul>
+              <button class="subscribe-btn" type="button" data-plan="starter">Débloquer mes photos</button>
+              <div class="plan-active-label" id="starterActive">Plan actif</div>
+              <div class="plan-footer-text">Abonnement résiliable à tout moment<br>Satisfait ou remboursé immédiatement</div>
+            </div>
+
+            <!-- Pro -->
+            <div class="plan-card-big" id="planPro" data-plan="pro">
+              <div class="plan-badge best-value">Best Value</div>
+              <div class="plan-name">Pro</div>
+              <div class="plan-price-area">
+                <div class="plan-original-price" id="proOriginal"></div>
+                <div class="plan-price" id="proPrice">14,90€<span class="period"> /mois</span></div>
+                <div class="plan-billing-note" id="proBilling"></div>
+              </div>
+              <ul class="plan-features">
+                <li><i data-lucide="check" class="check-icon"></i> 30 générations/mois</li>
+                <li><i data-lucide="check" class="check-icon"></i> Qualité 4K</li>
+                <li><i data-lucide="check" class="check-icon"></i> Support prioritaire</li>
+                <li><i data-lucide="check" class="check-icon"></i> Satisfait ou remboursé immédiatement</li>
+              </ul>
+              <button class="subscribe-btn teal" type="button" data-plan="pro">Débloquer mes photos</button>
+              <div class="plan-active-label" id="proActive">Plan actif</div>
+              <div class="plan-footer-text">Abonnement résiliable à tout moment<br>Satisfait ou remboursé immédiatement</div>
+            </div>
+
+            <!-- Ultra -->
+            <div class="plan-card-big" id="planUltra" data-plan="ultra">
+              <div class="plan-badge exclusif">Exclusif</div>
+              <div class="plan-name">Ultra</div>
+              <div class="plan-price-area">
+                <div class="plan-original-price" id="ultraOriginal"></div>
+                <div class="plan-price" id="ultraPrice">29,90€<span class="period"> /mois</span></div>
+                <div class="plan-billing-note" id="ultraBilling"></div>
+              </div>
+              <ul class="plan-features">
+                <li><i data-lucide="check" class="check-icon"></i> 75 générations/mois</li>
+                <li><i data-lucide="check" class="check-icon"></i> Ultra haute qualité 8K</li>
+                <li><i data-lucide="check" class="check-icon"></i> Support dédié 24/7</li>
+                <li><i data-lucide="check" class="check-icon"></i> Satisfait ou remboursé immédiatement</li>
+              </ul>
+              <button class="subscribe-btn" type="button" data-plan="ultra">Débloquer mes photos</button>
+              <div class="plan-active-label" id="ultraActive">Plan actif</div>
+              <div class="plan-footer-text">Abonnement résiliable à tout moment<br>Satisfait ou remboursé immédiatement</div>
+            </div>
+          </div>
+
+          <!-- Credits recharge -->
+          <div class="credits-recharge">
+            <div class="credits-recharge-title">Recharge de crédits</div>
+            <div class="credits-recharge-subtitle">Besoin d’un coup de pouce ponctuel ? Achetez des crédits sans engagement.</div>
+            <div class="credits-grid">
+              <div class="credit-pack" id="packSmall" data-pack="small">
+                <div class="credit-pack-name">Pack Légère</div>
+                <div class="credit-pack-price">4,90€</div>
+                <div class="credit-pack-desc">5 générations supplémentaires</div>
+                <button class="credit-pack-btn" type="button" data-pack="small">Acheter</button>
+              </div>
+              <div class="credit-pack" id="packLarge" data-pack="large">
+                <div class="credit-pack-name">Pack Max</div>
+                <div class="credit-pack-price">14,90€</div>
+                <div class="credit-pack-desc">15 générations supplémentaires</div>
+                <button class="credit-pack-btn" type="button" data-pack="large">Acheter</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCOUNT SECTION -->
+        <div class="account-section" id="accountSection">
+          <h1 style="font-size:28px;font-weight:800;color:#eeeeee;margin-bottom:8px;">Mon compte</h1>
+          <p style="font-size:14px;color:#a0a0a0;margin-bottom:24px;">Vos informations et votre abonnement.</p>
+
+          <div class="account-card">
+            <label>Email</label>
+            <p id="account-email">—</p>
+          </div>
+
+          <div class="account-card">
+            <label>Plan actuel</label>
+            <p id="account-plan">—</p>
+          </div>
+
+          <div class="account-card">
+            <label>Générations restantes</label>
+            <p id="account-credits">—</p>
+          </div>
+
+          <button id="btn-portal" type="button" onclick="openStripePortal()">
+            Gérer mon abonnement
+          </button>
+        </div>
+
+        <!-- GENERATION SECTION -->
+        <div id="generationSection">
+          <!-- Form Zone -->
+        <div id="formZone">
+          <!-- Upload Zone -->
+          <div class="upload-zone" id="uploadZone">
+            <div class="upload-placeholder" id="uploadPlaceholder">
+              <i data-lucide="upload-cloud"></i>
+              <div class="upload-title">Ta photo</div>
+              <div class="upload-hint">Touche pour importer</div>
+            </div>
+            <div class="preview-wrapper" id="previewWrapper" style="display: none;">
+              <img id="previewImg" src="" alt="Aperçu">
+            </div>
+            <button class="remove-file" id="removeFile" type="button" style="display: none;">Supprimer la photo</button>
+            <input type="file" class="upload-input" id="uploadInput" accept="image/*">
+          </div>
+
+          <!-- Transformation Options -->
+          <div class="transform-grid" id="transformGrid">
+            <button type="button" class="transform-btn" data-value="Make the biceps bigger">
+              💪 Biceps plus gros
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the shoulders wider">
+              🏋️ Épaules larges
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the abs visible">
+              🔥 Abdos visibles
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the pectorals more developed">
+              💥 Pectoraux développés
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the thighs more muscular">
+              🦵 Cuisses musclées
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the body leaner and more defined">
+              📐 Corps plus sec
+            </button>
+            <button type="button" class="transform-btn" data-value="Make the back more muscular">
+              🔙 Dos musclé
+            </button>
+          </div>
+
+          <!-- Optional custom prompt -->
+          <textarea class="prompt-extra" id="promptExtra" placeholder="Précisions optionnelles..." rows="3"></textarea>
+
+          <!-- Generate Button -->
+          <button class="generate-btn" id="generateBtn" type="button" disabled>
+            Générer →
+          </button>
+          <div class="generate-hint" id="generateHint">↑ Importe une photo pour commencer</div>
+        </div>
+
+        <!-- Error message -->
+        <div class="error-msg" id="errorMsg" style="display: none;"></div>
+
+        <!-- Result Zone -->
+        <div class="result-zone" id="resultZone" style="display: none;">
+          <div class="result-title">Résultat</div>
+          <div class="result-image-wrapper">
+            <img id="resultImage" src="" alt="Résultat">
+          </div>
+          <div class="result-actions">
+            <a class="download-btn" id="downloadBtn" href="#" download="golbody-result.jpg">
+              <i data-lucide="download"></i>
+              Télécharger
+            </a>
+            <button class="newgen-btn" id="newGenBtn" type="button">
+              Nouvelle génération
+            </button>
+          </div>
+        </div>
+      </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ===== Supabase =====
+    const supabaseClient = window.supabase.createClient(
+      'https://quvqqxrfewrsbajsllzk.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MjMyNTAsImV4cCI6MjA5ODk5OTI1MH0.CWkSUpjHFE3wV6vJmCbYmMNv291rEW1SPgkWIO5W6G4',
+      {
+        auth: {
+          flowType: 'pkce',
+          detectSessionInUrl: true
+        }
+      }
+    );
+
+    // ===== DOM refs =====
+    const uploadZone = document.getElementById('uploadZone');
+    const uploadInput = document.getElementById('uploadInput');
+    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    const previewWrapper = document.getElementById('previewWrapper');
+    const previewImg = document.getElementById('previewImg');
+    const removeFile = document.getElementById('removeFile');
+    const generateBtn = document.getElementById('generateBtn');
+    const transformGrid = document.getElementById('transformGrid');
+    const promptExtra = document.getElementById('promptExtra');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userEmail = document.getElementById('user-email');
+    const userCredits = document.getElementById('user-credits');
+    const userPlan = document.getElementById('user-plan');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const errorMsg = document.getElementById('errorMsg');
+    const formZone = document.getElementById('formZone');
+    const resultZone = document.getElementById('resultZone');
+    const resultImage = document.getElementById('resultImage');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const newGenBtn = document.getElementById('newGenBtn');
+    const navGenerate = document.getElementById('navGenerate');
+    const navSubscription = document.getElementById('navSubscription');
+    const navAccount = document.getElementById('navAccount');
+    const subscriptionSection = document.getElementById('subscriptionSection');
+    const generationSection = document.getElementById('generationSection');
+    const accountSection = document.getElementById('accountSection');
+    const successBanner = document.getElementById('successBanner');
+    const canceledBanner = document.getElementById('canceledBanner');
+
+    let currentFile = null;
+    let currentUser = null;
+    let currentCredits = 0;
+    let currentPlan = 'free';
+
+    const PLAN_NAMES = {
+      free: 'Plan Gratuit',
+      starter: 'Plan Starter',
+      pro: 'Plan Pro',
+      ultra: 'Plan Ultra',
+    };
+
+    const PLAN_CREDITS_MAP = {
+      free: 100,
+      starter: 1000,
+      pro: 3000,
+      ultra: 7500,
+    };
+
+    function creditsToGenerations(credits) {
+      return Math.floor(credits / 100);
+    }
+
+    function updateSidebar() {
+      const gens = creditsToGenerations(currentCredits);
+      const planLabel = PLAN_NAMES[currentPlan] || 'Plan Gratuit';
+      const creditsText = gens + ' génération' + (gens > 1 ? 's' : '') + ' restante' + (gens > 1 ? 's' : '');
+      userPlan.textContent = planLabel;
+      userCredits.textContent = creditsText;
+      mobileUserPlan.textContent = planLabel;
+      mobileUserCredits.textContent = creditsText;
+
+      // Highlight active plan card and toggle CTA vs "Plan actif"
+      document.querySelectorAll('.plan-card-big').forEach(card => {
+        card.classList.remove('active');
+        const btn = card.querySelector('.subscribe-btn');
+        const activeLabel = card.querySelector('.plan-active-label');
+        if (card.dataset.plan === currentPlan) {
+          card.classList.add('active');
+          if (btn) btn.style.display = 'none';
+          if (activeLabel) activeLabel.style.display = 'block';
+        } else {
+          if (btn) {
+            btn.style.display = 'inline-flex';
+            btn.disabled = false;
+          }
+          if (activeLabel) activeLabel.style.display = 'none';
+        }
+      });
+    }
+
+    async function loadProfile(userId) {
+      console.log('[Profile] Loading profile for', userId);
+      try {
+        const { data: profile, error } = await supabaseClient
+          .from('profiles')
+          .select('credits, plan, stripe_customer_id, stripe_subscription_id, credits_reset_date')
+          .eq('id', userId)
+          .single();
+
+        if (error || !profile) {
+          console.log('[Profile] No profile found, creating default');
+          await supabaseClient.from('profiles').insert({ id: userId, credits: 200, plan: 'free' });
+          currentCredits = 200;
+          currentPlan = 'free';
+        } else {
+          console.log('[Profile] Loaded:', profile.plan, profile.credits, 'credits');
+          currentCredits = profile.credits ?? 100;
+          currentPlan = profile.plan || 'free';
+        }
+        updateSidebar();
+        updateAccountSection(profile || { plan: 'free', credits: 100 });
+      } catch (err) {
+        console.error('[Profile] Load error:', err);
+        currentCredits = 200;
+        currentPlan = 'free';
+        updateSidebar();
+        updateAccountSection({ plan: 'free', credits: 200 });
+      }
+    }
+
+    function updateAccountSection(profile) {
+      const planNames = { free: 'Plan Gratuit', starter: 'Starter', pro: 'Pro', ultra: 'Ultra' };
+      document.getElementById('account-email').textContent = currentUser?.email || '—';
+      document.getElementById('account-plan').textContent = planNames[profile?.plan] || 'Plan Gratuit';
+      const gens = creditsToGenerations(profile?.credits ?? 0);
+      document.getElementById('account-credits').textContent = gens + ' génération' + (gens > 1 ? 's' : '') + ' restante' + (gens > 1 ? 's' : '');
+    }
+
+    async function openStripePortal() {
+      try {
+        const user = await ensureUser();
+        if (!user) {
+          showError('Veuillez vous connecter pour accéder au portail d\'abonnement.');
+          return;
+        }
+        const res = await fetch('/create-portal-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: user.id })
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          showError(data.error || 'Erreur lors de l\'ouverture du portail Stripe.');
+        }
+      } catch (err) {
+        console.error('Portal error:', err);
+        showError('Erreur de connexion. Réessayez.');
+      }
+    }
+
+    // ===== Auth check =====
+    const urlParams = new URLSearchParams(window.location.search);
+
+    async function initAuth() {
+      const hasOAuthCode = urlParams.has('code');
+
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Clean URL if OAuth code present
+      if (hasOAuthCode) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      // Show dashboard (hide spinner, show content)
+      document.getElementById('authLoading').classList.add('is-hidden');
+
+      // Load user data
+      currentUser = session.user;
+      const name = session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Utilisateur';
+      userEmail.textContent = currentUser.email || name;
+      mobileUserEmail.textContent = currentUser.email || name;
+      await loadProfile(session.user.id);
+    }
+
+    // ===== URL params =====
+    if (urlParams.get('success') === 'true') {
+      successBanner.classList.add('is-visible');
+      setTimeout(() => successBanner.classList.remove('is-visible'), 6000);
+    }
+    if (urlParams.get('canceled') === 'true') {
+      canceledBanner.classList.add('is-visible');
+      setTimeout(() => canceledBanner.classList.remove('is-visible'), 6000);
+    }
+
+    // ===== Mobile nav =====
+    const mobileNavBtn = document.getElementById('mobileNavBtn');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+    const mobileNav = document.getElementById('mobileNav');
+    const mobileNavGenerate = document.getElementById('mobileNavGenerate');
+    const mobileNavSubscription = document.getElementById('mobileNavSubscription');
+    const mobileNavAccount = document.getElementById('mobileNavAccount');
+    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+    const mobileUserPlan = document.getElementById('mobileUserPlan');
+    const mobileUserCredits = document.getElementById('mobileUserCredits');
+    const mobileUserEmail = document.getElementById('mobileUserEmail');
+
+    function openMobileNav() {
+      mobileNav.classList.add('is-visible');
+      mobileOverlay.classList.add('is-visible');
+      lucide.createIcons();
+    }
+
+    function closeMobileNav() {
+      mobileNav.classList.remove('is-visible');
+      mobileOverlay.classList.remove('is-visible');
+    }
+
+    mobileNavBtn.addEventListener('click', openMobileNav);
+    mobileOverlay.addEventListener('click', closeMobileNav);
+
+    mobileLogoutBtn.addEventListener('click', async () => {
+      closeMobileNav();
+      await supabaseClient.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    // ===== Navigation =====
+    function showGeneration() {
+      generationSection.style.display = 'block';
+      subscriptionSection.classList.remove('is-visible');
+      accountSection.classList.remove('is-visible');
+      navGenerate.classList.add('active');
+      navSubscription.classList.remove('active');
+      navAccount.classList.remove('active');
+      mobileNavGenerate.classList.add('active');
+      mobileNavSubscription.classList.remove('active');
+      mobileNavAccount.classList.remove('active');
+    }
+
+    function showSubscription() {
+      generationSection.style.display = 'none';
+      subscriptionSection.classList.add('is-visible');
+      accountSection.classList.remove('is-visible');
+      navGenerate.classList.remove('active');
+      navSubscription.classList.add('active');
+      navAccount.classList.remove('active');
+      mobileNavGenerate.classList.remove('active');
+      mobileNavSubscription.classList.add('active');
+      mobileNavAccount.classList.remove('active');
+      lucide.createIcons();
+    }
+
+    function showAccount() {
+      generationSection.style.display = 'none';
+      subscriptionSection.classList.remove('is-visible');
+      accountSection.classList.add('is-visible');
+      navGenerate.classList.remove('active');
+      navSubscription.classList.remove('active');
+      navAccount.classList.add('active');
+      mobileNavGenerate.classList.remove('active');
+      mobileNavSubscription.classList.remove('active');
+      mobileNavAccount.classList.add('active');
+    }
+
+    navGenerate.addEventListener('click', (e) => {
+      e.preventDefault();
+      showGeneration();
+    });
+
+    navSubscription.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSubscription();
+    });
+
+    navAccount.addEventListener('click', (e) => {
+      e.preventDefault();
+      showAccount();
+    });
+
+    mobileNavGenerate.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMobileNav();
+      showGeneration();
+    });
+
+    mobileNavSubscription.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMobileNav();
+      showSubscription();
+    });
+
+    mobileNavAccount.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeMobileNav();
+      showAccount();
+    });
+
+    // ===== Subscribe buttons =====
+    async function ensureUser() {
+      if (currentUser) return currentUser;
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        currentUser = session.user;
+        return session.user;
+      }
+      return null;
+    }
+
+    // ===== Billing toggle =====
+    let billingMode = 'yearly';
+
+    const BILLING_PRICES = {
+      monthly: {
+        starter: { price: '4,90€', original: '', billing: '' },
+        pro:     { price: '14,90€', original: '', billing: '' },
+        ultra:   { price: '29,90€', original: '', billing: '' },
+      },
+      yearly: {
+        starter: { price: '9,90€', original: '', billing: 'Facturé annuellement' },
+        pro:     { price: '29,90€', original: '', billing: 'Facturé annuellement' },
+        ultra:   { price: '74,90€', original: '', billing: 'Facturé annuellement' },
+      },
+    };
+
+    function setBilling(mode) {
+      billingMode = mode;
+      document.getElementById('btnMonthly').classList.toggle('active', mode === 'monthly');
+      document.getElementById('btnYearly').classList.toggle('active', mode === 'yearly');
+
+      ['starter', 'pro', 'ultra'].forEach(plan => {
+        const data = BILLING_PRICES[mode][plan];
+        document.getElementById(plan + 'Original').textContent = data.original ? data.original + ' /mois' : '';
+        document.getElementById(plan + 'Price').innerHTML = data.price + '<span class="period"> /mois</span>';
+        document.getElementById(plan + 'Billing').textContent = data.billing;
+      });
+    }
+
+    document.querySelectorAll('.subscribe-btn').forEach(btn => {
+      console.log('[Subscribe] Attaching listener to', btn.dataset.plan);
+      btn.addEventListener('click', async () => {
+        const plan = btn.dataset.plan;
+        console.log('[Subscribe] Clicked plan:', plan);
+
+        const user = await ensureUser();
+        console.log('[Subscribe] ensureUser result:', user?.email || 'null');
+        if (!user) {
+          console.error('[Subscribe] User not authenticated');
+          showError('Veuillez vous connecter pour souscrire à un abonnement.');
+          return;
+        }
+
+        try {
+          btn.disabled = true;
+          const originalText = btn.textContent;
+          btn.textContent = 'Chargement...';
+          console.log('[Subscribe] Calling /create-checkout-session with plan:', plan, 'billing:', billingMode, 'userId:', user.id);
+          const res = await fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              plan,
+              billing: billingMode,
+              customerEmail: user.email,
+              user_id: user.id,
+            }),
+          });
+          console.log('[Subscribe] Response status:', res.status);
+          const data = await res.json();
+          console.log('[Subscribe] Response data:', data);
+          if (data.url) {
+            console.log('[Subscribe] Redirecting to Stripe:', data.url.substring(0, 60));
+            window.location.href = data.url;
+          } else {
+            console.error('[Subscribe] No URL in response:', data);
+            showError(data.error || 'Erreur lors de la création de la session de paiement.');
+            btn.disabled = false;
+            btn.textContent = originalText;
+          }
+        } catch (err) {
+          console.error('[Subscribe] Error:', err);
+          showError('Erreur de connexion. Réessayez.');
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      });
+    });
+
+    // ===== Credit pack buttons =====
+    document.querySelectorAll('.credit-pack-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const pack = btn.dataset.pack;
+        const user = await ensureUser();
+        if (!user) {
+          showError('Veuillez vous connecter pour acheter des crédits.');
+          return;
+        }
+
+        try {
+          btn.disabled = true;
+          const originalText = btn.textContent;
+          btn.textContent = 'Chargement...';
+          const res = await fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              pack,
+              customerEmail: user.email,
+              user_id: user.id,
+            }),
+          });
+          const data = await res.json();
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            showError(data.error || 'Erreur lors de la création de la session de paiement.');
+            btn.disabled = false;
+            btn.textContent = originalText;
+          }
+        } catch (err) {
+          console.error('Credit pack error:', err);
+          showError('Erreur de connexion. Réessayez.');
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      });
+    });
+
+    // Run auth initialization
+    initAuth();
+
+    // ===== Logout =====
+    logoutBtn.addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+    // ===== New generation =====
+    newGenBtn.addEventListener('click', () => {
+      clearFile();
+      promptExtra.value = '';
+      transformGrid.querySelectorAll('.transform-btn').forEach(btn => btn.classList.remove('selected'));
+      resultZone.style.display = 'none';
+      resultImage.src = '';
+      downloadBtn.href = '#';
+      formZone.style.display = 'block';
+    });
+
+    // ===== Transformation selection =====
+    transformGrid.querySelectorAll('.transform-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('selected');
+      });
+    });
+
+    // ===== Upload zone =====
+    const generateHint = document.getElementById('generateHint');
+    let generateBtnDisabledAt = Date.now();
+
+    function updateGenerateHint() {
+      if (generateBtn.disabled) {
+        generateHint.classList.add('is-visible');
+      } else {
+        generateHint.classList.remove('is-visible');
+      }
+    }
+    updateGenerateHint();
+
+    function handleFile(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      currentFile = file;
+      const url = URL.createObjectURL(file);
+      previewImg.src = url;
+      uploadPlaceholder.style.display = 'none';
+      previewWrapper.style.display = 'block';
+      removeFile.style.display = 'block';
+      uploadZone.classList.add('has-file');
+      generateBtn.disabled = false;
+      updateGenerateHint();
+    }
+
+    function clearFile() {
+      currentFile = null;
+      previewImg.src = '';
+      uploadPlaceholder.style.display = 'flex';
+      previewWrapper.style.display = 'none';
+      removeFile.style.display = 'none';
+      uploadZone.classList.remove('has-file');
+      generateBtn.disabled = true;
+      generateBtnDisabledAt = Date.now();
+      uploadInput.value = '';
+      updateGenerateHint();
+    }
+
+    uploadZone.addEventListener('click', (e) => {
+      if (e.target === removeFile || e.target.closest('.remove-file')) return;
+      if (generateBtn.disabled && Date.now() - generateBtnDisabledAt > 3000) {
+        uploadZone.classList.remove('glow-pulse');
+        void uploadZone.offsetWidth; // force reflow
+        uploadZone.classList.add('glow-pulse');
+        setTimeout(() => uploadZone.classList.remove('glow-pulse'), 2400);
+      }
+      uploadInput.click();
+    });
+
+    uploadInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    removeFile.addEventListener('click', (e) => {
+      e.stopPropagation();
+      clearFile();
+    });
+
+    // Drag & drop
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.style.borderColor = '#FFD600';
+    });
+
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.style.borderColor = '';
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.style.borderColor = '';
+      if (e.dataTransfer.files.length > 0) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    // ===== Helpers =====
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.style.display = 'block';
+    }
+
+    function clearError() {
+      errorMsg.textContent = '';
+      errorMsg.style.display = 'none';
+    }
+
+    function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function resizeImageIfNeeded(file, maxSize = 1024) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          const w = img.naturalWidth;
+          const h = img.naturalHeight;
+          if (w <= maxSize && h <= maxSize) { resolve(file); return; }
+          const scale = maxSize / Math.max(w, h);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(w * scale);
+          canvas.height = Math.round(h * scale);
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob((blob) => resolve(new File([blob], file.name, { type: 'image/jpeg' })), 'image/jpeg', 0.9);
+        };
+        img.src = url;
+      });
+    }
+
+    // ===== Prompt mapping =====
+    const PROMPTS = {
+      "Make the biceps bigger": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the biceps: slightly more visible bicep peak and arm thickness, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the shoulders wider": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the shoulders: slightly broader deltoids and more visible shoulder caps, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the abs visible": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle abdominal definition: slightly more visible abs with natural lighting, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the pectorals more developed": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the chest: slightly more visible pectorals with natural shape, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the thighs more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the thighs: slightly more visible quadriceps and leg tone, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the body leaner and more defined": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only make the body slightly leaner with subtle muscle definition and reduced body fat, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the back more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the back: slightly more visible trapezius and latissimus dorsi, as if the person works out occasionally. Do not change body size or proportions."
+    };
+
+    // ===== Generate =====
+    generateBtn.addEventListener('click', async () => {
+      if (!currentFile) return;
+      clearError();
+      resultZone.style.display = 'none';
+
+      // Check credits before generating
+      if (currentCredits < 100) {
+        showError('Crédits insuffisants — upgradez votre plan dans l\'onglet Abonnement.');
+        return;
+      }
+
+      loadingOverlay.classList.add('is-visible');
+
+      try {
+        const imageUrl = await fileToDataUrl(currentFile);
+
+        const selected = Array.from(transformGrid.querySelectorAll('.transform-btn.selected')).map(btn => btn.dataset.value);
+        const extra = promptExtra.value.trim();
+        let promptText = "Transform this person's body to be very muscular and athletic, keep the face, clothes, pose and background exactly the same, photorealistic";
+        if (selected.length > 0) {
+          const detailedPrompts = selected.map(key => PROMPTS[key] || key);
+          promptText = detailedPrompts.join('. ') + '. Keep all other details of the photo identical, photorealistic';
+        }
+        if (extra) {
+          promptText += '. ' + extra;
+        }
+
+        const session = await supabaseClient.auth.getSession();
+        const token = session.data.session?.access_token;
+        const response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ imageUrl, prompt: promptText })
+        });
+        if (response.status === 401) {
+          window.location.href = 'login.html';
+          return;
+        }
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || 'Erreur lors de la génération');
+        }
+        const afterUrl = result.imageUrl;
+        if (!afterUrl) {
+          throw new Error('Aucune image retournée par l\'API');
+        }
+
+        // Deduct credits after successful generation
+        if (currentUser) {
+          try {
+            const { data: profile, error } = await supabaseClient
+              .from('profiles')
+              .select('credits')
+              .eq('id', currentUser.id)
+              .single();
+            if (profile && (profile.credits ?? 0) >= 100) {
+              const newCredits = profile.credits - 100;
+              await supabaseClient.from('profiles').update({ credits: newCredits }).eq('id', currentUser.id);
+              currentCredits = newCredits;
+              updateSidebar();
+            }
+          } catch (err) {
+            console.error('Credit deduction error:', err);
+          }
+        }
+
+        resultImage.src = afterUrl;
+        downloadBtn.href = afterUrl;
+        formZone.style.display = 'none';
+        resultZone.style.display = 'block';
+        lucide.createIcons();
+      } catch (err) {
+        console.error('Generation error:', err);
+        showError('Erreur : ' + (err.message || 'Impossible de générer l\'image'));
+      } finally {
+        loadingOverlay.classList.remove('is-visible');
+      }
+    });
+
+    // ===== Lucide icons =====
+    lucide.createIcons();
+  </script>
+</body>
+</html>

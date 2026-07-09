@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription — GolBody</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: #111111;
+      color: #eeeeee;
+      font-family: Inter, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .box {
+      text-align: center;
+      padding: 2rem;
+      width: 100%;
+      max-width: 360px;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFD600, #ccaa00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    p.subtitle {
+      color: #a0a0a0;
+      margin-bottom: 2rem;
+    }
+    input {
+      display: block;
+      width: 100%;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1rem;
+      background: #1a1a2e;
+      border: 1px solid #222233;
+      border-radius: 10px;
+      color: #eeeeee;
+      font-size: 1rem;
+      box-sizing: border-box;
+      font-family: Inter, sans-serif;
+    }
+    input:focus {
+      outline: none;
+      border-color: #FFD600;
+    }
+    input::placeholder {
+      color: #6a6a6a;
+    }
+    button[type="submit"] {
+      background: #FFD600;
+      color: #111111;
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      font-family: Inter, sans-serif;
+    }
+    button[type="submit"]:hover {
+      background: #ccaa00;
+    }
+    #error-msg {
+      color: #ff6b6b;
+      display: none;
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
+    }
+    .login-text {
+      margin-top: 1rem;
+      color: #a0a0a0;
+      font-size: 0.9rem;
+    }
+    .login-text a {
+      color: #FFD600;
+      text-decoration: none;
+    }
+    .login-text a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="logo-text" style="font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1; margin-bottom: 24px;">
+      <span style="color: #FFD600;">Gol</span><span style="color: white;">Body</span>
+    </div>
+    <p class="subtitle">Transforme ton physique en 1 clic</p>
+
+    <form id="register-form">
+      <input type="email" id="email" placeholder="Email" required/>
+      <input type="password" id="password" placeholder="Mot de passe" required/>
+      <button type="submit">S'inscrire</button>
+      <p id="error-msg"></p>
+    </form>
+
+    <p class="login-text">Déjà un compte ? <a href="login.html">Se connecter</a></p>
+  </div>
+
+  <script>
+    const sb = window.supabase.createClient(
+      'https://quvqqxrfewrsbajsllzk.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MjMyNTAsImV4cCI6MjA5ODk5OTI1MH0.CWkSUpjHFE3wV6vJmCbYmMNv291rEW1SPgkWIO5W6G4'
+    );
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) {
+        document.getElementById('error-msg').textContent = error.message;
+        document.getElementById('error-msg').style.display = 'block';
+      } else {
+        // Create profile with free plan and 100 credits
+        const userId = data.user?.id;
+        if (userId) {
+          try {
+            await sb.from('profiles').insert({
+              id: userId,
+              credits: 100,
+              plan: 'free',
+            });
+          } catch (err) {
+            console.error('Profile creation error:', err);
+          }
+        }
+        window.location.href = 'dashboard.html';
+      }
+    });
+  </script>
+</body>
+</html>

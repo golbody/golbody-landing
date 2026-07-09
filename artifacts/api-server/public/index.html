@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GolBody — Navigation</title>
+  <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --color-bg: #111111;
+      --color-accent: #FFD600;
+      --color-accent-hover: #e6c000;
+      --color-accent-dark: #ccaa00;
+      --color-text-muted: #a0a0a0;
+      --color-text-muted-hover: #c0c0c0;
+      --color-border: rgba(255, 214, 0, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--color-bg);
+      min-height: 100vh;
+      color: #ffffff;
+    }
+
+    /* ============ NAVIGATION ============ */
+    .gol-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 48px;
+      background: rgba(17, 17, 17, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      z-index: 1000;
+    }
+
+    .gol-nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .gol-logo {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+
+    .gol-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .gol-links a {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .gol-links a:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    .gol-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .gol-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 24px;
+      background: var(--color-accent);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #111111;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .gol-btn:hover {
+      background: var(--color-accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .gol-btn:active {
+      transform: translateY(0);
+    }
+
+    .gol-menu-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-text-muted);
+      padding: 8px;
+      border-radius: 8px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .gol-menu-toggle:hover {
+      color: var(--color-text-muted-hover);
+      background: rgba(255, 214, 0, 0.08);
+    }
+
+    .gol-menu-toggle svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* ============ MOBILE MENU ============ */
+    .gol-mobile-menu {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: rgba(17, 17, 17, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--color-border);
+      padding: 16px 48px 24px;
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+    }
+
+    .gol-mobile-menu.is-open {
+      display: flex;
+    }
+
+    .gol-mobile-link {
+      display: block;
+      padding: 16px 0;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 214, 0, 0.08);
+      cursor: pointer;
+      transition: color 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .gol-mobile-link:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    .gol-mobile-link:last-child {
+      border-bottom: none;
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 639px) {
+      .gol-nav {
+        padding: 0 24px;
+      }
+
+      .gol-links {
+        display: none;
+      }
+
+      .gol-menu-toggle {
+        display: flex;
+      }
+
+      .gol-mobile-menu {
+        padding: 16px 24px 24px;
+      }
+    }
+
+    /* ============ HERO ============ */
+    .gol-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 160px 24px 96px;
+      background: linear-gradient(135deg, #111111 0%, #111111 40%, #111111 100%);
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease infinite;
+    }
+
+    .gol-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 214, 0, 0.1);
+      border: 1px solid rgba(255, 214, 0, 0.3);
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-accent);
+      letter-spacing: 0.02em;
+      margin-bottom: 32px;
+    }
+
+    .gol-hero h1 {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: #ffffff;
+      max-width: 800px;
+      margin-bottom: 24px;
+      letter-spacing: -1.5px;
+    }
+
+    .gol-hero h1 .gradient-text {
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .gol-hero h1 .word-span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .gol-hero-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      max-width: 480px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .gol-hero-social {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .gol-hero-avatars {
+      display: flex;
+      align-items: center;
+    }
+
+    .gol-hero-avatars .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      border: 2px solid var(--color-bg);
+      margin-left: -8px;
+      flex-shrink: 0;
+    }
+
+    .gol-hero-avatars .avatar:first-child {
+      margin-left: 0;
+    }
+
+    .gol-hero-avatars .avatar:nth-child(1) { background: #b8a000; }
+    .gol-hero-avatars .avatar:nth-child(2) { background: #ccaa00; }
+    .gol-hero-avatars .avatar:nth-child(3) { background: #FFD600; }
+
+    .gol-hero-social-text {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+    }
+
+    .gol-hero-social-text strong {
+      color: var(--color-accent);
+      font-weight: 700;
+    }
+
+    .gol-hero-cta {
+      display: inline-flex;
+      align-items: center;
+      padding: 16px 32px;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 8px 32px rgba(255, 214, 0, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+      margin-bottom: 16px;
+      animation: glowPulse 2s ease infinite;
+    }
+
+    .gol-hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(255, 214, 0, 0.45);
+    }
+
+    .gol-hero-cta:active {
+      transform: translateY(0);
+    }
+
+    .gol-hero-note {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+    }
+
+    /* ============ STATS BAR ============ */
+    .gol-stats {
+      background: #1a1a2e;
+      border-top: 1px solid rgba(255, 214, 0, 0.1);
+      border-bottom: 1px solid rgba(255, 214, 0, 0.1);
+      padding: 32px 48px;
+    }
+
+    .gol-stats-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .gol-stats-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 24px;
+      border-right: 1px solid rgba(255, 214, 0, 0.1);
+    }
+
+    .gol-stats-item:last-child {
+      border-right: none;
+    }
+
+    .gol-stats-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: #FFD600;
+      line-height: 1.2;
+    }
+
+    .gol-stats-label {
+      font-size: 13px;
+      font-weight: 400;
+      color: #a0a0a0;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 639px) {
+      .gol-stats {
+        padding: 24px 24px;
+      }
+
+      .gol-stats-inner {
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .gol-stats-item {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 214, 0, 0.1);
+        padding: 0 0 24px;
+      }
+
+      .gol-stats-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+    }
+
+    /* ============ DIFFÉRENCE GOLBODY ============ */
+    .gol-diff {
+      padding: 96px 48px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 639px) {
+      .gol-diff {
+        padding: 64px 24px;
+      }
+    }
+
+    .gol-diff-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .gol-diff-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 214, 0, 0.1);
+      border: 1px solid rgba(255, 214, 0, 0.25);
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .gol-diff h2 {
+      font-size: 40px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .gol-diff-subtitle {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      max-width: 480px;
+      line-height: 1.6;
+      margin: 0 auto;
+    }
+
+    .gol-diff-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 639px) {
+      .gol-diff-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .gol-diff-card {
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 214, 0, 0.15);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .gol-diff-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(255,214,0,0.12);
+    }
+
+    .gol-diff-card-label {
+      display: block;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      border-bottom: 1px solid rgba(255, 214, 0, 0.1);
+    }
+
+    .gol-diff-card-label.active {
+      color: var(--color-accent);
+    }
+
+    .gol-diff-card-img {
+      aspect-ratio: 3 / 4;
+      background: #222233;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gol-diff-card-img svg {
+      width: 64px;
+      height: 64px;
+      flex-shrink: 0;
+    }
+
+    /* ============ TÉMOIGNAGES ============ */
+    .gol-testimonials {
+      padding: 96px 0;
+      overflow: hidden;
+    }
+
+    .gol-testimonials-header {
+      text-align: center;
+      margin-bottom: 48px;
+      padding: 0 48px;
+    }
+
+    @media (max-width: 639px) {
+      .gol-testimonials {
+        padding: 64px 0;
+      }
+
+      .gol-testimonials-header {
+        padding: 0 24px;
+      }
+    }
+
+    .gol-testimonials-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 214, 0, 0.1);
+      border: 1px solid rgba(255, 214, 0, 0.25);
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .gol-testimonials h2 {
+      font-size: 40px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .gol-testimonials-track {
+      display: flex;
+      gap: 16px;
+      width: max-content;
+      will-change: transform;
+    }
+
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @keyframes scroll-right {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,214,0,0.4); }
+      50% { box-shadow: 0 0 0 14px rgba(255,214,0,0); }
+    }
+
+    .gol-testimonials-row {
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .gol-testimonials-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .gol-testimonials-row .gol-testimonials-track {
+      animation: scroll-left 50s linear infinite;
+    }
+
+    .gol-testimonials-row:nth-child(2) .gol-testimonials-track {
+      animation: scroll-right 50s linear infinite;
+    }
+
+    .gol-testimonials-row:hover .gol-testimonials-track {
+      animation-play-state: paused;
+    }
+
+    .gol-testimonial-card {
+      flex-shrink: 0;
+      width: 300px;
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 214, 0, 0.12);
+      border-radius: 16px;
+      padding: 24px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .gol-testimonial-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(255,214,0,0.12);
+    }
+
+    .gol-testimonial-stars {
+      color: var(--color-accent);
+      font-size: 16px;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+
+    .gol-testimonial-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #eeeeee;
+      margin-bottom: 16px;
+    }
+
+    .gol-testimonial-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Scroll padding for anchor links */
+    html {
+      scroll-padding-top: 80px;
+    }
+
+    .gol-section {
+      padding: 96px 48px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 639px) {
+      .gol-section {
+        padding: 64px 24px;
+      }
+    }
+
+    .gol-section-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 24px;
+      letter-spacing: -0.5px;
+    }
+
+    .gol-section-text {
+      font-size: 16px;
+      color: var(--color-text-muted);
+      line-height: 1.7;
+      max-width: 640px;
+    }
+
+    /* ============ FAQ ============ */
+    .gol-faq {
+      padding: 96px 48px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 639px) {
+      .gol-faq {
+        padding: 64px 24px;
+      }
+    }
+
+    .gol-faq-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .gol-faq-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 214, 0, 0.1);
+      border: 1px solid rgba(255, 214, 0, 0.25);
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .gol-faq h2 {
+      font-size: 40px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+
+    .gol-faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .gol-faq-item {
+      background: #1a1a2e;
+      border: 1px solid rgba(255, 214, 0, 0.12);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .gol-faq-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      width: 100%;
+      padding: 24px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #eeeeee;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      text-align: left;
+      transition: background 0.2s ease;
+    }
+
+    .gol-faq-question:hover {
+      background: rgba(255, 214, 0, 0.04);
+    }
+
+    .gol-faq-question:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -4px;
+      border-radius: 16px;
+    }
+
+    .gol-faq-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--color-accent);
+      transition: transform 0.3s ease;
+    }
+
+    .gol-faq-item.is-open .gol-faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .gol-faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+    }
+
+    .gol-faq-item.is-open .gol-faq-answer {
+      max-height: 400px;
+      padding: 0 24px 24px;
+    }
+
+    .gol-faq-answer-inner {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--color-text-muted);
+    }
+
+    /* ============ CTA FINAL ============ */
+    .gol-final-cta {
+      padding: 96px 48px;
+      background: #1a1a2e;
+      border-top: 1px solid rgba(255, 214, 0, 0.1);
+      text-align: center;
+    }
+
+    @media (max-width: 639px) {
+      .gol-final-cta {
+        padding: 64px 24px;
+      }
+    }
+
+    .gol-final-cta h2 {
+      font-size: 40px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .gol-final-cta-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      margin-bottom: 40px;
+    }
+
+    .gol-final-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 16px 32px;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 8px 32px rgba(255, 214, 0, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .gol-final-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(255, 214, 0, 0.45);
+    }
+
+    .gol-final-cta-btn:active {
+      transform: translateY(0);
+    }
+
+    /* ============ FOOTER ============ */
+    .gol-footer {
+      background: #111111;
+      border-top: 1px solid rgba(255, 214, 0, 0.08);
+      padding: 32px 48px;
+    }
+
+    .gol-footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .gol-footer-logo {
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+
+    .gol-footer-copy {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-align: center;
+      flex: 1;
+      padding: 0 24px;
+    }
+
+    .gol-footer-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-shrink: 0;
+    }
+
+    .gol-footer-links a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .gol-footer-links a:hover {
+      color: var(--color-text-muted-hover);
+    }
+
+    @media (max-width: 639px) {
+      .gol-footer {
+        padding: 32px 24px;
+      }
+
+      .gol-footer-inner {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .gol-footer-copy {
+        padding: 0;
+        order: 2;
+      }
+
+      .gol-footer-links {
+        order: 3;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAVIGATION ============ -->
+  <nav class="gol-nav" role="navigation" aria-label="Navigation principale">
+    <div class="gol-nav-inner">
+      <a href="#" class="gol-logo"><img src="/logos/golbody-primary.svg" alt="GolBody" style="height: 36px;"></a>
+
+      <ul class="gol-links">
+        <li><a href="#exemples">Exemples</a></li>
+        <li><a href="#avis">Avis</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+
+      <div class="gol-cta">
+        <a href="login.html" class="gol-btn">Commencer</a>
+        <button
+          class="gol-menu-toggle"
+          id="menuToggle"
+          aria-label="Ouvrir le menu"
+          aria-expanded="false"
+          aria-controls="mobileMenu"
+        >
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ MOBILE MENU ============ -->
+  <div class="gol-mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="#exemples" class="gol-mobile-link">Exemples</a>
+    <a href="#avis" class="gol-mobile-link">Avis</a>
+    <a href="#faq" class="gol-mobile-link">FAQ</a>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="gol-hero" id="commencer">
+    <div class="gol-hero-badge">&#10022; L'IA #1 de transformation corporelle</div>
+    <h1>
+      De <span class="gradient-text">skinny &agrave; muscl&eacute;</span> en un seul clic
+    </h1>
+    <p class="gol-hero-subtitle">
+      Transformez votre apparence physique en quelques secondes avec notre IA de pointe. R&eacute;sultats r&eacute;alistes, garantis.
+    </p>
+
+    <div class="gol-hero-social">
+      <div class="gol-hero-avatars">
+        <div class="avatar">MK</div>
+        <div class="avatar">JL</div>
+        <div class="avatar">AR</div>
+      </div>
+      <span class="gol-hero-social-text"><strong>14 837</strong> corps transform&eacute;s aujourd'hui</span>
+    </div>
+
+    <a href="login.html" class="gol-hero-cta">Transformer ma photo maintenant &rarr;</a>
+
+    <p class="gol-hero-note">Essai gratuit &middot; Aucune carte requise</p>
+  </section>
+
+  <!-- ============ STATS BAR ============ -->
+  <div class="gol-stats">
+    <div class="gol-stats-inner">
+      <div class="gol-stats-item">
+        <span class="gol-stats-value">10s</span>
+        <span class="gol-stats-label">R&eacute;sultat instantan&eacute;</span>
+      </div>
+      <div class="gol-stats-item">
+        <span class="gol-stats-value">4K</span>
+        <span class="gol-stats-label">Qualit&eacute; photor&eacute;aliste</span>
+      </div>
+      <div class="gol-stats-item">
+        <span class="gol-stats-value">99%</span>
+        <span class="gol-stats-label">Ind&eacute;tectable</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ RÉSULTATS RÉELS ============ -->
+  <section class="gol-diff" id="difference">
+    <div class="gol-diff-header">
+      <div class="gol-diff-badge">R&Eacute;SULTATS</div>
+      <h2>R&eacute;sultats r&eacute;els</h2>
+      <p class="gol-diff-subtitle">G&eacute;n&eacute;r&eacute; en quelques secondes avec GolBody</p>
+    </div>
+
+    <div class="gol-diff-cards">
+      <div class="gol-diff-card">
+        <span class="gol-diff-card-label">Avant</span>
+        <div class="gol-diff-card-img">
+          <img src="/before_1.jpg" alt="Avant" style="width:100%;height:100%;object-fit:cover;border-radius:0 0 16px 16px;display:block;">
+        </div>
+      </div>
+      <div class="gol-diff-card">
+        <span class="gol-diff-card-label active">Apr&egrave;s &mdash; GolBody</span>
+        <div class="gol-diff-card-img">
+          <img src="/after_1.jpg" alt="Apr&egrave;s" style="width:100%;height:100%;object-fit:cover;border-radius:0 0 16px 16px;display:block;">
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:32px;color:#9ca3af;font-size:0.85rem;text-align:center;">Photo transform&eacute;e par IA &middot; R&eacute;sultat obtenu en quelques secondes</p>
+  </section>
+
+  <!-- ============ TÉMOIGNAGES ============ -->
+  <section class="gol-testimonials" id="avis">
+    <div class="gol-testimonials-header">
+      <div class="gol-testimonials-badge">AVIS</div>
+      <h2>Ce qu'ils en pensent</h2>
+    </div>
+
+    <!-- Rangée 1 : défile vers la gauche -->
+    <div class="gol-testimonials-row">
+      <div class="gol-testimonials-track">
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !</p>
+          <span class="gol-testimonial-name">@muscu_alex</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.</p>
+          <span class="gol-testimonial-name">Julien K.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.</p>
+          <span class="gol-testimonial-name">Thomas_B</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.</p>
+          <span class="gol-testimonial-name">@fit_laura</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.</p>
+          <span class="gol-testimonial-name">Kevin M.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.</p>
+          <span class="gol-testimonial-name">@romain_f</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.</p>
+          <span class="gol-testimonial-name">Sophie L.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.</p>
+          <span class="gol-testimonial-name">@startup_marc</span>
+        </div>
+        <!-- Duplication pour boucle seamless -->
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !</p>
+          <span class="gol-testimonial-name">@muscu_alex</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.</p>
+          <span class="gol-testimonial-name">Julien K.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.</p>
+          <span class="gol-testimonial-name">Thomas_B</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.</p>
+          <span class="gol-testimonial-name">@fit_laura</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.</p>
+          <span class="gol-testimonial-name">Kevin M.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.</p>
+          <span class="gol-testimonial-name">@romain_f</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.</p>
+          <span class="gol-testimonial-name">Sophie L.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.</p>
+          <span class="gol-testimonial-name">@startup_marc</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rangée 2 : défile vers la droite (ordre inversé) -->
+    <div class="gol-testimonials-row">
+      <div class="gol-testimonials-track">
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.</p>
+          <span class="gol-testimonial-name">@startup_marc</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.</p>
+          <span class="gol-testimonial-name">Sophie L.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.</p>
+          <span class="gol-testimonial-name">@romain_f</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.</p>
+          <span class="gol-testimonial-name">Kevin M.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.</p>
+          <span class="gol-testimonial-name">@fit_laura</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.</p>
+          <span class="gol-testimonial-name">Thomas_B</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.</p>
+          <span class="gol-testimonial-name">Julien K.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !</p>
+          <span class="gol-testimonial-name">@muscu_alex</span>
+        </div>
+        <!-- Duplication pour boucle seamless -->
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.</p>
+          <span class="gol-testimonial-name">@startup_marc</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.</p>
+          <span class="gol-testimonial-name">Sophie L.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.</p>
+          <span class="gol-testimonial-name">@romain_f</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.</p>
+          <span class="gol-testimonial-name">Kevin M.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.</p>
+          <span class="gol-testimonial-name">@fit_laura</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.</p>
+          <span class="gol-testimonial-name">Thomas_B</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.</p>
+          <span class="gol-testimonial-name">Julien K.</span>
+        </div>
+        <div class="gol-testimonial-card">
+          <div class="gol-testimonial-stars">★★★★★</div>
+          <p class="gol-testimonial-text">J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !</p>
+          <span class="gol-testimonial-name">@muscu_alex</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="gol-faq" id="faq">
+    <div class="gol-faq-header">
+      <div class="gol-faq-badge">FAQ</div>
+      <h2>Questions fr&eacute;quentes</h2>
+    </div>
+
+    <div class="gol-faq-list">
+      <div class="gol-faq-item">
+        <button class="gol-faq-question" aria-expanded="false" aria-controls="faq-answer-1">
+          <span>Comment fonctionne la transformation ?</span>
+          <svg class="gol-faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="gol-faq-answer" id="faq-answer-1">
+          <div class="gol-faq-answer-inner">
+            Tu upload ta photo, notre IA analyse ton physique et g&eacute;n&egrave;re une version muscl&eacute;e en conservant ton visage, ta tenue et l'&eacute;clairage. R&eacute;sultat en 10 secondes, qualit&eacute; 4K.
+          </div>
+        </div>
+      </div>
+
+      <div class="gol-faq-item">
+        <button class="gol-faq-question" aria-expanded="false" aria-controls="faq-answer-2">
+          <span>Le r&eacute;sultat est-il ind&eacute;tectable ?</span>
+          <svg class="gol-faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="gol-faq-answer" id="faq-answer-2">
+          <div class="gol-faq-answer-inner">
+            Oui. Notre IA pr&eacute;serve les moindres d&eacute;tails de ton visage et de l'environnement. M&ecirc;me tes proches ne verront pas la diff&eacute;rence. 99% des utilisateurs ne sont jamais d&eacute;masqu&eacute;s.
+          </div>
+        </div>
+      </div>
+
+      <div class="gol-faq-item">
+        <button class="gol-faq-question" aria-expanded="false" aria-controls="faq-answer-3">
+          <span>Mes photos restent-elles confidentielles ?</span>
+          <svg class="gol-faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="gol-faq-answer" id="faq-answer-3">
+          <div class="gol-faq-answer-inner">
+            Absolument. Tes photos sont trait&eacute;es en temps r&eacute;el puis supprim&eacute;es de nos serveurs dans l'heure. Nous ne stockons jamais tes images et ne les partageons avec personne.
+          </div>
+        </div>
+      </div>
+
+      <div class="gol-faq-item">
+        <button class="gol-faq-question" aria-expanded="false" aria-controls="faq-answer-4">
+          <span>Combien de temps prend une g&eacute;n&eacute;ration ?</span>
+          <svg class="gol-faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="gol-faq-answer" id="faq-answer-4">
+          <div class="gol-faq-answer-inner">
+            Entre 8 et 12 secondes en moyenne. Notre infrastructure GPU de pointe te garantit un r&eacute;sultat instantan&eacute;, m&ecirc;me aux heures de pointe.
+          </div>
+        </div>
+      </div>
+
+      <div class="gol-faq-item">
+        <button class="gol-faq-question" aria-expanded="false" aria-controls="faq-answer-5">
+          <span>Puis-je annuler mon abonnement ?</span>
+          <svg class="gol-faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="gol-faq-answer" id="faq-answer-5">
+          <div class="gol-faq-answer-inner">
+            Oui, &agrave; tout moment. Pas de p&eacute;riode d'engagement, pas de frais cach&eacute;s. Tu peux annuler depuis ton compte en un clic et conserver l'acc&egrave;s jusqu'&agrave; la fin de ta p&eacute;riode pay&eacute;e.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIcon = menuToggle.querySelector('[data-lucide]');
+    let isOpen = false;
+
+    function updateMenuIcon() {
+      menuIcon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+      lucide.createIcons();
+    }
+
+    function closeMenu() {
+      isOpen = false;
+      mobileMenu.classList.remove('is-open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Ouvrir le menu');
+      updateMenuIcon();
+    }
+
+    function openMenu() {
+      isOpen = true;
+      mobileMenu.classList.add('is-open');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      menuToggle.setAttribute('aria-expanded', 'true');
+      menuToggle.setAttribute('aria-label', 'Fermer le menu');
+      updateMenuIcon();
+    }
+
+    menuToggle.addEventListener('click', function () {
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.gol-mobile-link').forEach(function (link) {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Close mobile menu on Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isOpen) {
+        closeMenu();
+      }
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function (e) {
+      if (isOpen && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+        closeMenu();
+      }
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.gol-faq-question').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var item = btn.closest('.gol-faq-item');
+        var isOpen = item.classList.contains('is-open');
+
+        // Close all other items
+        document.querySelectorAll('.gol-faq-item.is-open').forEach(function (openItem) {
+          if (openItem !== item) {
+            openItem.classList.remove('is-open');
+            openItem.querySelector('.gol-faq-question').setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        // Toggle current item
+        if (isOpen) {
+          item.classList.remove('is-open');
+          btn.setAttribute('aria-expanded', 'false');
+        } else {
+          item.classList.add('is-open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  </script>
+
+  <!-- ============ CTA FINAL ============ -->
+  <section class="gol-final-cta">
+    <h2>Pr&ecirc;t &agrave; transformer ton physique ?</h2>
+    <p class="gol-final-cta-subtitle">Rejoins des milliers d'utilisateurs qui ont d&eacute;j&agrave; essay&eacute; GolBody.</p>
+    <a href="login.html" class="gol-final-cta-btn">Commencer gratuitement &rarr;</a>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="gol-footer">
+    <div class="gol-footer-inner">
+      <a href="#" class="gol-footer-logo">GolBody</a>
+      <span class="gol-footer-copy">&copy; 2026 GolBody. Tous droits r&eacute;serv&eacute;s.</span>
+      <div class="gol-footer-links">
+        <a href="mentions-legales.html">Mentions l&eacute;gales</a>
+        <a href="cgu.html">CGU</a>
+        <a href="confidentialite.html">Confidentialit&eacute;</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      // 1. Hero title — word by word reveal
+      var heroTitle = document.querySelector('.gol-hero h1');
+      if (heroTitle) {
+        var childNodes = Array.prototype.slice.call(heroTitle.childNodes);
+        childNodes.forEach(function(node) {
+          if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN') {
+            // Existing span (e.g. gradient-text) — wrap as a single animated word
+            var wrapper = document.createElement('span');
+            wrapper.className = 'word-span';
+            node.parentNode.insertBefore(wrapper, node);
+            wrapper.appendChild(node);
+            wrapper.style.opacity = '0';
+            wrapper.style.transform = 'translateY(20px)';
+            wrapper.style.display = 'inline-block';
+            wrapper.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          } else if (node.nodeType === Node.TEXT_NODE) {
+            var text = node.textContent;
+            var parts = text.split(/(\s+)/);
+            var fragment = document.createDocumentFragment();
+            parts.forEach(function(part) {
+              if (/^\s*$/.test(part)) {
+                fragment.appendChild(document.createTextNode(part));
+              } else {
+                var span = document.createElement('span');
+                span.className = 'word-span';
+                span.textContent = part;
+                span.style.opacity = '0';
+                span.style.transform = 'translateY(20px)';
+                span.style.display = 'inline-block';
+                span.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                fragment.appendChild(span);
+              }
+            });
+            node.parentNode.replaceChild(fragment, node);
+          }
+        });
+        var words = heroTitle.querySelectorAll('.word-span');
+        words.forEach(function(span, i) {
+          setTimeout(function() {
+            span.style.opacity = '1';
+            span.style.transform = 'translateY(0)';
+          }, 100 * i);
+        });
+      }
+
+      // 2. Stats counter
+      var stats = document.querySelectorAll('.gol-stats-value');
+      stats.forEach(function(stat) {
+        var fullText = stat.textContent;
+        var match = fullText.match(/([\d\.]+)(.*)/);
+        if (!match) return;
+        var target = parseFloat(match[1]);
+        var suffix = match[2];
+        stat.textContent = '0' + suffix;
+        var current = 0;
+        var duration = 1500;
+        var steps = 30;
+        var increment = target / steps;
+        var interval = duration / steps;
+        var timer = null;
+        var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+              timer = setInterval(function() {
+                current += increment;
+                if (current >= target) {
+                  current = target;
+                  clearInterval(timer);
+                }
+                stat.textContent = Math.floor(current) + suffix;
+              }, interval);
+              observer.unobserve(stat);
+            }
+          });
+        }, { threshold: 0.5 });
+        observer.observe(stat);
+      });
+
+      // 3. Scroll reveal
+      var revealSelectors = [
+        '.gol-diff',
+        '.gol-testimonials',
+        '.gol-faq',
+        '.gol-final-cta',
+        '.gol-section',
+        '.gol-stats',
+        '.gol-diff-card',
+        '.gol-testimonial-card',
+        '.gol-stats-item'
+      ];
+      var revealElements = [];
+      revealSelectors.forEach(function(sel) {
+        document.querySelectorAll(sel).forEach(function(el) {
+          el.classList.add('scroll-reveal');
+          revealElements.push(el);
+        });
+      });
+      var revealObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      revealElements.forEach(function(el) {
+        revealObserver.observe(el);
+      });
+    })();
+  </script>
+
+</body>
+</html>

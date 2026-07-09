@@ -150,6 +150,12 @@
     .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+    .gol-slider-gender{display:flex;justify-content:center;gap:6px;margin-bottom:12px}
+    .gol-slider-gender-btn{padding:6px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(255,214,0,0.25);background:transparent;color:var(--color-text-muted);font-family:'Inter',sans-serif;transition:all 0.2s;letter-spacing:0.04em;text-transform:uppercase}
+    .gol-slider-gender-btn.active{background:rgba(255,214,0,0.15);border-color:var(--color-accent);color:var(--color-accent)}
+    .gol-slider-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+    .gol-slider-tab{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,214,0,0.15);background:transparent;color:var(--color-text-muted);font-family:'Inter',sans-serif;transition:all 0.2s}
+    .gol-slider-tab.active{background:rgba(255,214,0,0.1);border-color:rgba(255,214,0,0.4);color:var(--color-accent)}
   </style>
 </head>
 <body>
@@ -200,9 +206,11 @@
   <div class="gol-results-badge">R&Eacute;SULTATS</div>
   <h2>R&eacute;sultats r&eacute;els</h2>
   <p class="gol-results-sub">G&eacute;n&eacute;r&eacute; en quelques secondes avec GolBody</p>
+  <div class="gol-slider-gender"><button class="gol-slider-gender-btn active" data-gender="f">Femmes</button><button class="gol-slider-gender-btn" data-gender="m">Hommes</button></div>
+  <div class="gol-slider-tabs" id="sliderTabs"><button class="gol-slider-tab active" data-index="0">Plage</button><button class="gol-slider-tab" data-index="1">Salle de sport</button><button class="gol-slider-tab" data-index="2">Pilates</button></div>
   <div class="gol-slider" id="slider">
-    <img class="gol-slider-after" src="/after_1.jpg" alt="Apr&egrave;s" draggable="false">
-    <div class="gol-slider-before" id="sliderBefore"><img src="/before_1.jpg" alt="Avant" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+    <img class="gol-slider-after" id="sliderAfterImg" src="/after_1.jpg" alt="Apr&egrave;s" draggable="false">
+    <div class="gol-slider-before" id="sliderBefore"><img id="sliderBeforeImg" src="/before_1.jpg" alt="Avant" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
     <div class="gol-slider-handle" id="sliderHandle">
       <div class="gol-slider-pill">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -300,6 +308,15 @@
   // Reveal
   var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});
+
+  // Gender + Tabs
+  var ALL_PAIRS={f:[{before:'/before_1.jpg',after:'/after_1.jpg'},{before:'/before_2.jpg',after:'/after_2.jpg'},{before:'/before_3.jpg',after:'/after_3.jpg'}],m:[{before:'/before_4.jpg',after:'/after_4.jpg'},{before:'/before_5.jpg',after:'/after_5.jpg'},{before:'/before_6.jpg',after:'/after_6.jpg'}]};
+  var TAB_LABELS={f:['Plage','Salle de sport','Pilates'],m:['Plage','Salle de sport','Casual']};
+  var currentGender='f',currentIdx=0,autoTimer=null;
+  var elAfter=document.getElementById('sliderAfterImg'),elBefore=document.getElementById('sliderBeforeImg'),tabsWrap=document.getElementById('sliderTabs');
+  function showPair(g,i){currentGender=g;currentIdx=i;var p=ALL_PAIRS[g][i];elAfter.src=p.after;elBefore.src=p.before;document.querySelectorAll('.gol-slider-gender-btn').forEach(function(b){b.classList.toggle('active',b.dataset.gender===g);});tabsWrap.innerHTML='';TAB_LABELS[g].forEach(function(l,idx){var btn=document.createElement('button');btn.className='gol-slider-tab'+(idx===i?' active':'');btn.textContent=l;btn.dataset.index=idx;btn.addEventListener('click',function(){showPair(currentGender,idx);});tabsWrap.appendChild(btn);});if(autoTimer)clearInterval(autoTimer);autoTimer=setInterval(function(){var nxt=(currentIdx+1)%ALL_PAIRS[currentGender].length;showPair(currentGender,nxt);},3500);}
+  document.querySelectorAll('.gol-slider-gender-btn').forEach(function(btn){btn.addEventListener('click',function(){showPair(btn.dataset.gender,0);});});
+  showPair('f',0);
 })();
 </script>
 </body>

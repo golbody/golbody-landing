@@ -149,8 +149,13 @@
     /* REVEAL */
     .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
-    .gol-slider-gender{display:flex;justify-content:center;gap:6px;margin-bottom:12px}.gol-slider-gender-btn{padding:6px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(255,214,0,0.25);background:transparent;color:var(--color-text-muted);font-family:'Inter',sans-serif;transition:all 0.2s;letter-spacing:0.04em;text-transform:uppercase}.gol-slider-gender-btn.active{background:rgba(255,214,0,0.15);border-color:var(--color-accent);color:var(--color-accent)}.gol-slider-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:20px}.gol-slider-tab{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,214,0,0.15);background:transparent;color:var(--color-text-muted);font-family:'Inter',sans-serif;transition:all 0.2s;letter-spacing:0.04em}.gol-slider-tab.active{background:rgba(255,214,0,0.12);border-color:var(--color-accent);color:var(--color-accent)}
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+    .gol-slider-gender{display:flex;justify-content:center;gap:6px;margin-bottom:12px}
+    .gol-slider-gender-btn{padding:6px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(255,214,0,0.25);background:transparent;color:var(--color-text-muted);font-family:'Inter',sans-serif;transition:all 0.2s;letter-spacing:0.04em;text-transform:uppercase}
+    .gol-slider-gender-btn.active{background:rgba(255,214,0,0.15);border-color:var(--color-accent);color:var(--color-accent)}
+    .gol-slider-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+    .gol-slider-tab{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,214,0,0.15);background:transparent;color:var(--color-text-muted);font-family:'Inter',sans-serif;transition:all 0.2s}
+    .gol-slider-tab.active{background:rgba(255,214,0,0.1);border-color:rgba(255,214,0,0.4);color:var(--color-accent)}
   </style>
 </head>
 <body>
@@ -304,15 +309,14 @@
   var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});
 
-  // Gender / Tab switcher
+  // Gender + Tabs
   var ALL_PAIRS={f:[{before:'/before_1.jpg',after:'/after_1.jpg'},{before:'/before_2.jpg',after:'/after_2.jpg'},{before:'/before_3.jpg',after:'/after_3.jpg'}],m:[{before:'/before_4.jpg',after:'/after_4.jpg'},{before:'/before_5.jpg',after:'/after_5.jpg'},{before:'/before_6.jpg',after:'/after_6.jpg'}]};
   var TAB_LABELS={f:['Plage','Salle de sport','Pilates'],m:['Plage','Salle de sport','Casual']};
   var currentGender='f',currentIdx=0,autoTimer=null;
-  function showPair(g,i){currentGender=g;currentIdx=i;var pair=ALL_PAIRS[g][i];document.getElementById('sliderAfterImg').src=pair.after;document.getElementById('sliderBeforeImg').src=pair.before;document.querySelectorAll('.gol-slider-gender-btn').forEach(function(b){b.classList.toggle('active',b.dataset.gender===g);});document.querySelectorAll('.gol-slider-tab').forEach(function(b,idx){b.classList.toggle('active',idx===i);b.textContent=TAB_LABELS[g][idx];});}
-  function startAuto(){if(autoTimer)clearInterval(autoTimer);autoTimer=setInterval(function(){var next=(currentIdx+1)%3;showPair(currentGender,next);},4000);}
-  document.querySelectorAll('.gol-slider-gender-btn').forEach(function(btn){btn.addEventListener('click',function(){showPair(btn.dataset.gender,0);startAuto();});});
-  document.querySelectorAll('.gol-slider-tab').forEach(function(btn){btn.addEventListener('click',function(){showPair(currentGender,parseInt(btn.dataset.index,10));startAuto();});});
-  startAuto();
+  var elAfter=document.getElementById('sliderAfterImg'),elBefore=document.getElementById('sliderBeforeImg'),tabsWrap=document.getElementById('sliderTabs');
+  function showPair(g,i){currentGender=g;currentIdx=i;var p=ALL_PAIRS[g][i];elAfter.src=p.after;elBefore.src=p.before;document.querySelectorAll('.gol-slider-gender-btn').forEach(function(b){b.classList.toggle('active',b.dataset.gender===g);});tabsWrap.innerHTML='';TAB_LABELS[g].forEach(function(l,idx){var btn=document.createElement('button');btn.className='gol-slider-tab'+(idx===i?' active':'');btn.textContent=l;btn.dataset.index=idx;btn.addEventListener('click',function(){showPair(currentGender,idx);});tabsWrap.appendChild(btn);});if(autoTimer)clearInterval(autoTimer);autoTimer=setInterval(function(){var nxt=(currentIdx+1)%ALL_PAIRS[currentGender].length;showPair(currentGender,nxt);},3500);}
+  document.querySelectorAll('.gol-slider-gender-btn').forEach(function(btn){btn.addEventListener('click',function(){showPair(btn.dataset.gender,0);});});
+  showPair('f',0);
 })();
 </script>
 </body>

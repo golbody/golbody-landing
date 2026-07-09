@@ -2097,7 +2097,7 @@
       "Make the abs visible": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle abdominal definition: slightly more visible abs with natural lighting, as if the person works out occasionally. Do not change body size or proportions.",
       "Make the pectorals more developed": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the chest: slightly more visible pectorals with natural shape, as if the person works out occasionally. Do not change body size or proportions.",
       "Make the thighs more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the thighs: slightly more visible quadriceps and leg tone, as if the person works out occasionally. Do not change body size or proportions.",
-      "Make the body leaner and more defined": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only make the body slightly leaner with subtle muscle definition and reduced body fat, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the body leaner and more defined": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only make the body slightly leaner with subtle muscle definition and more sculpted silhouette, as if the person works out occasionally. Do not change body size or proportions.",
       "Make the back more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the back: slightly more visible trapezius and latissimus dorsi, as if the person works out occasionally. Do not change body size or proportions."
     };
 
@@ -2120,12 +2120,14 @@
 
         const selected = Array.from(transformGrid.querySelectorAll('.transform-btn.selected')).map(btn => btn.dataset.value);
         const extra = promptExtra.value.trim();
-        let promptText = "Transform this person's body to be very muscular and athletic, keep the face, clothes, pose and background exactly the same, photorealistic";
+        let promptText = "Edit only the body of this person: significantly more muscular and athletic physique, larger chest, broader shoulders, bigger arms, more defined abs. Keep the face, skin tone, hair, clothing, pose, and background completely unchanged. Result must look like a real unedited photograph.";
         if (selected.length > 0) {
           const detailedPrompts = selected.map(key => PROMPTS[key] || key);
-          promptText = detailedPrompts.join('. ') + '. Keep all other details of the photo identical, photorealistic';
+          promptText = detailedPrompts.join('. ');
+        } else if (extra) {
+          promptText = extra;
         }
-        if (extra) {
+        if (selected.length > 0 && extra) {
           promptText += '. ' + extra;
         }
 

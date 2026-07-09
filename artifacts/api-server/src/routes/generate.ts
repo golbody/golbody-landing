@@ -5,10 +5,11 @@ const router = Router();
 
 const FAL_API_KEY = process.env["FAL_API_KEY"];
 const FAL_QUEUE_SUBMIT = "https://queue.fal.run/fal-ai/flux-pro/kontext";
+const FAL_QUEUE_REQUESTS = "https://queue.fal.run";
 const FAL_QUEUE_STATUS = (id: string) =>
-  `https://queue.fal.run/fal-ai/flux-pro/kontext/requests/${id}/status`;
+  `${FAL_QUEUE_REQUESTS}/requests/${id}/status`;
 const FAL_QUEUE_RESULT = (id: string) =>
-  `https://queue.fal.run/fal-ai/flux-pro/kontext/requests/${id}`;
+  `${FAL_QUEUE_REQUESTS}/requests/${id}`;
 
 function extractImageUrl(falData: Record<string, unknown>): string | null {
   if (falData.images && Array.isArray(falData.images) && falData.images[0]) {

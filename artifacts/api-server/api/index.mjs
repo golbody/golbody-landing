@@ -45896,8 +45896,9 @@ var logger = (0, import_pino.default)({
 var router2 = (0, import_express2.Router)();
 var FAL_API_KEY = process.env["FAL_API_KEY"];
 var FAL_QUEUE_SUBMIT = "https://queue.fal.run/fal-ai/flux-pro/kontext";
-var FAL_QUEUE_STATUS = (id) => `https://queue.fal.run/fal-ai/flux-pro/kontext/requests/${id}/status`;
-var FAL_QUEUE_RESULT = (id) => `https://queue.fal.run/fal-ai/flux-pro/kontext/requests/${id}`;
+var FAL_QUEUE_REQUESTS = "https://queue.fal.run";
+var FAL_QUEUE_STATUS = (id) => `${FAL_QUEUE_REQUESTS}/requests/${id}/status`;
+var FAL_QUEUE_RESULT = (id) => `${FAL_QUEUE_REQUESTS}/requests/${id}`;
 function extractImageUrl(falData) {
   if (falData.images && Array.isArray(falData.images) && falData.images[0]) {
     const first = falData.images[0];
@@ -59165,8 +59166,8 @@ app.use(
   })
 );
 app.use((0, import_cors.default)());
-app.use(import_express5.default.json());
-app.use(import_express5.default.urlencoded({ extended: true }));
+app.use(import_express5.default.json({ limit: "10mb" }));
+app.use(import_express5.default.urlencoded({ extended: true, limit: "10mb" }));
 app.use(payments_default);
 app.use("/api", routes_default);
 var app_default = app;

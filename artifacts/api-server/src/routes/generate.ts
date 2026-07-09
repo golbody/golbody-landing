@@ -4,8 +4,11 @@ import { logger } from "../lib/logger";
 const router = Router();
 
 const FAL_API_KEY = process.env["FAL_API_KEY"];
-const FAL_MODEL = "fal-ai/flux-pro/kontext";
-const FAL_QUEUE_BASE = `https://queue.fal.run/${FAL_MODEL}`;
+const FAL_QUEUE_SUBMIT = "https://queue.fal.run/fal-ai/flux-pro/kontext";
+const FAL_QUEUE_STATUS = (id: string) =>
+  `https://queue.fal.run/fal-ai/flux-pro/kontext/requests/${id}/status`;
+const FAL_QUEUE_RESULT = (id: string) =>
+  `https://queue.fal.run/fal-ai/flux-pro/kontext/requests/${id}`;
 
 function extractImageUrl(falData: Record<string, unknown>): string | null {
   if (falData.images && Array.isArray(falData.images) && falData.images[0]) {
@@ -16,20 +19,26 @@ function extractImageUrl(falData: Record<string, unknown>): string | null {
     const img = falData.image as Record<string, unknown> | string;
     return typeof img === "string" ? img : (img.url as string) || null;
   }
-  if (falData.output && typeof falData.output === "object") {
-    const out = falData.output as Record<string, unknown>;
-    if (Array.isArray(out.images) && out.images[0]) {
-      const first = out.images[0] as Record<string, unknown> | string;
-      return typeof first === "string" ? first : (first.url as string) || null;
-    }
+  if (
+    falData.output &&
+    typeof falData.output === "object" &&
+    Array.isArray((falData.output as Record<string, unknown>).images)
+  ) {
+    const images = (falData.output as Record<string, unknown>).images as unknown[];
+    const first = images[0] as Record<string, unknown> | string;
+    return typeof first === "string" ? first : (first.url as string) || null;
   }
-  if (typeof falData.url === "string") return falData.url;
-  if (falData.data && typeof falData.data === "object") {
-    const d = falData.data as Record<string, unknown>;
-    if (Array.isArray(d.images) && d.images[0]) {
-      const first = d.images[0] as Record<string, unknown> | string;
-      return typeof first === "string" ? first : (first.url as string) || null;
-    }
+  if (typeof falData.url === "string") {
+    return falData.url;
+  }
+  if (
+    falData.data &&
+    typeof falData.data === "object" &&
+    Array.isArray((falData.data as Record<string, unknown>).images)
+  ) {
+    const images = (falData.data as Record<string, unknown>).images as unknown[];
+    const first = images[0] as Record<string, unknown> | string;
+    return typeof first === "string" ? first : (first.url as string) || null;
   }
   return null;
 }
@@ -37,34 +46,52 @@ function extractImageUrl(falData: Record<string, unknown>): string | null {
 router.post("/generate", async (req: Request, res: ExpressResponse) => {
   try {
     const { imageUrl, prompt } = req.body;
+
     if (!imageUrl || !prompt) {
       res.status(400).json({ error: "Missing imageUrl or prompt" });
       return;
     }
+
     if (!FAL_API_KEY) {
       logger.error("FAL_API_KEY is not configured");
       res.status(500).json({ error: "Server configuration error" });
       return;
     }
-    logger.info({ promptLength: prompt.length }, "Submitting to fal.ai queue");
-    const falRes = await fetch(FAL_QUEUE_BASE, {
+
+    logger.info(
+      { imageUrlLength: imageUrl.length, promptLength: prompt.length },
+      "Submitting to fal.ai queue",
+    );
+
+    const falRes = await fetch(FAL_QUEUE_SUBMIT, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Key ${FAL_API_KEY}` },
-      body: JSON.stringify({ prompt, image_url: imageUrl }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Key ${FAL_API_KEY}`,
+      },
+      body: JSON.stringify({
+        prompt,
+        image_url: imageUrl,
+      }),
     });
+
     if (!falRes.ok) {
       const text = await falRes.text();
       logger.error({ status: falRes.status, body: text }, "fal.ai queue submit error");
       res.status(502).json({ error: "fal.ai returned an error" });
       return;
     }
-    const data = (await falRes.json()) as Record<string, unknown>;
-    const requestId = (data.request_id || data.requestId) as string;
+
+    const falData = (await falRes.json()) as { request_id?: string };
+    const requestId = falData.request_id;
+
     if (!requestId) {
-      logger.error({ data }, "No request_id from fal.ai");
-      res.status(502).json({ error: "No request_id from fal.ai" });
+      logger.error({ falData }, "No request_id in fal.ai queue response");
+      res.status(502).json({ error: "No request_id returned by generation API" });
       return;
     }
+
+    logger.info({ requestId }, "fal.ai job submitted");
     res.json({ requestId });
   } catch (err) {
     logger.error({ err }, "Error in POST /api/generate");
@@ -74,14 +101,38 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
 
 router.get("/generate/status/:requestId", async (req: Request, res: ExpressResponse) => {
   try {
-    if (!FAL_API_KEY) { res.status(500).json({ error: "Server configuration error" }); return; }
     const { requestId } = req.params;
-    const statusRes = await fetch(`${FAL_QUEUE_BASE}/requests/${requestId}/status`, {
-      headers: { Authorization: `Key ${FAL_API_KEY}` },
+
+    if (!FAL_API_KEY) {
+      res.status(500).json({ error: "Server configuration error" });
+      return;
+    }
+
+    const falRes = await fetch(FAL_QUEUE_STATUS(requestId), {
+      headers: {
+        Authorization: `Key ${FAL_API_KEY}`,
+      },
     });
-    if (!statusRes.ok) { res.status(502).json({ error: "fal.ai status error" }); return; }
-    const data = (await statusRes.json()) as Record<string, unknown>;
-    res.json({ status: data.status });
+
+    if (!falRes.ok) {
+      const text = await falRes.text();
+      logger.error({ status: falRes.status, body: text }, "fal.ai queue status error");
+      res.status(502).json({ error: "fal.ai returned an error" });
+      return;
+    }
+
+    const falData = (await falRes.json()) as { status?: string };
+    const rawStatus = falData.status || "UNKNOWN";
+
+    // Map fal.ai statuses to a simple set for the client
+    const mappedStatus =
+      rawStatus === "COMPLETED"
+        ? "COMPLETED"
+        : rawStatus === "FAILED"
+          ? "FAILED"
+          : "IN_PROGRESS";
+
+    res.json({ status: mappedStatus });
   } catch (err) {
     logger.error({ err }, "Error in GET /api/generate/status");
     res.status(500).json({ error: "Internal server error" });
@@ -90,20 +141,38 @@ router.get("/generate/status/:requestId", async (req: Request, res: ExpressRespo
 
 router.get("/generate/result/:requestId", async (req: Request, res: ExpressResponse) => {
   try {
-    if (!FAL_API_KEY) { res.status(500).json({ error: "Server configuration error" }); return; }
     const { requestId } = req.params;
-    const resultRes = await fetch(`${FAL_QUEUE_BASE}/requests/${requestId}`, {
-      headers: { Authorization: `Key ${FAL_API_KEY}` },
+
+    if (!FAL_API_KEY) {
+      res.status(500).json({ error: "Server configuration error" });
+      return;
+    }
+
+    const falRes = await fetch(FAL_QUEUE_RESULT(requestId), {
+      headers: {
+        Authorization: `Key ${FAL_API_KEY}`,
+      },
     });
-    if (!resultRes.ok) { res.status(502).json({ error: "fal.ai result error" }); return; }
-    const falData = (await resultRes.json()) as Record<string, unknown>;
-    const imageUrl = extractImageUrl(falData);
-    if (!imageUrl) {
-      logger.error({ falData }, "No image URL in fal.ai result");
+
+    if (!falRes.ok) {
+      const text = await falRes.text();
+      logger.error({ status: falRes.status, body: text }, "fal.ai queue result error");
+      res.status(502).json({ error: "fal.ai returned an error" });
+      return;
+    }
+
+    const falData = (await falRes.json()) as Record<string, unknown>;
+    logger.info({ keys: Object.keys(falData) }, "fal.ai queue result received");
+
+    const imageResultUrl = extractImageUrl(falData);
+
+    if (!imageResultUrl) {
+      logger.error({ falData }, "No image URL found in fal.ai queue result");
       res.status(502).json({ error: "No image returned by generation API" });
       return;
     }
-    res.json({ imageUrl });
+
+    res.json({ imageUrl: imageResultUrl });
   } catch (err) {
     logger.error({ err }, "Error in GET /api/generate/result");
     res.status(500).json({ error: "Internal server error" });

@@ -3,12 +3,19 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 
-// gemini-2.5-flash added native image generation support.
-// API version v1beta is the correct endpoint for image output on this model.
-const GEMINI_MODEL = "gemini-2.5-flash-image";
-const GEMINI_API_VERSION = "v1beta";
+// FAL API endpoint for image editing via nano-banana-2
+const FAL_MODEL = "fal-ai/nano-banana-2/edit";
+const FAL_URL = `https://fal.run/${FAL_MODEL}`;
 
-// Synchronous image generation via Gemini REST API
+// Simple prompt sanitization to avoid injection or disallowed content
+function safePrompt(prompt: string): string {
+  return prompt
+    .replace(/[<>]/g, "")
+    .trim()
+    .slice(0, 500);
+}
+
+// Synchronous image generation via FAL REST API
 router.post("/generate", async (req: Request, res: ExpressResponse) => {
   try {
     const { imageUrl, prompt } = req.body;
@@ -23,47 +30,64 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
       res.status(400).json({ error: "Invalid image format" });
       return;
     }
-    const mimeType = matches[1];
     const base64Data = matches[2];
 
-    const apiKey = process.env["GEMINI_API_KEY"];
-    const geminiUrl = `https://generativelanguage.googleapis.com/${GEMINI_API_VERSION}/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+    const apiKey = process.env["FAL_API_KEY"];
+    if (!apiKey) {
+      logger.error("FAL_API_KEY is not set");
+      res.status(500).json({ error: "FAL_API_KEY is not configured" });
+      return;
+    }
 
-    const geminiRes = await fetch(geminiUrl, {
+    const sanitizedPrompt = safePrompt(prompt);
+
+    const falRes = await fetch(FAL_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Key ${apiKey}`,
+      },
       body: JSON.stringify({
-        contents: [{
-          parts: [
-            { inline_data: { mime_type: mimeType, data: base64Data } },
-            { text: prompt }
-          ]
-        }],
-        generationConfig: {
-          responseModalities: ["image", "text"]
-        }
-      })
+        image_url: `data:image/png;base64,${base64Data}`,
+        prompt: sanitizedPrompt,
+      }),
     });
 
-    const geminiData = await geminiRes.json() as Record<string, unknown>;
-    logger.info({ status: geminiRes.status, data: JSON.stringify(geminiData).slice(0, 500) }, "Gemini raw response");
+    const falData = await falRes.json() as Record<string, unknown>;
+    logger.info(
+      { status: falRes.status, data: JSON.stringify(falData).slice(0, 500) },
+      "FAL raw response"
+    );
 
-    if (!geminiRes.ok) {
-      logger.error({ status: geminiRes.status, data: geminiData }, "Gemini API error");
-      res.status(502).json({ error: "Gemini API error", details: geminiData });
+    if (!falRes.ok) {
+      logger.error({ status: falRes.status, data: falData }, "FAL API error");
+      res.status(502).json({ error: "FAL API error", details: falData });
       return;
     }
 
-    const candidates = geminiData.candidates as Array<{ content: { parts: Array<{ inlineData?: { data: string; mimeType: string }; text?: string }> } }>;
-    const imagePart = candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-    if (!imagePart?.inlineData?.data) {
-      logger.error({ candidates: JSON.stringify(candidates).slice(0, 500) }, "No image in Gemini response");
-      res.status(502).json({ error: "No image returned by Gemini" });
+    // FAL returns { images: [{ url: string }] }
+    const images = (falData.images || falData.image) as
+      | Array<{ url: string }>
+      | { url: string }
+      | undefined;
+
+    let resultImageUrl: string | undefined;
+    if (Array.isArray(images) && images[0]?.url) {
+      resultImageUrl = images[0].url;
+    } else if (images && typeof images === "object" && "url" in images) {
+      resultImageUrl = (images as { url: string }).url;
+    }
+
+    if (!resultImageUrl) {
+      logger.error(
+        { data: JSON.stringify(falData).slice(0, 500) },
+        "No image in FAL response"
+      );
+      res.status(502).json({ error: "No image returned by FAL" });
       return;
     }
 
-    const resultDataUrl = `data:${imagePart.inlineData.mimeType};base64,${imagePart.inlineData.data}`;
-    res.json({ imageUrl: resultDataUrl });
+    res.json({ imageUrl: resultImageUrl });
   } catch (err) {
     logger.error({ err }, "Error in POST /api/generate");
     res.status(500).json({ error: "Internal server error" });

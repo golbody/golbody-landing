@@ -151,9 +151,7 @@
     .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
     .reveal.visible { opacity: 1; transform: translateY(0); }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
-    .gol-slider-gender{display:flex;justify-content:center;gap:6px;margin-bottom:12px}
-    .gol-slider-gender-btn{padding:6px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid rgba(255,214,0,0.25);background:transparent;color:var(--color-text-muted);font-family:'Inter',sans-serif;transition:all 0.2s;letter-spacing:0.04em;text-transform:uppercase}
-    .gol-slider-gender-btn.active{background:rgba(255,214,0,0.15);border-color:var(--color-accent);color:var(--color-accent)}
+    .gol-carousel-row2 .gol-carousel-track{animation-direction:reverse}
     .gol-slider-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
     .gol-slider-tab{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,214,0,0.15);background:transparent;color:var(--color-text-muted);font-family:'Inter',sans-serif;transition:all 0.2s}
     .gol-slider-tab.active{background:rgba(255,214,0,0.1);border-color:rgba(255,214,0,0.4);color:var(--color-accent)}
@@ -207,15 +205,24 @@
   <div class="gol-results-badge">R&Eacute;SULTATS</div>
   <h2>R&eacute;sultats r&eacute;els</h2>
   <p class="gol-results-sub">G&eacute;n&eacute;r&eacute; en quelques secondes avec GolBody</p>
-  <div class="gol-slider-gender"><button class="gol-slider-gender-btn active" data-gender="f">Femmes</button><button class="gol-slider-gender-btn" data-gender="m">Hommes</button></div>
-  <div class="gol-carousel" id="golCarousel">
-    <div class="gol-carousel-track" id="golCarouselTrack">
-      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_1.jpg" class="gol-carousel-img" data-pair="0" data-type="before"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_1.jpg" class="gol-carousel-img" data-pair="0" data-type="after"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
-      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_2.jpg" class="gol-carousel-img" data-pair="1" data-type="before"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_2.jpg" class="gol-carousel-img" data-pair="1" data-type="after"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
-      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_3.jpg" class="gol-carousel-img" data-pair="2" data-type="before"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_3.jpg" class="gol-carousel-img" data-pair="2" data-type="after"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
-      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_1.jpg" class="gol-carousel-img" data-pair="0" data-type="before" data-dup="1"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_1.jpg" class="gol-carousel-img" data-pair="0" data-type="after" data-dup="1"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
-      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_2.jpg" class="gol-carousel-img" data-pair="1" data-type="before" data-dup="1"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_2.jpg" class="gol-carousel-img" data-pair="1" data-type="after" data-dup="1"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
-      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_3.jpg" class="gol-carousel-img" data-pair="2" data-type="before" data-dup="1"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_3.jpg" class="gol-carousel-img" data-pair="2" data-type="after" data-dup="1"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+  <div class="gol-carousel" style="margin-bottom:12px">
+    <div class="gol-carousel-track">
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_1.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_1.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_2.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_2.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_3.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_3.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_1.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_1.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_2.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_2.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_3.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_3.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+    </div>
+  </div>
+  <div class="gol-carousel gol-carousel-row2">
+    <div class="gol-carousel-track">
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_4.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_4.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_5.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_5.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_6.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_6.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_4.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_4.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_5.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_5.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_6.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_6.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
     </div>
   </div>
 </section>
@@ -278,11 +285,6 @@
   var so=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){animateCounter(e.target);so.unobserve(e.target);}});},{threshold:0.5});
   document.querySelectorAll('.gol-stats-value[data-target]').forEach(function(el){so.observe(el);});
 
-  // Carousel
-  var CAROUSEL_PAIRS={f:[{before:'/before_1.jpg',after:'/after_1.jpg'},{before:'/before_2.jpg',after:'/after_2.jpg'},{before:'/before_3.jpg',after:'/after_3.jpg'}],m:[{before:'/before_4.jpg',after:'/after_4.jpg'},{before:'/before_5.jpg',after:'/after_5.jpg'},{before:'/before_6.jpg',after:'/after_6.jpg'}]};
-  function switchCarouselGender(gender){var pairs=CAROUSEL_PAIRS[gender];document.querySelectorAll('.gol-carousel-img').forEach(function(img){var idx=parseInt(img.dataset.pair);var type=img.dataset.type;img.src=pairs[idx][type];});var track=document.getElementById('golCarouselTrack');track.style.animation='none';track.offsetHeight;track.style.animation='';document.querySelectorAll('.gol-slider-gender-btn').forEach(function(btn){btn.classList.toggle('active',btn.dataset.gender===gender);});}
-  document.querySelectorAll('.gol-slider-gender-btn').forEach(function(btn){btn.addEventListener('click',function(){switchCarouselGender(btn.dataset.gender);});});
-
   // Testimonials
   var revs=[["J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !","@muscu_alex"],["En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.","Julien K."],["J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.","Thomas_B"],["Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.","@fit_laura"],["J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.","Kevin M."],["Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.","@romain_f"],["Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.","Sophie L."],["J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.","@startup_marc"]];
   function mkCard(t,n){return'<div class="gol-testimonial-card"><div class="gol-testimonial-stars">★★★★★</div><p class="gol-testimonial-text">'+t+'</p><span class="gol-testimonial-name">'+n+'</span></div>';}
@@ -298,8 +300,6 @@
   var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});
 
-  // Default carousel gender
-  switchCarouselGender('f');
 })();
 </script>
 </body>

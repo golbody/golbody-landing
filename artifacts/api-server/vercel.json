@@ -1,4 +1,6 @@
 {
+  "installCommand": "echo skip",
+  "buildCommand": "echo done",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index" },
     { "source": "/webhook", "destination": "/api/index" },

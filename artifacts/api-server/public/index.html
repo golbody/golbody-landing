@@ -79,14 +79,15 @@
     .gol-results-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,214,0,0.1); border: 1px solid rgba(255,214,0,0.25); border-radius: 40px; font-size: 12px; font-weight: 600; color: var(--color-accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 24px; }
     .gol-results h2 { font-size: 40px; font-weight: 800; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; }
     .gol-results-sub { font-size: 16px; color: var(--color-text-muted); margin-bottom: 48px; }
-    .gol-slider { position: relative; width: 100%; max-width: 540px; margin: 0 auto; border-radius: 20px; overflow: hidden; cursor: ew-resize; user-select: none; box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,214,0,0.15); touch-action: none; }
-    .gol-slider-after { display: block; width: 100%; aspect-ratio: 3/4; object-fit: cover; }
-    .gol-slider-before { position: absolute; inset: 0; overflow: hidden; width: 50%; }
-    .gol-slider-before img { display: block; width: 100%; height: 100%; object-fit: cover; }
-    .gol-slider-handle { position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: 3px; background: #FFD600; pointer-events: none; }
-    .gol-slider-pill { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 44px; height: 44px; background: #FFD600; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(255,214,0,0.5); pointer-events: none; }
-    .gol-slider-label { position: absolute; top: 16px; padding: 6px 14px; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); border-radius: 20px; font-size: 12px; font-weight: 600; color: #fff; pointer-events: none; }
-    .gol-slider-label-before { left: 16px; } .gol-slider-label-after { right: 16px; color: var(--color-accent); }
+    .gol-carousel{overflow:hidden;width:100%;margin-top:32px;mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent)}
+    .gol-carousel-track{display:flex;gap:12px;width:max-content;animation:carouselScroll 20s linear infinite}
+    .gol-carousel-track:hover{animation-play-state:paused}
+    @keyframes carouselScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .gol-carousel-pair{display:flex;gap:3px;border-radius:16px;overflow:hidden;flex-shrink:0}
+    .gol-carousel-half{position:relative;flex-shrink:0}
+    .gol-carousel-img{width:185px;height:260px;object-fit:cover;display:block}
+    .gol-carousel-badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.05em}
+    .gol-carousel-badge-after{background:rgba(255,214,0,0.15);color:var(--color-accent);border:1px solid rgba(255,214,0,0.3)}
     .gol-slider-note { margin-top: 20px; font-size: 13px; color: #666; }
 
     /* TESTIMONIALS */
@@ -207,20 +208,16 @@
   <h2>R&eacute;sultats r&eacute;els</h2>
   <p class="gol-results-sub">G&eacute;n&eacute;r&eacute; en quelques secondes avec GolBody</p>
   <div class="gol-slider-gender"><button class="gol-slider-gender-btn active" data-gender="f">Femmes</button><button class="gol-slider-gender-btn" data-gender="m">Hommes</button></div>
-  <div class="gol-slider-tabs" id="sliderTabs"><button class="gol-slider-tab active" data-index="0">Plage</button><button class="gol-slider-tab" data-index="1">Salle de sport</button><button class="gol-slider-tab" data-index="2">Pilates</button></div>
-  <div class="gol-slider" id="slider">
-    <img class="gol-slider-after" id="sliderAfterImg" src="/after_1.jpg" alt="Apr&egrave;s" draggable="false">
-    <div class="gol-slider-before" id="sliderBefore"><img id="sliderBeforeImg" src="/before_1.jpg" alt="Avant" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
-    <div class="gol-slider-handle" id="sliderHandle">
-      <div class="gol-slider-pill">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left:-4px"><polyline points="9 18 15 12 9 6"></polyline></svg>
-      </div>
+  <div class="gol-carousel" id="golCarousel">
+    <div class="gol-carousel-track" id="golCarouselTrack">
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_1.jpg" class="gol-carousel-img" data-pair="0" data-type="before"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_1.jpg" class="gol-carousel-img" data-pair="0" data-type="after"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_2.jpg" class="gol-carousel-img" data-pair="1" data-type="before"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_2.jpg" class="gol-carousel-img" data-pair="1" data-type="after"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_3.jpg" class="gol-carousel-img" data-pair="2" data-type="before"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_3.jpg" class="gol-carousel-img" data-pair="2" data-type="after"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_1.jpg" class="gol-carousel-img" data-pair="0" data-type="before" data-dup="1"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_1.jpg" class="gol-carousel-img" data-pair="0" data-type="after" data-dup="1"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_2.jpg" class="gol-carousel-img" data-pair="1" data-type="before" data-dup="1"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_2.jpg" class="gol-carousel-img" data-pair="1" data-type="after" data-dup="1"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+      <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_3.jpg" class="gol-carousel-img" data-pair="2" data-type="before" data-dup="1"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_3.jpg" class="gol-carousel-img" data-pair="2" data-type="after" data-dup="1"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
     </div>
-    <span class="gol-slider-label gol-slider-label-before">Avant</span>
-    <span class="gol-slider-label gol-slider-label-after">Apr&egrave;s &mdash; GolBody</span>
   </div>
-  <p class="gol-slider-note">&#8592; Glisse pour comparer &rarr;</p>
 </section>
 
 <section class="gol-testimonials" id="avis">
@@ -281,18 +278,10 @@
   var so=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){animateCounter(e.target);so.unobserve(e.target);}});},{threshold:0.5});
   document.querySelectorAll('.gol-stats-value[data-target]').forEach(function(el){so.observe(el);});
 
-  // Slider
-  var slider=document.getElementById('slider'),before=document.getElementById('sliderBefore'),handle=document.getElementById('sliderHandle'),dragging=false;
-  function setPos(p){p=Math.max(5,Math.min(95,p));before.style.width=p+'%';handle.style.left=p+'%';}
-  function getPos(e){var r=slider.getBoundingClientRect(),cx=e.touches?e.touches[0].clientX:e.clientX;return((cx-r.left)/r.width)*100;}
-  slider.addEventListener('mousedown',function(e){dragging=true;setPos(getPos(e));e.preventDefault();});
-  slider.addEventListener('touchstart',function(e){dragging=true;setPos(getPos(e));},{passive:true});
-  document.addEventListener('mousemove',function(e){if(dragging)setPos(getPos(e));});
-  document.addEventListener('touchmove',function(e){if(dragging)setPos(getPos(e));},{passive:true});
-  document.addEventListener('mouseup',function(){dragging=false;});
-  document.addEventListener('touchend',function(){dragging=false;});
-  var demoDone=false;
-  new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting&&!demoDone&&!dragging){demoDone=true;var s0=performance.now();function sw(now){var t=Math.min((now-s0)/1600,1),ez=t<0.5?2*t*t:-1+(4-2*t)*t;setPos(50+(20-50)*ez);if(t<1)requestAnimationFrame(sw);else setTimeout(function(){var s1=performance.now();function sb(n){var t2=Math.min((n-s1)/1600,1),ez2=t2<0.5?2*t2*t2:-1+(4-2*t2)*t2;setPos(20+(50-20)*ez2);if(t2<1)requestAnimationFrame(sb);}requestAnimationFrame(sb);},400);}requestAnimationFrame(sw);}});},{threshold:0.4}).observe(slider);
+  // Carousel
+  var CAROUSEL_PAIRS={f:[{before:'/before_1.jpg',after:'/after_1.jpg'},{before:'/before_2.jpg',after:'/after_2.jpg'},{before:'/before_3.jpg',after:'/after_3.jpg'}],m:[{before:'/before_4.jpg',after:'/after_4.jpg'},{before:'/before_5.jpg',after:'/after_5.jpg'},{before:'/before_6.jpg',after:'/after_6.jpg'}]};
+  function switchCarouselGender(gender){var pairs=CAROUSEL_PAIRS[gender];document.querySelectorAll('.gol-carousel-img').forEach(function(img){var idx=parseInt(img.dataset.pair);var type=img.dataset.type;img.src=pairs[idx][type];});var track=document.getElementById('golCarouselTrack');track.style.animation='none';track.offsetHeight;track.style.animation='';document.querySelectorAll('.gol-slider-gender-btn').forEach(function(btn){btn.classList.toggle('active',btn.dataset.gender===gender);});}
+  document.querySelectorAll('.gol-slider-gender-btn').forEach(function(btn){btn.addEventListener('click',function(){switchCarouselGender(btn.dataset.gender);});});
 
   // Testimonials
   var revs=[["J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !","@muscu_alex"],["En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.","Julien K."],["J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.","Thomas_B"],["Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.","@fit_laura"],["J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.","Kevin M."],["Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.","@romain_f"],["Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.","Sophie L."],["J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.","@startup_marc"]];
@@ -309,14 +298,8 @@
   var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});
 
-  // Gender + Tabs
-  var ALL_PAIRS={f:[{before:'/before_1.jpg',after:'/after_1.jpg'},{before:'/before_2.jpg',after:'/after_2.jpg'},{before:'/before_3.jpg',after:'/after_3.jpg'}],m:[{before:'/before_4.jpg',after:'/after_4.jpg'},{before:'/before_5.jpg',after:'/after_5.jpg'},{before:'/before_6.jpg',after:'/after_6.jpg'}]};
-  var TAB_LABELS={f:['Plage','Salle de sport','Pilates'],m:['Plage','Salle de sport','Casual']};
-  var currentGender='f',currentIdx=0,autoTimer=null;
-  var elAfter=document.getElementById('sliderAfterImg'),elBefore=document.getElementById('sliderBeforeImg'),tabsWrap=document.getElementById('sliderTabs');
-  function showPair(g,i){currentGender=g;currentIdx=i;var p=ALL_PAIRS[g][i];elAfter.src=p.after;elBefore.src=p.before;document.querySelectorAll('.gol-slider-gender-btn').forEach(function(b){b.classList.toggle('active',b.dataset.gender===g);});tabsWrap.innerHTML='';TAB_LABELS[g].forEach(function(l,idx){var btn=document.createElement('button');btn.className='gol-slider-tab'+(idx===i?' active':'');btn.textContent=l;btn.dataset.index=idx;btn.addEventListener('click',function(){showPair(currentGender,idx);});tabsWrap.appendChild(btn);});if(autoTimer)clearInterval(autoTimer);autoTimer=setInterval(function(){var nxt=(currentIdx+1)%ALL_PAIRS[currentGender].length;showPair(currentGender,nxt);},3500);}
-  document.querySelectorAll('.gol-slider-gender-btn').forEach(function(btn){btn.addEventListener('click',function(){showPair(btn.dataset.gender,0);});});
-  showPair('f',0);
+  // Default carousel gender
+  switchCarouselGender('f');
 })();
 </script>
 </body>

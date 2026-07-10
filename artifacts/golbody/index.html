@@ -193,6 +193,14 @@
     .gol-pricing-card:not(.gol-pricing-card--featured) .gol-pricing-btn-full:hover { background: rgba(255,255,255,0.07) !important; border-color: rgba(255,255,255,0.4) !important; }
     @media (max-width: 768px) { .gol-pricing { padding: 80px 24px; } .gol-pricing h2 { font-size: 28px; } .gol-pricing-grid { grid-template-columns: 1fr; gap: 16px; max-width: 420px; } .gol-pricing-card:first-child, .gol-pricing-card:last-child { border-radius: 20px; border: 1px solid rgba(255,214,0,0.14); } }
 
+
+    .gol-cta-loader{position:fixed;inset:0;background:#0d0d1a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;opacity:0;pointer-events:none;transition:opacity .2s ease}
+    .gol-cta-loader.active{opacity:1;pointer-events:all}
+    .gol-cta-loader-logo{font-size:36px;font-weight:800;color:#fff;letter-spacing:-1px;font-family:'Inter',sans-serif}
+    .gol-cta-loader-logo span{color:#FFD600}
+    .gol-cta-loader-bar-wrap{width:220px;height:2px;background:rgba(255,214,0,.12);border-radius:2px;overflow:hidden}
+    .gol-cta-loader-bar{height:100%;width:0;background:linear-gradient(90deg,#FFD600,#fffacd);border-radius:2px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+    .gol-cta-loader-text{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;font-family:'Inter',sans-serif}
   </style>
 </head>
 <body>
@@ -418,7 +426,25 @@
   var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});
 
+
+  document.querySelectorAll('a[href="register.html"]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.preventDefault();
+      var overlay=document.getElementById('golCtaLoader');
+      var bar=document.getElementById('golCtaBar');
+      overlay.classList.add('active');
+      setTimeout(function(){bar.style.width='100%';},40);
+      setTimeout(function(){window.location.href='register.html';},1500);
+    });
+  });
+
 })();
 </script>
+
+  <div class="gol-cta-loader" id="golCtaLoader">
+    <div class="gol-cta-loader-logo">Gol<span>Body</span></div>
+    <div class="gol-cta-loader-bar-wrap"><div class="gol-cta-loader-bar" id="golCtaBar"></div></div>
+    <div class="gol-cta-loader-text">Pr&eacute;paration de votre transformation&hellip;</div>
+  </div>
 </body>
 </html>

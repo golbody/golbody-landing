@@ -3,126 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion — GolBody</title>
+  <title>Connexion &mdash; GolBody</title>
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <style>
-    body {
-      margin: 0;
-      background: #111111;
-      color: #eeeeee;
-      font-family: Inter, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
-    .box {
-      text-align: center;
-      padding: 2rem;
-      width: 100%;
-      max-width: 360px;
-    }
-    h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #FFD600, #ccaa00);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 0.5rem;
-    }
-    p.subtitle {
-      color: #a0a0a0;
-      margin-bottom: 2rem;
-    }
-    input {
-      display: block;
-      width: 100%;
-      padding: 0.8rem 1rem;
-      margin-bottom: 1rem;
-      background: #1a1a2e;
-      border: 1px solid #222233;
-      border-radius: 10px;
-      color: #eeeeee;
-      font-size: 1rem;
-      box-sizing: border-box;
-      font-family: Inter, sans-serif;
-    }
-    input:focus {
-      outline: none;
-      border-color: #FFD600;
-    }
-    input::placeholder {
-      color: #6a6a6a;
-    }
-    button[type="submit"] {
-      background: #FFD600;
-      color: #111111;
-      border: none;
-      padding: 0.9rem 2rem;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      font-family: Inter, sans-serif;
-    }
-    button[type="submit"]:hover {
-      background: #ccaa00;
-    }
-    #error-msg {
-      color: #ff6b6b;
-      display: none;
-      font-size: 0.9rem;
-      margin-top: 0.75rem;
-    }
-    .signup-text {
-      margin-top: 1rem;
-      color: #a0a0a0;
-      font-size: 0.9rem;
-    }
-    .signup-text a {
-      color: #FFD600;
-      text-decoration: none;
-    }
-    .signup-text a:hover {
-      text-decoration: underline;
-    }
-  </style>
+    @keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#06060f url('/after_1.jpg') center/cover no-repeat;position:relative}
+    body::before{content:"";position:fixed;inset:0;background:linear-gradient(135deg,rgba(5,5,16,.93) 0%,rgba(10,8,0,.9) 100%);z-index:0}
+    body::after{content:"";position:fixed;width:700px;height:700px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(255,214,0,.07) 0%,transparent 60%);z-index:0;pointer-events:none}
+    .card{position:relative;z-index:1;width:100%;max-width:400px;margin:20px;background:rgba(10,10,22,.8);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(255,214,0,.13);border-radius:26px;padding:44px 40px 36px;box-shadow:0 40px 100px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.04);animation:cardIn .5s cubic-bezier(.4,0,.2,1) forwards;text-align:center;color:#fff}
+    .card-avatar{width:54px;height:54px;background:linear-gradient(135deg,#FFD600 0%,#c8a800 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:24px;font-weight:900;color:#111;box-shadow:0 6px 24px rgba(255,214,0,.28)}
+    .card h1{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+    .card-sub{font-size:13px;color:rgba(255,255,255,.38);margin-bottom:30px;line-height:1.55}
+    .card-sub strong{color:rgba(255,214,0,.8);font-weight:600}
+    .field{text-align:left;margin-bottom:15px}
+    .field label{display:block;font-size:11px;font-weight:600;color:rgba(255,255,255,.38);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+    input{display:block;width:100%;padding:13px 15px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:11px;color:#fff;font-size:14px;font-family:Inter,sans-serif;transition:border-color .2s,background .2s}
+    input:focus{outline:none;border-color:rgba(255,214,0,.5);background:rgba(255,214,0,.04)}
+    input::placeholder{color:rgba(255,255,255,.2)}
+    .btn-submit{width:100%;padding:14px;background:#FFD600;color:#111;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;margin-top:8px;transition:background .2s,transform .1s,box-shadow .2s;box-shadow:0 4px 22px rgba(255,214,0,.22);letter-spacing:-.2px}
+    .btn-submit:hover{background:#e6c000;box-shadow:0 6px 30px rgba(255,214,0,.32)}
+    .btn-submit:active{transform:scale(.98)}
+    #error-msg{color:#ff6b6b;display:none;font-size:13px;margin-top:12px}
+    .card-divider{height:1px;background:rgba(255,255,255,.06);margin:24px 0}
+    .card-link{font-size:13px;color:rgba(255,255,255,.35)}
+    .card-link a{color:#FFD600;text-decoration:none}
+    .card-link a:hover{text-decoration:underline}
+    .card-secure{margin-top:18px;font-size:11px;color:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;gap:5px}
+</style>
 </head>
 <body>
-  <div class="box">
-    <div class="logo-text" style="font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1; margin-bottom: 24px;">
-      <span style="color: #FFD600;">Gol</span><span style="color: white;">Body</span>
-    </div>
-    <p class="subtitle">Transforme ton physique en 1 clic</p>
-
+  <div class="card">
+    <div class="card-avatar">G</div>
+    <h1>Bon retour&nbsp;!</h1>
+    <p class="card-sub">Connectez-vous &agrave; votre espace GolBody</p>
     <form id="login-form">
-      <input type="email" id="email" placeholder="Email" required/>
-      <input type="password" id="password" placeholder="Mot de passe" required/>
-      <button type="submit">Se connecter</button>
+      <div class="field"><label>Email</label><input type="email" id="email" placeholder="vous@email.com" required/></div>
+      <div class="field"><label>Mot de passe</label><input type="password" id="password" placeholder="Votre mot de passe" required/></div>
+      <button type="submit" class="btn-submit">Se connecter &rarr;</button>
       <p id="error-msg"></p>
     </form>
-
-    <p class="signup-text">Pas de compte ? <a href="register.html">S'inscrire</a></p>
+    <div class="card-divider"></div>
+    <p class="card-link">Pas de compte&nbsp;? <a href="register.html">S&rsquo;inscrire gratuitement</a></p>
+    <p class="card-secure">&#128274; Donn&eacute;es s&eacute;curis&eacute;es &middot; R&eacute;siliable &agrave; tout moment</p>
   </div>
-
   <script>
-    const sb = window.supabase.createClient(
-      'https://quvqqxrfewrsbajsllzk.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MjMyNTAsImV4cCI6MjA5ODk5OTI1MH0.CWkSUpjHFE3wV6vJmCbYmMNv291rEW1SPgkWIO5W6G4'
-    );
-
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
+    const sb = window.supabase.createClient("https://quvqqxrfewrsbajsllzk.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MjMyNTAsImV4cCI6MjA5ODk5OTI1MH0.CWkSUpjHFE3wV6vJmCbYmMNv291rEW1SPgkWIO5W6G4");
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
       const { error } = await sb.auth.signInWithPassword({ email, password });
       if (error) {
-        document.getElementById('error-msg').textContent = 'Email ou mot de passe incorrect';
-        document.getElementById('error-msg').style.display = 'block';
+        document.getElementById("error-msg").textContent = "Email ou mot de passe incorrect";
+        document.getElementById("error-msg").style.display = "block";
       } else {
-        window.location.href = 'dashboard.html';
+        window.location.href = "dashboard.html";
       }
     });
   </script>

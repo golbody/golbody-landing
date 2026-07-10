@@ -3,11 +3,9 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 
-// FAL API endpoint for image editing via nano-banana-2
 const FAL_MODEL = "fal-ai/nano-banana-2/edit";
 const FAL_URL = `https://fal.run/${FAL_MODEL}`;
 
-// Simple prompt sanitization to avoid injection or disallowed content
 function safePrompt(prompt: string): string {
   return prompt
     .replace(/[<>]/g, "")
@@ -15,7 +13,6 @@ function safePrompt(prompt: string): string {
     .slice(0, 500);
 }
 
-// Synchronous image generation via FAL REST API
 router.post("/generate", async (req: Request, res: ExpressResponse) => {
   try {
     const { imageUrl, prompt } = req.body;
@@ -24,12 +21,12 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
       return;
     }
 
-    // Convert base64 data URI to inline image part
     const matches = imageUrl.match(/^data:([^;]+);base64,(.+)$/);
     if (!matches) {
       res.status(400).json({ error: "Invalid image format" });
       return;
     }
+    const mimeType = matches[1];
     const base64Data = matches[2];
 
     const apiKey = process.env["FAL_API_KEY"];
@@ -39,6 +36,29 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
       return;
     }
 
+    // Step 1: Upload image to FAL storage to get a real HTTPS URL
+    const imageBuffer = Buffer.from(base64Data, "base64");
+    const formData = new FormData();
+    const imageBlob = new Blob([imageBuffer], { type: mimeType });
+    formData.append("file", imageBlob, "upload.jpg");
+
+    const uploadRes = await fetch("https://storage.fal.ai/upload", {
+      method: "POST",
+      headers: { Authorization: `Key ${apiKey}` },
+      body: formData,
+    });
+
+    if (!uploadRes.ok) {
+      const errText = await uploadRes.text();
+      logger.error({ status: uploadRes.status, err: errText }, "FAL storage upload failed");
+      res.status(502).json({ error: "Image upload to FAL storage failed" });
+      return;
+    }
+
+    const { url: falImageUrl } = await uploadRes.json() as { url: string };
+    logger.info({ falImageUrl }, "Image uploaded to FAL storage");
+
+    // Step 2: Call model with the uploaded URL
     const sanitizedPrompt = safePrompt(prompt);
 
     const falRes = await fetch(FAL_URL, {
@@ -48,7 +68,7 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
         Authorization: `Key ${apiKey}`,
       },
       body: JSON.stringify({
-        image_url: `data:image/png;base64,${base64Data}`,
+        image_urls: [falImageUrl],
         prompt: sanitizedPrompt,
       }),
     });
@@ -65,7 +85,6 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
       return;
     }
 
-    // FAL returns { images: [{ url: string }] }
     const images = (falData.images || falData.image) as
       | Array<{ url: string }>
       | { url: string }
@@ -79,10 +98,7 @@ router.post("/generate", async (req: Request, res: ExpressResponse) => {
     }
 
     if (!resultImageUrl) {
-      logger.error(
-        { data: JSON.stringify(falData).slice(0, 500) },
-        "No image in FAL response"
-      );
+      logger.error({ data: JSON.stringify(falData).slice(0, 500) }, "No image in FAL response");
       res.status(502).json({ error: "No image returned by FAL" });
       return;
     }

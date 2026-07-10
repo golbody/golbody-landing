@@ -79,13 +79,13 @@
     .gol-results-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,214,0,0.1); border: 1px solid rgba(255,214,0,0.25); border-radius: 40px; font-size: 12px; font-weight: 600; color: var(--color-accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 24px; }
     .gol-results h2 { font-size: 40px; font-weight: 800; color: #fff; margin-bottom: 12px; letter-spacing: -0.5px; }
     .gol-results-sub { font-size: 16px; color: var(--color-text-muted); margin-bottom: 48px; }
-    .gol-carousel{overflow:hidden;width:100%;margin-top:32px;mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent)}
+    .gol-carousel{overflow:hidden;width:100vw;margin-top:32px;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;-webkit-mask-image:linear-gradient(to right,transparent,black 20%,black 80%,transparent);mask-image:linear-gradient(to right,transparent,black 20%,black 80%,transparent)}
     .gol-carousel-track{display:flex;gap:12px;width:max-content;animation:carouselScroll 20s linear infinite}
     .gol-carousel-track:hover{animation-play-state:paused}
     @keyframes carouselScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
     .gol-carousel-pair{display:flex;gap:3px;border-radius:16px;overflow:hidden;flex-shrink:0}
     .gol-carousel-half{position:relative;flex-shrink:0}
-    .gol-carousel-img{width:185px;height:260px;object-fit:cover;display:block}
+    .gol-carousel-img{width:220px;height:310px;object-fit:cover;display:block}
     .gol-carousel-badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;letter-spacing:.05em}
     .gol-carousel-badge-after{background:rgba(255,214,0,0.15);color:var(--color-accent);border:1px solid rgba(255,214,0,0.3)}
     .gol-slider-note { margin-top: 20px; font-size: 13px; color: #666; }
@@ -155,6 +155,52 @@
     .gol-slider-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
     .gol-slider-tab{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,214,0,0.15);background:transparent;color:var(--color-text-muted);font-family:'Inter',sans-serif;transition:all 0.2s}
     .gol-slider-tab.active{background:rgba(255,214,0,0.1);border-color:rgba(255,214,0,0.4);color:var(--color-accent)}
+  
+    /* PRICING v3 */
+    .gol-pricing { max-width: 1100px; margin: 0 auto; padding: 100px 48px; text-align: center; }
+    .gol-pricing-eyebrow { font-size: 13px; font-weight: 600; color: var(--color-accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; display: block; }
+    .gol-pricing h2 { font-size: 40px; font-weight: 800; color: #fff; margin-bottom: 16px; letter-spacing: -0.5px; }
+    .gol-pricing-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; max-width: 960px; margin: 32px auto 0; align-items: stretch; }
+    .gol-pricing-card { background: #0d0d1a; display: flex; flex-direction: column; padding: 32px 24px; text-align: left; }
+    .gol-pricing-card:first-child { border-radius: 20px 0 0 20px; border: 1px solid rgba(255,214,0,0.14); border-right: none; }
+    .gol-pricing-card:last-child { border-radius: 0 20px 20px 0; border: 1px solid rgba(255,214,0,0.14); border-left: none; }
+    .gol-pricing-card--featured { display: flex; flex-direction: column; background: linear-gradient(145deg, #1e1800 0%, #141000 100%); border: 1.5px solid #FFD600; border-radius: 20px; padding: 32px 24px; position: relative; z-index: 1; box-shadow: 0 0 0 1px rgba(255,214,0,0.1), 0 24px 56px rgba(255,214,0,0.12); }
+    .gol-pricing-plan-name { font-size: 13px; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    .gol-pricing-popular-tag { align-self: flex-start; display: inline-block; background: rgba(255,214,0,0.15); color: #FFD600; border: 1px solid rgba(255,214,0,0.3); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.04em; }
+    .gol-pricing-popular-tag-excl { display: inline-block; background: rgba(255,130,0,0.12); color: #ff8800; border: 1px solid rgba(255,130,0,0.3); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 0.04em; }
+    .gol-pricing-amount-wrap { display: flex; align-items: flex-start; gap: 3px; margin-bottom: 14px; }
+    .gol-pricing-int { font-size: 56px; font-weight: 800; color: #fff; line-height: 1; letter-spacing: -2px; }
+    .gol-pricing-card--featured .gol-pricing-int { color: #FFD600; }
+    .gol-pricing-dec-col { display: flex; flex-direction: column; padding-top: 10px; }
+    .gol-pricing-dec { font-size: 24px; font-weight: 700; color: #fff; line-height: 1; }
+    .gol-pricing-card--featured .gol-pricing-dec { color: #FFD600; }
+    .gol-pricing-unit { font-size: 12px; color: var(--color-text-muted); margin-top: 3px; }
+    .gol-pricing-guarantee-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(76,184,122,0.1); border: 1px solid rgba(76,184,122,0.22); border-radius: 20px; padding: 4px 10px; font-size: 11px; font-weight: 600; color: #4CB87A; margin-bottom: 18px; }
+    .gol-pricing-credits-box { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; }
+    .gol-pricing-card--featured .gol-pricing-credits-box { background: rgba(255,214,0,0.07); border-color: rgba(255,214,0,0.18); }
+    .gol-pricing-credits-num { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .gol-pricing-card--featured .gol-pricing-credits-num { color: #FFD600; }
+    .gol-pricing-credits-sub { font-size: 12px; color: var(--color-text-muted); }
+    .gol-pricing-includes-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-text-muted); margin-bottom: 12px; }
+    .gol-pricing-features { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 24px; }
+    .gol-pricing-features li { font-size: 13px; color: var(--color-text-muted); display: flex; align-items: center; gap: 8px; line-height: 1.4; }
+    .gol-pricing-features li::before { content: "\2713"; color: var(--color-accent); font-weight: 800; flex-shrink: 0; font-size: 12px; }
+    .gol-pricing-btn-inv { margin-top: auto; display: flex; align-items: center; justify-content: center; padding: 13px 24px; background: #FFD600; color: #111; border-radius: 10px; font-size: 15px; font-weight: 700; text-decoration: none; transition: background 0.2s; margin-bottom: 10px; }
+    .gol-pricing-btn-inv:hover { background: #e6c000; }
+    .gol-pricing-btn-full { margin-top: auto; width: 100%; justify-content: center; padding: 13px 24px; font-size: 15px; margin-bottom: 10px; }
+    .gol-pricing-resil { font-size: 11px; color: var(--color-text-muted); text-align: center; }
+    .gol-pricing-card:not(.gol-pricing-card--featured) .gol-pricing-btn-full { background: transparent !important; color: #fff !important; border: 1.5px solid rgba(255,255,255,0.22) !important; }
+    .gol-pricing-card:not(.gol-pricing-card--featured) .gol-pricing-btn-full:hover { background: rgba(255,255,255,0.07) !important; border-color: rgba(255,255,255,0.4) !important; }
+    @media (max-width: 768px) { .gol-pricing { padding: 80px 24px; } .gol-pricing h2 { font-size: 28px; } .gol-pricing-grid { grid-template-columns: 1fr; gap: 16px; max-width: 420px; } .gol-pricing-card:first-child, .gol-pricing-card:last-child { border-radius: 20px; border: 1px solid rgba(255,214,0,0.14); } }
+
+
+    .gol-cta-loader{position:fixed;inset:0;background:#0d0d1a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;opacity:0;pointer-events:none;transition:opacity .2s ease}
+    .gol-cta-loader.active{opacity:1;pointer-events:all}
+    .gol-cta-loader-logo{font-size:36px;font-weight:800;color:#fff;letter-spacing:-1px;font-family:'Inter',sans-serif}
+    .gol-cta-loader-logo span{color:#FFD600}
+    .gol-cta-loader-bar-wrap{width:220px;height:2px;background:rgba(255,214,0,.12);border-radius:2px;overflow:hidden}
+    .gol-cta-loader-bar{height:100%;width:0;background:linear-gradient(90deg,#FFD600,#fffacd);border-radius:2px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
+    .gol-cta-loader-text{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;font-family:'Inter',sans-serif}
   </style>
 </head>
 <body>
@@ -168,7 +214,7 @@
       <li><a href="#faq">FAQ</a></li>
     </ul>
     <div class="gol-cta">
-      <a href="login.html" class="gol-btn">Commencer</a>
+      <a href="register.html" class="gol-btn">Commencer</a>
       <button class="gol-menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileMenu"><i data-lucide="menu"></i></button>
     </div>
   </div>
@@ -189,7 +235,7 @@
     <div class="gol-hero-avatars"><div class="avatar">MK</div><div class="avatar">JL</div><div class="avatar">AR</div></div>
     <span class="gol-hero-social-text"><strong>14&nbsp;837</strong> corps transform&eacute;s aujourd'hui</span>
   </div>
-  <a href="login.html" class="gol-hero-cta">Transformer ma photo maintenant &rarr;</a>
+  <a href="register.html" class="gol-hero-cta">Transformer ma photo maintenant &rarr;</a>
   <p class="gol-hero-note">Essai gratuit &middot; Aucune carte requise</p>
 </section>
 
@@ -247,10 +293,90 @@
   </div>
 </section>
 
+
+<section class="gol-pricing">
+  <span class="gol-pricing-eyebrow reveal">TARIFS</span>
+  <h2 class="reveal">Choisissez votre transformation</h2>
+  <div class="gol-pricing-guarantee-badge" style="display:inline-flex;margin:0 auto 32px;">&#10003; Satisfait ou rembours&eacute; imm&eacute;diatement</div>
+  <div class="gol-pricing-grid">
+    <div class="gol-pricing-card reveal">
+      <div class="gol-pricing-plan-name">Starter</div>
+      <div class="gol-pricing-amount-wrap">
+        <span class="gol-pricing-int">4</span>
+        <div class="gol-pricing-dec-col"><span class="gol-pricing-dec">,90</span><span class="gol-pricing-unit">&euro;/mois</span></div>
+      </div>
+      <div class="gol-pricing-credits-box">
+        <div class="gol-pricing-credits-num">10 g&eacute;n&eacute;rations / mois</div>
+        <div class="gol-pricing-credits-sub">Parfait pour d&eacute;couvrir GolBody</div>
+      </div>
+      <div class="gol-pricing-includes-label">Votre forfait inclut :</div>
+      <ul class="gol-pricing-features">
+        <li>Acc&egrave;s &agrave; la g&eacute;n&eacute;ration IA</li>
+        <li>Transformation photo r&eacute;aliste</li>
+        <li>Qualit&eacute; haute d&eacute;finition</li>
+        <li>T&eacute;l&eacute;chargement des r&eacute;sultats</li>
+        <li>Support email</li>
+        <li>Acc&egrave;s &agrave; l&rsquo;historique</li>
+      </ul>
+      <a href="register.html" class="gol-btn gol-pricing-btn-full">Commencer</a>
+      <p class="gol-pricing-resil">R&eacute;siliable &agrave; tout moment sans engagement</p>
+    </div>
+    <div class="gol-pricing-card gol-pricing-card--featured reveal">
+      <div class="gol-pricing-popular-tag">Best Value</div>
+      <div class="gol-pricing-plan-name">Pro</div>
+      <div class="gol-pricing-amount-wrap">
+        <span class="gol-pricing-int">14</span>
+        <div class="gol-pricing-dec-col"><span class="gol-pricing-dec">,90</span><span class="gol-pricing-unit">&euro;/mois</span></div>
+      </div>
+      <div class="gol-pricing-credits-box">
+        <div class="gol-pricing-credits-num">30 g&eacute;n&eacute;rations / mois</div>
+        <div class="gol-pricing-credits-sub">Le meilleur choix pour les passionn&eacute;s</div>
+      </div>
+      <div class="gol-pricing-includes-label">Votre forfait inclut :</div>
+      <ul class="gol-pricing-features">
+        <li>Acc&egrave;s &agrave; la g&eacute;n&eacute;ration IA</li>
+        <li>Transformation photo r&eacute;aliste</li>
+        <li>Qualit&eacute; 4K</li>
+        <li>T&eacute;l&eacute;chargement des r&eacute;sultats</li>
+        <li>Support prioritaire</li>
+        <li>Acc&egrave;s &agrave; l&rsquo;historique</li>
+        <li>G&eacute;n&eacute;ration acc&eacute;l&eacute;r&eacute;e</li>
+      </ul>
+      <a href="register.html" class="gol-pricing-btn-inv">Choisir Pro</a>
+      <p class="gol-pricing-resil">R&eacute;siliable &agrave; tout moment sans engagement</p>
+    </div>
+    <div class="gol-pricing-card reveal">
+      <div class="gol-pricing-popular-tag">Exclusif</div>
+      <div class="gol-pricing-plan-name">Ultra</div>
+      <div class="gol-pricing-amount-wrap">
+        <span class="gol-pricing-int">29</span>
+        <div class="gol-pricing-dec-col"><span class="gol-pricing-dec">,90</span><span class="gol-pricing-unit">&euro;/mois</span></div>
+      </div>
+      <div class="gol-pricing-credits-box">
+        <div class="gol-pricing-credits-num">75 g&eacute;n&eacute;rations / mois</div>
+        <div class="gol-pricing-credits-sub">Pour les cr&eacute;ateurs sans limites</div>
+      </div>
+      <div class="gol-pricing-includes-label">Votre forfait inclut :</div>
+      <ul class="gol-pricing-features">
+        <li>Acc&egrave;s &agrave; la g&eacute;n&eacute;ration IA</li>
+        <li>Transformation photo r&eacute;aliste</li>
+        <li>Qualit&eacute; 8K</li>
+        <li>T&eacute;l&eacute;chargement des r&eacute;sultats</li>
+        <li>Support 24/7 d&eacute;di&eacute;</li>
+        <li>Acc&egrave;s &agrave; l&rsquo;historique</li>
+        <li>G&eacute;n&eacute;ration prioritaire</li>
+        <li>File d&rsquo;attente prioritaire</li>
+      </ul>
+      <a href="register.html" class="gol-btn gol-pricing-btn-full">Choisir Ultra</a>
+      <p class="gol-pricing-resil">R&eacute;siliable &agrave; tout moment sans engagement</p>
+    </div>
+  </div>
+</section>
+
 <section class="gol-final-cta">
   <h2 class="reveal">Pr&ecirc;t &agrave; transformer ton physique&nbsp;?</h2>
   <p class="gol-final-cta-subtitle reveal">Rejoins des milliers d'utilisateurs qui ont d&eacute;j&agrave; essay&eacute; GolBody.</p>
-  <a href="login.html" class="gol-final-cta-btn reveal">Commencer gratuitement &rarr;</a>
+  <a href="register.html" class="gol-final-cta-btn reveal">Commencer gratuitement &rarr;</a>
 </section>
 
 <footer class="gol-footer">
@@ -300,7 +426,25 @@
   var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});
 
+
+  document.querySelectorAll('a[href="register.html"]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.preventDefault();
+      var overlay=document.getElementById('golCtaLoader');
+      var bar=document.getElementById('golCtaBar');
+      overlay.classList.add('active');
+      setTimeout(function(){bar.style.width='100%';},40);
+      setTimeout(function(){window.location.href='register.html';},1500);
+    });
+  });
+
 })();
 </script>
+
+  <div class="gol-cta-loader" id="golCtaLoader">
+    <div class="gol-cta-loader-logo">Gol<span>Body</span></div>
+    <div class="gol-cta-loader-bar-wrap"><div class="gol-cta-loader-bar" id="golCtaBar"></div></div>
+    <div class="gol-cta-loader-text">Pr&eacute;paration de votre transformation&hellip;</div>
+  </div>
 </body>
 </html>

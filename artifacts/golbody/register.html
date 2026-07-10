@@ -7,8 +7,10 @@
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <style>
+    @keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
     body {
       margin: 0;
+      animation: pageIn .45s ease forwards;
       background: #111111;
       color: #eeeeee;
       font-family: Inter, sans-serif;

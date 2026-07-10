@@ -1,0 +1,31 @@
+Dans artifacts/golbody/index.html, remplace toute la section gol-results reveal par ceci (2 lignes de carousel, sans boutons genre) :
+▎
+▎ CSS — remplace .gol-slider-gender et .gol-slider-gender-btn par :
+▎ .gol-carousel-row2 .gol-carousel-track{animation-direction:reverse}
+▎
+▎ HTML — remplace l'intégralité du contenu entre <section class="gol-results reveal" id="exemples"> et </section> par :
+▎ <div class="gol-results-badge">RÉSULTATS</div>
+▎ <h2>Résultats réels</h2>
+▎ <p class="gol-results-sub">Généré en quelques secondes avec GolBody</p>
+▎ <div class="gol-carousel" style="margin-bottom:12px">
+▎   <div class="gol-carousel-track">
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_1.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_1.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_2.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_2.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_3.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_3.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_1.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_1.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_2.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_2.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_3.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_3.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎   </div>
+▎ </div>
+▎ <div class="gol-carousel gol-carousel-row2">
+▎   <div class="gol-carousel-track">
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_4.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_4.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_5.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_5.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_6.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_6.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_4.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_4.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_5.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_5.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎     <div class="gol-carousel-pair"><div class="gol-carousel-half"><img src="/before_6.jpg" class="gol-carousel-img"><span class="gol-carousel-badge">Avant</span></div><div class="gol-carousel-half"><img src="/after_6.jpg" class="gol-carousel-img"><span class="gol-carousel-badge gol-carousel-badge-after">Après</span></div></div>
+▎   </div>
+▎ </div>
+▎
+▎ Ensuite cd artifacts/api-server && node build.mjs, puis dis-moi quand c'est prêt pour que je fasse le git push manuellement.

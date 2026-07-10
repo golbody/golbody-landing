@@ -193,14 +193,18 @@
     .gol-pricing-card:not(.gol-pricing-card--featured) .gol-pricing-btn-full:hover { background: rgba(255,255,255,0.07) !important; border-color: rgba(255,255,255,0.4) !important; }
     @media (max-width: 768px) { .gol-pricing { padding: 80px 24px; } .gol-pricing h2 { font-size: 28px; } .gol-pricing-grid { grid-template-columns: 1fr; gap: 16px; max-width: 420px; } .gol-pricing-card:first-child, .gol-pricing-card:last-child { border-radius: 20px; border: 1px solid rgba(255,214,0,0.14); } }
 
-
-    .gol-cta-loader{position:fixed;inset:0;background:#0d0d1a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;opacity:0;pointer-events:none;transition:opacity .2s ease}
+    .gol-cta-loader{position:fixed;inset:0;background:#0d0d1a;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;opacity:0;pointer-events:none;transition:opacity .2s ease}
     .gol-cta-loader.active{opacity:1;pointer-events:all}
-    .gol-cta-loader-logo{font-size:36px;font-weight:800;color:#fff;letter-spacing:-1px;font-family:'Inter',sans-serif}
-    .gol-cta-loader-logo span{color:#FFD600}
-    .gol-cta-loader-bar-wrap{width:220px;height:2px;background:rgba(255,214,0,.12);border-radius:2px;overflow:hidden}
-    .gol-cta-loader-bar{height:100%;width:0;background:linear-gradient(90deg,#FFD600,#fffacd);border-radius:2px;transition:width 1.3s cubic-bezier(.4,0,.2,1)}
-    .gol-cta-loader-text{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.12em;text-transform:uppercase;font-family:'Inter',sans-serif}
+    .gol-sil{position:absolute;width:170px;height:360px;background:radial-gradient(ellipse at 50% 38%,rgba(255,214,0,.07) 0%,transparent 65%);filter:blur(22px);border-radius:42% 58% 40% 60%/52% 48% 52% 48%;transition:all 1.4s cubic-bezier(.4,0,.2,1)}
+    .gol-sil.morphed{border-radius:28% 72% 28% 72%/40% 60% 40% 60%;width:136px;background:radial-gradient(ellipse at 50% 36%,rgba(255,214,0,.13) 0%,transparent 65%)}
+    .gol-ring-wrap{position:relative;width:108px;height:108px;display:flex;align-items:center;justify-content:center}
+    .gol-ring-svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+    .gol-ring-bg{fill:none;stroke:rgba(255,214,0,.1);stroke-width:2.5}
+    .gol-ring-fill{fill:none;stroke:url(#golGrad);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:283;stroke-dashoffset:283;transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1)}
+    .gol-ring-letter{font-size:42px;font-weight:800;color:#FFD600;font-family:'Inter',sans-serif;position:relative;z-index:1;letter-spacing:-1px}
+    .gol-loader-brand{font-size:17px;font-weight:700;color:#fff;font-family:'Inter',sans-serif;letter-spacing:-.3px}
+    .gol-loader-brand span{color:#FFD600}
+    .gol-loader-sub{font-size:10px;color:rgba(255,255,255,.28);letter-spacing:.14em;text-transform:uppercase;font-family:'Inter',sans-serif}
   </style>
 </head>
 <body>
@@ -438,13 +442,33 @@
     });
   });
 
+
+  document.querySelectorAll('a[href="register.html"]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.preventDefault();
+      var ov=document.getElementById('golCtaLoader');
+      var ring=document.getElementById('golRingFill');
+      var sil=document.getElementById('golSil');
+      ov.classList.add('active');
+      setTimeout(function(){ ring.style.strokeDashoffset='0'; sil.classList.add('morphed'); }, 40);
+      setTimeout(function(){ window.location.href='register.html'; }, 1650);
+    });
+  });
+
 })();
 </script>
-
   <div class="gol-cta-loader" id="golCtaLoader">
-    <div class="gol-cta-loader-logo">Gol<span>Body</span></div>
-    <div class="gol-cta-loader-bar-wrap"><div class="gol-cta-loader-bar" id="golCtaBar"></div></div>
-    <div class="gol-cta-loader-text">Pr&eacute;paration de votre transformation&hellip;</div>
+    <div class="gol-sil" id="golSil"></div>
+    <div class="gol-ring-wrap">
+      <svg class="gol-ring-svg" viewBox="0 0 100 100">
+        <defs><linearGradient id="golGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFD600"/><stop offset="100%" stop-color="#fffacd"/></linearGradient></defs>
+        <circle class="gol-ring-bg" cx="50" cy="50" r="45"/>
+        <circle class="gol-ring-fill" cx="50" cy="50" r="45" id="golRingFill"/>
+      </svg>
+      <span class="gol-ring-letter">G</span>
+    </div>
+    <div class="gol-loader-brand">Gol<span>Body</span></div>
+    <div class="gol-loader-sub">Pr&eacute;paration de votre transformation&hellip;</div>
   </div>
 </body>
 </html>

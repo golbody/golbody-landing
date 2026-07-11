@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inscription &mdash; GolBody</title>
   <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js">
+var pc=document.getElementById('particles');
+for(var i=0;i<28;i++){var p=document.createElement('div');var sz=Math.random()*3+1.5;var dur=Math.random()*14+10;var delay=Math.random()*-dur;p.style.cssText='position:absolute;width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:rgba(255,214,0,'+(Math.random()*.5+.3)+');left:'+(Math.random()*100)+'%;top:100%;animation:float-up '+dur+'s '+delay+'s linear infinite;pointer-events:none';pc.appendChild(p)}
+</script>
   <style>
     @keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
     *{box-sizing:border-box;margin:0;padding:0}
@@ -33,9 +36,13 @@
     .link a{color:#FFD600;text-decoration:none;font-weight:600}
     .link a:hover{text-decoration:underline}
     .secure{margin-top:18px;font-size:11px;color:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;gap:5px}
+
+    #particles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+    @keyframes float-up{0%{transform:translateY(0) scale(1);opacity:0}8%{opacity:1}90%{opacity:.4}100%{transform:translateY(-110vh) scale(.3);opacity:0}}
   </style>
 </head>
 <body>
+<div id="particles"></div>
 <div class="card">
   <div class="brand">Gol<span>Body</span></div>
   <h1>Cr&eacute;er votre compte</h1>

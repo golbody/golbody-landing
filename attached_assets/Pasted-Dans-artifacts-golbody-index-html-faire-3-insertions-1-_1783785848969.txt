@@ -1,0 +1,106 @@
+Dans artifacts/golbody/index.html, faire 3 insertions :
+
+  1. Dans le <style>, juste avant /* STATS */, ajoute ce bloc CSS :
+
+  /* VSL DEMO */
+  .gol-vsl{padding:0 0 64px}
+  .gol-vsl-wrap{max-width:900px;margin:0 auto;padding:0 32px}
+  .gol-vsl-frame{border-radius:16px;overflow:hidden;border:1px solid rgba(255,214,0,.18);box-shadow:0 0 0 1px rgba(255,214,0,.04),0 40px 100px rgba(0,0,0,.7),0 0 80px rgba(255,214,0,.07);background:#0c0c0c}
+  .gol-vsl-bar{display:flex;align-items:center;padding:11px 16px;background:#161616;border-bottom:1px solid rgba(255,255,255,.05);gap:14px}
+  .gol-vsl-dots{display:flex;gap:6px}
+  .gol-vsl-dots span{width:11px;height:11px;border-radius:50%;display:block;flex-shrink:0}
+  .gol-vsl-url{flex:1;height:26px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,.28);gap:5px}
+  .gol-vsl-screen canvas{width:100%;height:auto;display:block}
+  .gol-vsl-steps{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:28px}
+  .gol-vsl-step{display:flex;align-items:center;gap:10px;padding:10px 20px;border:1px solid rgba(255,255,255,.06);border-radius:12px;transition:border-color .4s,background .4s}
+  .gol-vsl-step.active{border-color:rgba(255,214,0,.32);background:rgba(255,214,0,.06)}
+  .gol-vsl-step-n{font-size:11px;font-weight:800;color:rgba(255,255,255,.18);letter-spacing:.08em;transition:color .4s}
+  .gol-vsl-step.active .gol-vsl-step-n{color:#FFD600}
+  .gol-vsl-step-t{font-size:12px;font-weight:600;color:rgba(255,255,255,.3);white-space:nowrap;transition:color .4s}
+  .gol-vsl-step.active .gol-vsl-step-t{color:#fff}
+  .gol-vsl-arr{color:rgba(255,255,255,.14);font-size:16px}
+  @media(max-width:639px){.gol-vsl-wrap{padding:0 16px}.gol-vsl-steps{gap:6px}.gol-vsl-step{padding:8px 12px;gap:7px}.gol-vsl-step-t{font-size:11px}}
+
+  2. Dans le HTML, juste après </section> de la section hero (après la balise <p class="gol-hero-note">) et juste avant <div class="gol-stats">, ajoute :
+
+  <section class="gol-vsl" aria-label="Démonstration">
+    <div class="gol-vsl-wrap">
+      <div class="gol-vsl-frame">
+        <div class="gol-vsl-bar">
+          <div class="gol-vsl-dots"><span style="background:#ff5f57"></span><span style="background:#ffbd2e"></span><span style="background:#28c840"></span></div>
+          <div class="gol-vsl-url">🔒 golbody.com/dashboard</div>
+          <div style="width:56px"></div>
+        </div>
+        <div class="gol-vsl-screen"><canvas id="vslCanvas" width="900" height="500"></canvas></div>
+      </div>
+      <div class="gol-vsl-steps">
+        <div class="gol-vsl-step active" id="vstep0"><span class="gol-vsl-step-n">01</span><span class="gol-vsl-step-t">Upload ta photo</span></div>
+        <div class="gol-vsl-arr">→</div>
+        <div class="gol-vsl-step" id="vstep1"><span class="gol-vsl-step-n">02</span><span class="gol-vsl-step-t">L'IA transforme</span></div>
+        <div class="gol-vsl-arr">→</div>
+        <div class="gol-vsl-step" id="vstep2"><span class="gol-vsl-step-n">03</span><span class="gol-vsl-step-t">Résultat parfait</span></div>
+      </div>
+    </div>
+  </section>
+
+  3. Dans le <script>, juste avant le commentaire // FAQ, ajoute ce bloc JS :
+
+  // VSL Canvas
+  (function(){
+    var cv=document.getElementById('vslCanvas');if(!cv)return;
+    var ctx=cv.getContext('2d');
+    var dpr=window.devicePixelRatio||1,W=900,H=500;
+    cv.width=W*dpr;cv.height=H*dpr;ctx.scale(dpr,dpr);
+    var bImg=new Image(),aImg=new Image();
+    bImg.src='/public/before_1.jpg';aImg.src='/public/after_1.jpg';
+    var LOOP=11000,T1=2800,T2=5900;
+    var vsteps=[document.getElementById('vstep0'),document.getElementById('vstep1'),document.getElementById('vstep2')];
+    function setVStep(i){vsteps.forEach(function(s,j){if(s)s.classList.toggle('active',i===j);});}
+    function eo(t){return 1-Math.pow(1-t,3);}
+    function eio(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+    function lerp(a,b,t){return a+(b-a)*t;}
+    function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
+    function cover(img,x,y,w,h){if(!img.complete||!img.naturalWidth)return;var iw=img.naturalWidth,ih=img.naturalHeight,s=Math.max(w/iw,h/ih);ctx.drawImage(img,x+(w-iw*s)/2,y+(h-ih*s)/2,iw*s,ih*s);}
+    function topbar(){ctx.fillStyle='rgba(255,255,255,.04)';ctx.fillRect(0,0,W,44);ctx.fillStyle='rgba(255,214,0,.75)';ctx.font='700 14px Inter,sans-serif';ctx.textAlign='left';ctx.fillText('GolBody',18,29);ctx.fillStyle='rgba(255,255,255,.22)';ctx.font='13px Inter';['Dashboard','Transformer','Galerie'].forEach(function(l,i){ctx.fillText(l,96+i*96,29);});}
+    function pUpload(t){
+      ctx.fillStyle='#0c0c0c';ctx.fillRect(0,0,W,H);topbar();
+      var zx=150,zy=58,zw=600,zh=370;
+      if(t<0.22){
+        ctx.globalAlpha=Math.min(1,t/0.14);
+        ctx.save();ctx.setLineDash([10,7]);ctx.lineWidth=2;ctx.strokeStyle='rgba(255,214,0,.38)';rr(zx,zy,zw,zh,16);ctx.stroke();ctx.restore();
+        ctx.fillStyle='rgba(255,214,0,.025)';rr(zx,zy,zw,zh,16);ctx.fill();
+        var cx=zx+zw/2,cy=zy+zh/2-18;
+        ctx.strokeStyle='rgba(255,214,0,.48)';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.setLineDash([]);
+        ctx.beginPath();ctx.moveTo(cx,cy-28);ctx.lineTo(cx,cy+10);ctx.moveTo(cx-13,cy-13);ctx.lineTo(cx,cy-28);ctx.lineTo(cx+13,cy-13);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(cx-18,cy+20);ctx.lineTo(cx+18,cy+20);ctx.stroke();
+        ctx.font='600 16px Inter';ctx.fillStyle='rgba(255,255,255,.52)';ctx.textAlign='center';ctx.fillText('Glisse ta photo ici',cx,cy+54);
+        ctx.font='13px Inter';ctx.fillStyle='rgba(255,255,255,.22)';ctx.fillText('ou clique pour choisir',cx,cy+76);
+        ctx.globalAlpha=1;
+      } else if(t<0.72){
+        var st=eo((t-0.22)/0.5);
+        ctx.save();ctx.strokeStyle='rgba(255,214,0,'+lerp(0.35,0.72,st)+')';ctx.lineWidth=2;ctx.setLineDash([]);rr(zx,zy,zw,zh,16);ctx.stroke();
+        ctx.beginPath();rr(zx,zy,zw,zh,16);ctx.clip();
+        if(bImg.complete&&bImg.naturalWidth){var iw=bImg.naturalWidth,ih=bImg.naturalHeight,s=Math.max(zw/iw,zh/ih),dw=iw*s,dh=ih*s;ctx.globalAlpha=Math.min(1,st*2.8);ctx.drawImage(bImg,zx+(zw-dw)/2+lerp(50,0,st),zy+(zh-dh)/2,dw,dh);ctx.globalAlpha=1;}
+        ctx.restore();
+      } else {
+        var gt=eo((t-0.72)/0.28);
+        ctx.save();ctx.beginPath();rr(zx,zy,zw,zh,16);ctx.clip();cover(bImg,zx,zy,zw,zh);ctx.restore();
+        ctx.save();ctx.shadowColor='#FFD600';ctx.shadowBlur=lerp(0,24,gt);ctx.strokeStyle='rgba(255,214,0,'+lerp(0.5,1,gt)+')';ctx.lineWidth=2.5;ctx.setLineDash([]);rr(zx,zy,zw,zh,16);ctx.stroke();ctx.restore();
+        ctx.fillStyle='rgba(0,0,0,.65)';rr(zx+10,zy+10,64,24,12);ctx.fill();ctx.fillStyle='#fff';ctx.font='700 11px Inter';ctx.textAlign='center';ctx.fillText('AVANT',zx+42,zy+26);
+        ctx.globalAlpha=gt;ctx.fillStyle='#FFD600';ctx.beginPath();ctx.arc(zx+zw-26,zy+26,22,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='#0c0c0c';ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
+        ctx.beginPath();ctx.moveTo(zx+zw-34,zy+26);ctx.lineTo(zx+zw-24,zy+35);ctx.lineTo(zx+zw-14,zy+16);ctx.stroke();ctx.globalAlpha=1;
+      }
+      ctx.fillStyle='rgba(255,214,0,.05)';ctx.fillRect(0,H-48,W,48);
+      ctx.fillStyle='rgba(255,255,255,.22)';ctx.font='600 12px Inter';ctx.textAlign='left';ctx.fillText('📁  Sélectionne une photo de corps ci-dessus',24,H-20);
+    }
+    function pProcess(t){
+      ctx.fillStyle='#0c0c0c';ctx.fillRect(0,0,W,H);topbar();
+      var zx=150,zy=58,zw=600,zh=370;
+      ctx.save();ctx.beginPath();rr(zx,zy,zw,zh,16);ctx.clip();cover(bImg,zx,zy,zw,zh);
+      var sp=Math.min(1,t*1.06),sy=zy+sp*zh;
+      ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(zx,zy,zw,sy-zy);
+      ctx.fillStyle='rgba(255,214,0,.1)';
+      for(var gy=zy+9;gy<sy;gy+=18)for(var gx2=zx+9;gx2<zx+zw;gx2+=18){ctx.beginPath();ctx.arc(gx2,gy,1.5,0,Math.PI*2);ctx.fill();}
+      if(sp<0.98){var sg=ctx.createLinearGradient(0,sy-34,0,sy+6);sg.addColorStop(0,'rgba(255,214,0,0)');sg.addColorStop(.7,'rgba(255,214,0,.7)');sg.addColorStop(1,'rgba(255,214,0,0)');ctx.fillStyle=sg;ctx.fillRect(zx,sy-34,zw,40);ctx.fillStyle='rgba(255,214,0,.95)';ctx.fillRect(zx,sy-1.5,zw,3);}
+      ctx.restore();

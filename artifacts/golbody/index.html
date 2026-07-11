@@ -32,15 +32,16 @@
     .gol-cta { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
     .gol-btn { display: inline-flex; align-items: center; padding: 8px 24px; background: var(--color-accent); border-radius: 8px; font-size: 14px; font-weight: 600; color: #111; text-decoration: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s, transform 0.1s, box-shadow 0.2s; white-space: nowrap; }
     .gol-btn:hover { background: var(--color-accent-hover); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(255,214,0,0.3); }
-    .gol-menu-toggle { display: none; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; color: var(--color-text-muted); padding: 8px; border-radius: 8px; transition: color 0.2s, background 0.2s; }
-    .gol-menu-toggle:hover { color: var(--color-text-muted-hover); background: rgba(255,214,0,0.08); }
-    .gol-menu-toggle svg { width: 24px; height: 24px; }
-    .gol-mobile-menu { position: fixed; top: 64px; left: 0; right: 0; background: rgba(14,14,14,0.98); backdrop-filter: blur(16px); border-bottom: 1px solid var(--color-border); padding: 16px 48px 24px; z-index: 999; display: none; flex-direction: column; }
-    .gol-mobile-menu.is-open { display: flex; }
-    .gol-mobile-link { display: block; padding: 16px 0; font-size: 14px; color: var(--color-text-muted); text-decoration: none; border-bottom: 1px solid rgba(255,214,0,0.08); cursor: pointer; transition: color 0.2s; }
-    .gol-mobile-link:hover { color: #fff; }
-    .gol-mobile-link:last-child { border-bottom: none; }
-    @media (max-width: 639px) { .gol-nav { padding: 0 24px; } .gol-links { display: none; } .gol-menu-toggle { display: flex; } .gol-mobile-menu { padding: 16px 24px 24px; } }
+    .gol-menu-toggle { display: none; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; color: #fff; padding: 8px; border-radius: 8px; transition: color 0.2s, background 0.2s; }
+    .gol-menu-toggle:hover { background: rgba(255,214,0,0.08); }
+    .gol-menu-toggle svg { width: 22px; height: 22px; display: block; }
+    .gol-mobile-menu { position: fixed; top: 64px; left: 0; right: 0; bottom: 0; background: rgba(10,10,10,0.98); backdrop-filter: blur(20px); padding: 32px 24px 40px; z-index: 999; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.28s cubic-bezier(.4,0,.2,1); pointer-events: none; }
+    .gol-mobile-menu.is-open { transform: translateX(0); pointer-events: auto; }
+    .gol-mobile-link { display: flex; align-items: center; padding: 20px 0; font-size: 22px; font-weight: 600; color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.06); transition: color 0.15s, padding-left 0.15s; }
+    .gol-mobile-link:hover { color: #FFD600; padding-left: 8px; }
+    .gol-mobile-cta { display: block; margin-top: 32px; padding: 18px 24px; background: #FFD600; color: #0e0e0e; font-size: 17px; font-weight: 800; border-radius: 14px; text-align: center; text-decoration: none; letter-spacing: -0.3px; transition: opacity 0.15s; }
+    .gol-mobile-cta:hover { opacity: 0.9; }
+    @media (max-width: 639px) { .gol-nav { padding: 0 20px; } .gol-links { display: none; } .gol-cta .gol-btn { display: none; } .gol-menu-toggle { display: flex; } }
 
     /* HERO */
     .gol-hero { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 160px 24px 100px; background: radial-gradient(ellipse 90% 70% at 50% -10%, rgba(255,214,0,0.14) 0%, transparent 65%), var(--color-bg); }
@@ -223,15 +224,19 @@
     </ul>
     <div class="gol-cta">
       <a href="register.html" class="gol-btn">Commencer</a>
-      <button class="gol-menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileMenu"><i data-lucide="menu"></i></button>
+      <button class="gol-menu-toggle" id="menuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileMenu">
+        <svg id="iconMenu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg id="iconClose" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
   </div>
 </nav>
 
-<div class="gol-mobile-menu" id="mobileMenu" aria-hidden="true">
+<div class="gol-mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-hidden="true">
   <a href="#exemples" class="gol-mobile-link">Exemples</a>
   <a href="#avis" class="gol-mobile-link">Avis</a>
   <a href="#faq" class="gol-mobile-link">FAQ</a>
+  <a href="register.html" class="gol-mobile-cta">Transformer ma photo →</a>
 </div>
 
 <section class="gol-hero" id="commencer">
@@ -397,12 +402,12 @@
 
 <script>
 (function(){
-  lucide.createIcons();
-  var menuToggle=document.getElementById('menuToggle'),mobileMenu=document.getElementById('mobileMenu'),isOpen=false;
-  function closeMenu(){isOpen=false;mobileMenu.classList.remove('is-open');mobileMenu.setAttribute('aria-hidden','true');menuToggle.setAttribute('aria-expanded','false');menuToggle.querySelector('[data-lucide]').setAttribute('data-lucide','menu');lucide.createIcons();}
-  function openMenu(){isOpen=true;mobileMenu.classList.add('is-open');mobileMenu.setAttribute('aria-hidden','false');menuToggle.setAttribute('aria-expanded','true');menuToggle.querySelector('[data-lucide]').setAttribute('data-lucide','x');lucide.createIcons();}
+  if(window.lucide)lucide.createIcons();
+  var menuToggle=document.getElementById('menuToggle'),mobileMenu=document.getElementById('mobileMenu'),iconMenu=document.getElementById('iconMenu'),iconClose=document.getElementById('iconClose'),isOpen=false;
+  function closeMenu(){isOpen=false;mobileMenu.classList.remove('is-open');mobileMenu.setAttribute('aria-hidden','true');menuToggle.setAttribute('aria-expanded','false');iconMenu.style.display='block';iconClose.style.display='none';document.body.style.overflow='';}
+  function openMenu(){isOpen=true;mobileMenu.classList.add('is-open');mobileMenu.setAttribute('aria-hidden','false');menuToggle.setAttribute('aria-expanded','true');iconMenu.style.display='none';iconClose.style.display='block';document.body.style.overflow='hidden';}
   menuToggle.addEventListener('click',function(){isOpen?closeMenu():openMenu();});
-  document.querySelectorAll('.gol-mobile-link').forEach(function(l){l.addEventListener('click',closeMenu);});
+  document.querySelectorAll('.gol-mobile-link,.gol-mobile-cta').forEach(function(l){l.addEventListener('click',closeMenu);});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&isOpen)closeMenu();});
   document.addEventListener('click',function(e){if(isOpen&&!mobileMenu.contains(e.target)&&!menuToggle.contains(e.target))closeMenu();});
 

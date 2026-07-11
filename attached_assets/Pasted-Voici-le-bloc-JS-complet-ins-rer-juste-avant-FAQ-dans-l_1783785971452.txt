@@ -1,0 +1,98 @@
+Voici le bloc JS complet à insérer juste avant // FAQ dans le <script> :
+
+// VSL Canvas
+(function(){
+  var cv=document.getElementById('vslCanvas');if(!cv)return;
+  var ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1,W=900,H=500;
+  cv.width=W*dpr;cv.height=H*dpr;ctx.scale(dpr,dpr);
+  var bImg=new Image(),aImg=new Image();
+  bImg.src='/public/before_1.jpg';aImg.src='/public/after_1.jpg';
+  var LOOP=11000,T1=2800,T2=5900;
+  var vsteps=[document.getElementById('vstep0'),document.getElementById('vstep1'),document.getElementById('vstep2')];
+  function setVStep(i){vsteps.forEach(function(s,j){if(s)s.classList.toggle('active',i===j);});}
+  function eo(t){return 1-Math.pow(1-t,3);}
+  function eio(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
+  function cover(img,x,y,w,h){if(!img.complete||!img.naturalWidth)return;var iw=img.naturalWidth,ih=img.naturalHeight,s=Math.max(w/iw,h/ih);ctx.drawImage(img,x+(w-iw*s)/2,y+(h-ih*s)/2,iw*s,ih*s);}
+  function topbar(){ctx.fillStyle='rgba(255,255,255,.04)';ctx.fillRect(0,0,W,44);ctx.fillStyle='rgba(255,214,0,.75)';ctx.font='700 14px Inter,sans-serif';ctx.textAlign='left';ctx.fillText('GolBody',18,29);ctx.fillStyle='rgba(255,255,255,.22)';ctx.font='13px Inter';['Dashboard','Transformer','Galerie'].forEach(function(l,i){ctx.fillText(l,96+i*96,29);});}
+  function pUpload(t){
+    ctx.fillStyle='#0c0c0c';ctx.fillRect(0,0,W,H);topbar();
+    var zx=150,zy=58,zw=600,zh=370;
+    if(t<0.22){
+      ctx.globalAlpha=Math.min(1,t/0.14);
+      ctx.save();ctx.setLineDash([10,7]);ctx.lineWidth=2;ctx.strokeStyle='rgba(255,214,0,.38)';rr(zx,zy,zw,zh,16);ctx.stroke();ctx.restore();
+      ctx.fillStyle='rgba(255,214,0,.025)';rr(zx,zy,zw,zh,16);ctx.fill();
+      var cx=zx+zw/2,cy=zy+zh/2-18;
+      ctx.strokeStyle='rgba(255,214,0,.48)';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.setLineDash([]);
+      ctx.beginPath();ctx.moveTo(cx,cy-28);ctx.lineTo(cx,cy+10);ctx.moveTo(cx-13,cy-13);ctx.lineTo(cx,cy-28);ctx.lineTo(cx+13,cy-13);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx-18,cy+20);ctx.lineTo(cx+18,cy+20);ctx.stroke();
+      ctx.font='600 16px Inter';ctx.fillStyle='rgba(255,255,255,.52)';ctx.textAlign='center';ctx.fillText('Glisse ta photo ici',cx,cy+54);
+      ctx.font='13px Inter';ctx.fillStyle='rgba(255,255,255,.22)';ctx.fillText('ou clique pour choisir',cx,cy+76);
+      ctx.globalAlpha=1;
+    } else if(t<0.72){
+      var st=eo((t-0.22)/0.5);
+      ctx.save();ctx.strokeStyle='rgba(255,214,0,'+lerp(0.35,0.72,st)+')';ctx.lineWidth=2;ctx.setLineDash([]);rr(zx,zy,zw,zh,16);ctx.stroke();
+      ctx.beginPath();rr(zx,zy,zw,zh,16);ctx.clip();
+      if(bImg.complete&&bImg.naturalWidth){var iw=bImg.naturalWidth,ih=bImg.naturalHeight,sc=Math.max(zw/iw,zh/ih),dw=iw*sc,dh=ih*sc;ctx.globalAlpha=Math.min(1,st*2.8);ctx.drawImage(bImg,zx+(zw-dw)/2+lerp(50,0,st),zy+(zh-dh)/2,dw,dh);ctx.globalAlpha=1;}
+      ctx.restore();
+    } else {
+      var gt=eo((t-0.72)/0.28);
+      ctx.save();ctx.beginPath();rr(zx,zy,zw,zh,16);ctx.clip();cover(bImg,zx,zy,zw,zh);ctx.restore();
+      ctx.save();ctx.shadowColor='#FFD600';ctx.shadowBlur=lerp(0,24,gt);ctx.strokeStyle='rgba(255,214,0,'+lerp(0.5,1,gt)+')';ctx.lineWidth=2.5;ctx.setLineDash([]);rr(zx,zy,zw,zh,16);ctx.stroke();ctx.restore();
+      ctx.fillStyle='rgba(0,0,0,.65)';rr(zx+10,zy+10,64,24,12);ctx.fill();ctx.fillStyle='#fff';ctx.font='700 11px Inter';ctx.textAlign='center';ctx.fillText('AVANT',zx+42,zy+26);
+      ctx.globalAlpha=gt;ctx.fillStyle='#FFD600';ctx.beginPath();ctx.arc(zx+zw-26,zy+26,22,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#0c0c0c';ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
+      ctx.beginPath();ctx.moveTo(zx+zw-34,zy+26);ctx.lineTo(zx+zw-24,zy+35);ctx.lineTo(zx+zw-14,zy+16);ctx.stroke();ctx.globalAlpha=1;
+    }
+    ctx.fillStyle='rgba(255,214,0,.05)';ctx.fillRect(0,H-48,W,48);
+    ctx.fillStyle='rgba(255,255,255,.22)';ctx.font='600 12px Inter';ctx.textAlign='left';ctx.fillText('Selectionne une photo de corps ci-dessus',24,H-20);
+  }
+  function pProcess(t){
+    ctx.fillStyle='#0c0c0c';ctx.fillRect(0,0,W,H);topbar();
+    var zx=150,zy=58,zw=600,zh=370;
+    ctx.save();ctx.beginPath();rr(zx,zy,zw,zh,16);ctx.clip();cover(bImg,zx,zy,zw,zh);
+    var sp=Math.min(1,t*1.06),sy=zy+sp*zh;
+    ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(zx,zy,zw,sy-zy);
+    ctx.fillStyle='rgba(255,214,0,.1)';
+    for(var gy=zy+9;gy<sy;gy+=18)for(var gx2=zx+9;gx2<zx+zw;gx2+=18){ctx.beginPath();ctx.arc(gx2,gy,1.5,0,Math.PI*2);ctx.fill();}
+    if(sp<0.98){var sg=ctx.createLinearGradient(0,sy-34,0,sy+6);sg.addColorStop(0,'rgba(255,214,0,0)');sg.addColorStop(.7,'rgba(255,214,0,.7)');sg.addColorStop(1,'rgba(255,214,0,0)');ctx.fillStyle=sg;ctx.fillRect(zx,sy-34,zw,40);ctx.fillStyle='rgba(255,214,0,.95)';ctx.fillRect(zx,sy-1.5,zw,3);}
+    ctx.restore();
+    ctx.save();ctx.shadowColor='#FFD600';ctx.shadowBlur=12+Math.sin(t*Math.PI*10)*5;ctx.strokeStyle='rgba(255,214,0,.72)';ctx.lineWidth=2.5;ctx.setLineDash([]);rr(zx,zy,zw,zh,16);ctx.stroke();ctx.restore();
+    ctx.fillStyle='rgba(255,214,0,.05)';ctx.fillRect(0,H-60,W,60);
+    ctx.fillStyle='rgba(255,255,255,.07)';rr(zx,H-38,zw,8,4);ctx.fill();
+    var pct=Math.min(1,t*1.06);
+    ctx.save();ctx.shadowColor='#FFD600';ctx.shadowBlur=10;ctx.fillStyle='#FFD600';rr(zx,H-38,zw*pct,8,4);ctx.fill();ctx.restore();
+    ctx.fillStyle='#FFD600';ctx.font='700 13px Inter';ctx.textAlign='left';ctx.fillText('Transformation IA en cours... '+Math.round(pct*100)+'%',zx,H-48);
+  }
+  function pReveal(t){
+    ctx.fillStyle='#0c0c0c';ctx.fillRect(0,0,W,H);
+    var bh=H-58,rx=W*eio(Math.min(1,t*1.12));
+    ctx.save();ctx.beginPath();ctx.rect(0,0,rx,bh);ctx.clip();cover(aImg,0,0,W,bh);
+    if(rx>80){ctx.globalAlpha=Math.min(1,(rx-20)/90);ctx.fillStyle='rgba(255,214,0,.15)';rr(14,14,76,26,13);ctx.fill();ctx.strokeStyle='rgba(255,214,0,.45)';ctx.lineWidth=1;ctx.setLineDash([]);rr(14,14,76,26,13);ctx.stroke();ctx.fillStyle='#FFD600';ctx.font='700 11px Inter';ctx.textAlign='center';ctx.fillText('APRES',52,31);ctx.globalAlpha=1;}
+    ctx.restore();
+    ctx.save();ctx.beginPath();ctx.rect(rx,0,W-rx,bh);ctx.clip();cover(bImg,0,0,W,bh);
+    if(W-rx>70){var lx=Math.max(rx+14,W-90);ctx.globalAlpha=Math.min(1,(W-rx-20)/90);ctx.fillStyle='rgba(0,0,0,.62)';rr(lx,14,72,26,13);ctx.fill();ctx.fillStyle='#fff';ctx.font='700 11px Inter';ctx.textAlign='center';ctx.fillText('AVANT',lx+36,31);ctx.globalAlpha=1;}
+    ctx.restore();
+    if(t<0.96){ctx.save();ctx.shadowColor='#FFD600';ctx.shadowBlur=22;ctx.strokeStyle='#FFD600';ctx.lineWidth=3;ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(rx,0);ctx.lineTo(rx,bh);ctx.stroke();ctx.beginPath();ctx.arc(rx,bh/2,20,0,Math.PI*2);ctx.fillStyle='#FFD600';ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#0c0c0c';ctx.font='700 13px Inter';ctx.textAlign='center';ctx.fillText('< >',rx,bh/2+4.5);ctx.restore();}
+    ctx.fillStyle='rgba(0,0,0,.9)';ctx.fillRect(0,bh,W,H-bh);
+    if(t>0.6){
+      var ba=eo((t-0.6)/0.4),bw2=280,bh2=40,bx2=(W-bw2)/2,by2=bh+9;
+      ctx.save();ctx.globalAlpha=ba;ctx.shadowColor='#FFD600';ctx.shadowBlur=ba*28*(0.8+0.2*Math.sin(t*Math.PI*5));
+      ctx.fillStyle='#FFD600';rr(bx2,by2,bw2,bh2,10);ctx.fill();ctx.shadowBlur=0;
+      ctx.fillStyle='#0c0c0c';ctx.font='700 14px Inter';ctx.textAlign='center';ctx.fillText('Telecharger ma transformation',W/2,by2+26);ctx.globalAlpha=1;ctx.restore();
+    } else {
+      ctx.fillStyle='rgba(255,255,255,.28)';ctx.font='13px Inter';ctx.textAlign='center';ctx.fillText('Resultat genere en 9 secondes',W/2,bh+32);
+    }
+  }
+  var vt0=null;
+  function vframe(ts){
+    if(!vt0)vt0=ts;
+    var el=(ts-vt0)%LOOP;
+    if(el<T1){setVStep(0);pUpload(el/T1);}
+    else if(el<T2){setVStep(1);pProcess((el-T1)/(T2-T1));}
+    else{setVStep(2);pReveal((el-T2)/(LOOP-T2));}
+    requestAnimationFrame(vframe);
+  }
+  requestAnimationFrame(vframe);
+})();

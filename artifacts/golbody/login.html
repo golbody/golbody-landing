@@ -50,7 +50,7 @@ for(var i=0;i<28;i++){var p=document.createElement('div');var sz=Math.random()*3
   <div class="brand">Gol<span>Body</span></div>
   <h1>Bon retour&nbsp;!</h1>
   <p class="sub">Connectez-vous &agrave; votre espace GolBody</p>
-  <form id="lform" id="lform">
+  <form id="form">
     <div class="field"><label>Email</label><input type="email" id="email" placeholder="vous@email.com" required/></div>
     <div class="field"><label>Mot de passe</label><input type="password" id="pwd" placeholder="Votre mot de passe" required/></div>
     <button type="submit" class="btn" id="btn">Se connecter &rarr;</button>
@@ -61,7 +61,7 @@ for(var i=0;i<28;i++){var p=document.createElement('div');var sz=Math.random()*3
   <p class="secure">&#128274; Donn&eacute;es s&eacute;curis&eacute;es &middot; R&eacute;siliable &agrave; tout moment</p>
 </div>
 <script>
-const sb=supabase.createClient('https://quvqqxrfewrsbajsllzk.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc0MjkzOTIsImV4cCI6MjA2MzAwNTM5Mn0.lLFgAFv6_-7WyLvWzY9oMFhJCWkSUpjHFE3wV6vJmCbYmMNv291rEW1SPgkWIO5W6G4');
+const sb=supabase.createClient('https://quvqqxrfewrsbajsllzk.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MjMyNTAsImV4cCI6MjA5ODk5OTI1MH0.CWkSUpjHFE3wV6vJmCbYmMNv291rEW1SPgkWIO5W6G4');
 document.getElementById('form').addEventListener('submit',async e=>{
   e.preventDefault();
   const btn=document.getElementById('btn'),err=document.getElementById('err');

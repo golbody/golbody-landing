@@ -1,0 +1,13 @@
+{
+  "installCommand": "echo skip",
+  "buildCommand": "echo done",
+  "outputDirectory": "artifacts/golbody",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/webhook", "destination": "/api/index" },
+    { "source": "/create-checkout-session", "destination": "/api/index" },
+    { "source": "/use-credit", "destination": "/api/index" },
+    { "source": "/create-portal-session", "destination": "/api/index" },
+    { "source": "/profile/:userId", "destination": "/api/index" }
+  ]
+}

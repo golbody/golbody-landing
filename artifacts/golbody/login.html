@@ -39,7 +39,8 @@ for(var i=0;i<28;i++){var p=document.createElement('div');var sz=Math.random()*3
 
     
     8%{opacity:1}90%{opacity:.4}100%{transform:translateY(-110vh) scale(.3);opacity:0}}
-  #cnv{position:fixed;inset:0;z-index:0;pointer-events:none}
+  
+  #cnv{position:fixed;top:0;left:0;z-index:0;pointer-events:none}
   </style>
 </head>
 <body>
@@ -70,23 +71,38 @@ document.getElementById('form').addEventListener('submit',async e=>{
   if(data.user)window.location.href='dashboard.html'
 });
 </script>
+
 <script>
 (function(){
-var c=document.getElementById('cnv'),ctx=c.getContext('2d');
-function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
-resize();window.addEventListener('resize',resize);
+var c=document.getElementById('cnv');
+c.style.cssText='position:fixed;top:0;left:0;z-index:0;pointer-events:none';
+var ctx=c.getContext('2d');
+function resize(){c.width=window.innerWidth;c.height=window.innerHeight;reset();}
 var pts=[];
-for(var i=0;i<45;i++) pts.push({x:Math.random(),y:Math.random(),r:Math.random()*1.4+.4,s:Math.random()*.004+.001,ph:Math.random()*6.28});
-function frame(t){
+function reset(){
+  pts=[];
+  for(var i=0;i<40;i++) pts.push({
+    x:Math.random()*c.width, y:Math.random()*c.height,
+    r:Math.random()*1.4+.4,
+    vy:-(Math.random()*.4+.15),
+    op:Math.random()*.5+.1,
+    opd:(Math.random()>.5?1:-1)*(Math.random()*.004+.002)
+  });
+}
+resize();
+window.addEventListener('resize',resize);
+function frame(){
   ctx.clearRect(0,0,c.width,c.height);
   for(var i=0;i<pts.length;i++){
-    var p=pts[i],op=((Math.sin(t*.001*p.s*1000+p.ph)+1)/2)*.55+.1;
-    ctx.beginPath();ctx.arc(p.x*c.width,p.y*c.height,p.r,0,6.28);
-    ctx.fillStyle='rgba(255,214,0,'+op+')';ctx.fill();
+    var p=pts[i];
+    p.y+=p.vy; if(p.y<-6){p.y=c.height+6;p.x=Math.random()*c.width;}
+    p.op+=p.opd; if(p.op>.7||p.op<.08) p.opd*=-1;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.28);
+    ctx.fillStyle='rgba(255,214,0,'+p.op.toFixed(2)+')';ctx.fill();
   }
   requestAnimationFrame(frame);
 }
-requestAnimationFrame(frame);
+frame();
 })();
 </script>
 </body>

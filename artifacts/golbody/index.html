@@ -106,9 +106,13 @@
     @keyframes scroll-right { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
     .gol-testimonial-card { flex-shrink: 0; width: 300px; background: linear-gradient(135deg, #1a1a2e 0%, #141420 100%); border: 1px solid rgba(255,214,0,0.1); border-radius: 16px; padding: 24px; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; }
     .gol-testimonial-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(255,214,0,0.1); border-color: rgba(255,214,0,0.25); }
-    .gol-testimonial-stars { color: var(--color-accent); font-size: 16px; letter-spacing: 2px; margin-bottom: 14px; }
-    .gol-testimonial-text { font-size: 15px; line-height: 1.6; color: #ddd; margin-bottom: 16px; }
-    .gol-testimonial-name { font-size: 13px; font-weight: 600; color: var(--color-text-muted); }
+    .gol-testimonial-stars { font-size: 14px; letter-spacing: 1px; margin-bottom: 12px; }
+    .gol-testimonial-text { font-size: 14px; line-height: 1.65; color: #ddd; margin-bottom: 16px; }
+    .gol-testimonial-footer { display: flex; align-items: center; gap: 10px; }
+    .gol-testimonial-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #0e0e0e; flex-shrink: 0; }
+    .gol-testimonial-meta { display: flex; flex-direction: column; gap: 1px; }
+    .gol-testimonial-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .gol-testimonial-detail { font-size: 11px; color: #666; }
 
     /* FAQ */
     .gol-faq { padding: 96px 48px; max-width: 720px; margin: 0 auto; }
@@ -416,10 +420,21 @@
   document.querySelectorAll('.gol-stats-value[data-target]').forEach(function(el){so.observe(el);});
 
   // Testimonials
-  var revs=[["J'ai posté la photo sur Insta, personne n'a remarqué que c'était de l'IA. Résultat bluffant !","@muscu_alex"],["En 10 secondes j'avais un physique de rêve. Mes potes me demandent quel sport je fais.","Julien K."],["J'ai utilisé GolBody pour mon profil Tinder, mes matchs ont triplé. C'est dingue.","Thomas_B"],["Le rendu est ultra réaliste, pas du tout cheap comme d'autres apps. Vraiment impressionnante.","@fit_laura"],["J'ai testé pour rigoler et au final j'ai acheté le pack annuel. Zéro regret.","Kevin M."],["Ma copine m'a demandé si j'avais repris la muscu. Même elle n'a pas vu la différence.","@romain_f"],["Service client réactif, résultat instantané, qualité pro. 5 étoiles méritées.","Sophie L."],["J'utilise GolBody pour mes photos pro LinkedIn. Le before/after est ouf.","@startup_marc"]];
-  function mkCard(t,n){return'<div class="gol-testimonial-card"><div class="gol-testimonial-stars">★★★★★</div><p class="gol-testimonial-text">'+t+'</p><span class="gol-testimonial-name">'+n+'</span></div>';}
-  var h1=revs.map(function(r){return mkCard(r[0],r[1]);}).join('');
-  var h2=revs.slice(3).concat(revs.slice(0,3)).map(function(r){return mkCard(r[0],r[1]);}).join('');
+  var revs=[
+    {t:"J'étais sceptique au début, mais le résultat sur ma photo de piscine était indétectable. Même ma sœur n'a pas vu. J'ai commandé le pack mensuel direct.",n:"Antoine D.",d:"Paris · 24 ans",c:"#FFD600",s:5},
+    {t:"Ça marche vraiment bien sur les photos en bonne lumière. Moins convaincant si le fond est compliqué, mais dans 90% des cas le rendu est très propre.",n:"Lucas B.",d:"Lyon · étudiant en sport",c:"#4ECDC4",s:4},
+    {t:"J'ai mis la photo sur Tinder. Clairement plus de matchs en une semaine. Difficile de mesurer exactement mais la différence est réelle.",n:"Romain G.",d:"Bordeaux · 28 ans",c:"#FF6B6B",s:5},
+    {t:"Top pour LinkedIn. J'ai mis ma photo pro retouchée, j'ai eu 2 propositions de missions en quelques jours. Le réalisme fait vraiment la différence.",n:"Maxime R.",d:"Nantes · consultant",c:"#A78BFA",s:5},
+    {t:"J'aurais aimé un partage direct vers Instagram depuis l'app, mais le résultat brut est là. Vraiment bluffant pour le prix.",n:"Théo M.",d:"Marseille · 22 ans",c:"#F59E0B",s:4},
+    {t:"Premier essai : ma copine a regardé la photo 3 fois en pensant que j'avais repris la salle. Complètement indétectable, je valide.",n:"Jordan F.",d:"Lille · 21 ans",c:"#34D399",s:5},
+    {t:"J'utilise depuis 2 mois pour mes photos de profil. La qualité est constante d'une génération à l'autre. Bien au-dessus des autres apps que j'ai testées.",n:"Sébastien K.",d:"Toulouse · coach sportif",c:"#60A5FA",s:5},
+    {t:"Le fond doit être propre pour un résultat optimal — c'est le seul conseil que je donnerais. Sinon c'est vraiment impressionnant pour 10 secondes de traitement.",n:"Clément V.",d:"Strasbourg · 26 ans",c:"#FB7185",s:4}
+  ];
+  function stars(n){var s='';for(var i=0;i<5;i++)s+='<span style="color:'+(i<n?'#FFD600':'#444')+'">★</span>';return s;}
+  function initials(n){return n.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);}
+  function mkCard(r){return'<div class="gol-testimonial-card"><div class="gol-testimonial-stars">'+stars(r.s)+'</div><p class="gol-testimonial-text">'+r.t+'</p><div class="gol-testimonial-footer"><div class="gol-testimonial-avatar" style="background:'+r.c+'">'+initials(r.n)+'</div><div class="gol-testimonial-meta"><span class="gol-testimonial-name">'+r.n+'</span><span class="gol-testimonial-detail">'+r.d+'</span></div></div></div>';}
+  var h1=revs.map(function(r){return mkCard(r);}).join('');
+  var h2=revs.slice(3).concat(revs.slice(0,3)).map(function(r){return mkCard(r);}).join('');
   document.getElementById('track1').innerHTML=h1+h1;
   document.getElementById('track2').innerHTML=h2+h2;
 

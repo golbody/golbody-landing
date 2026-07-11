@@ -37,12 +37,14 @@ for(var i=0;i<28;i++){var p=document.createElement('div');var sz=Math.random()*3
     .link a:hover{text-decoration:underline}
     .secure{margin-top:18px;font-size:11px;color:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;gap:5px}
 
-    #particles{position:fixed;inset:0;pointer-events:none;z-index:0}
-    @keyframes float-up{0%{transform:translateY(0) scale(1);opacity:0}8%{opacity:1}90%{opacity:.4}100%{transform:translateY(-110vh) scale(.3);opacity:0}}
+    
+    8%{opacity:1}90%{opacity:.4}100%{transform:translateY(-110vh) scale(.3);opacity:0}}
+  #cnv{position:fixed;inset:0;z-index:0;pointer-events:none}
   </style>
 </head>
 <body>
-<div id="particles"></div>
+<canvas id="cnv"></canvas>
+
 <div class="card">
   <div class="brand">Gol<span>Body</span></div>
   <h1>Bon retour&nbsp;!</h1>
@@ -67,6 +69,25 @@ document.getElementById('form').addEventListener('submit',async e=>{
   if(error){err.textContent=error.message;err.style.display='block';btn.disabled=false;btn.textContent='Commencer ma transformation →';return}
   if(data.user)window.location.href='dashboard.html'
 });
+</script>
+<script>
+(function(){
+var c=document.getElementById('cnv'),ctx=c.getContext('2d');
+function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+var pts=[];
+for(var i=0;i<45;i++) pts.push({x:Math.random(),y:Math.random(),r:Math.random()*1.4+.4,s:Math.random()*.004+.001,ph:Math.random()*6.28});
+function frame(t){
+  ctx.clearRect(0,0,c.width,c.height);
+  for(var i=0;i<pts.length;i++){
+    var p=pts[i],op=((Math.sin(t*.001*p.s*1000+p.ph)+1)/2)*.55+.1;
+    ctx.beginPath();ctx.arc(p.x*c.width,p.y*c.height,p.r,0,6.28);
+    ctx.fillStyle='rgba(255,214,0,'+op+')';ctx.fill();
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
 </script>
 </body>
 </html>

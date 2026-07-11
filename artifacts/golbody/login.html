@@ -14,7 +14,7 @@
     body::after{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,214,0,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,214,0,.025) 1px,transparent 1px);background-size:52px 52px;pointer-events:none}
     .card{position:relative;z-index:1;width:100%;max-width:420px;margin:20px;background:linear-gradient(145deg,rgba(28,23,4,.97) 0%,rgba(14,12,2,.99) 100%);border:1px solid rgba(255,214,0,.16);border-radius:24px;padding:48px 44px 40px;box-shadow:0 0 0 1px rgba(255,214,0,.05),0 30px 90px rgba(0,0,0,.65),0 0 100px rgba(255,214,0,.06);animation:cardIn .55s cubic-bezier(.4,0,.2,1) forwards;color:#fff;text-align:center}
     .card::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:72px;height:2px;background:linear-gradient(90deg,transparent,#FFD600,transparent);border-radius:0 0 2px 2px}
-    .avatar{width:58px;height:58px;background:linear-gradient(135deg,#FFD600 0%,#c8a800 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 30px;font-size:22px;font-weight:900;color:#111;box-shadow:0 0 0 10px rgba(255,214,0,.07),0 8px 32px rgba(255,214,0,.32)}
+    .brand{font-size:30px;font-weight:900;letter-spacing:-.6px;margin:0 auto 28px;text-align:center;color:#fff}.brand span{color:#FFD600}
     h1{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
     .sub{font-size:13px;color:rgba(255,255,255,.42);margin-bottom:36px;line-height:1.55}
     .sub strong{color:#FFD600;font-weight:700}
@@ -37,7 +37,7 @@
 </head>
 <body>
 <div class="card">
-  <div class="avatar">G</div>
+  <div class="brand">Gol<span>Body</span></div>
   <h1>Bon retour&nbsp;!</h1>
   <p class="sub">Connectez-vous &agrave; votre espace GolBody</p>
   <form id="lform" id="lform">

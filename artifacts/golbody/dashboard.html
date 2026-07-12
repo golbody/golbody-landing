@@ -1362,6 +1362,36 @@
   .credit-pack-btn.teal{background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk))!important;color:#111!important;border:none!important;}
 
   @media (max-width:900px){ .plans-grid{grid-template-columns:1fr!important;} }
+
+  /* ---------- MON COMPTE (redesign) ---------- */
+  .account-section{max-width:760px;margin:0 auto;}
+  .acc-head{margin-bottom:22px;}
+  .acc-head h1{font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;color:var(--rd-txt);}
+  .acc-head p{font-size:14px;color:var(--rd-muted);}
+  .acc-profile{display:flex;align-items:center;gap:18px;background:linear-gradient(160deg,rgba(255,214,0,0.06),var(--rd-panel));border:1px solid var(--rd-bdg);border-radius:20px;padding:24px;margin-bottom:18px;box-shadow:0 12px 30px rgba(0,0,0,0.35);}
+  .acc-pav{width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#111;flex-shrink:0;box-shadow:0 8px 22px rgba(255,214,0,0.25);text-transform:uppercase;}
+  .acc-pinfo{min-width:0;flex:1;}
+  .acc-pemail{font-size:17px;font-weight:700;margin-bottom:6px;word-break:break-all;color:var(--rd-txt);}
+  .acc-pbadges{display:flex;gap:8px;flex-wrap:wrap;}
+  .acc-plan-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;}
+  .acc-since-badge{display:inline-flex;align-items:center;gap:5px;background:var(--rd-panel2);border:1px solid var(--rd-bd);color:var(--rd-muted);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;}
+  .acc-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+  .acc-card{background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:16px;padding:18px 20px;}
+  .acc-lbl{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--rd-faint);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+  .acc-lbl svg{color:var(--rd-accent);}
+  .acc-val{font-size:20px;font-weight:800;color:var(--rd-txt);}
+  .acc-cbar{height:6px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;margin-top:10px;}
+  .acc-cbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rd-accent),var(--rd-accent-dk));border-radius:6px;transition:width .4s ease;}
+  .acc-actions{display:flex;flex-direction:column;gap:12px;}
+  .acc-manage{display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--rd-panel);border:1px solid var(--rd-bdg);border-radius:16px;padding:18px 20px;}
+  .acc-mtxt{min-width:0;}
+  .acc-mt{font-size:15px;font-weight:700;margin-bottom:3px;color:var(--rd-txt);}
+  .acc-md{font-size:12.5px;color:var(--rd-muted);}
+  .acc-btn-gold{display:inline-flex!important;align-items:center;gap:8px;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk))!important;color:#111!important;font-weight:800!important;font-size:14px!important;border:none!important;border-radius:12px!important;padding:13px 20px!important;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;box-shadow:0 8px 22px rgba(255,214,0,0.2);margin-top:0!important;}
+  .acc-btn-gold:hover{filter:brightness(1.05);opacity:1!important;}
+  .acc-btn-logout{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;background:transparent;border:1px solid var(--rd-bd);color:var(--rd-muted);font-weight:700;font-size:14px;border-radius:12px;padding:14px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;}
+  .acc-btn-logout:hover{border-color:rgba(255,107,107,0.4);color:#ff8a8a;}
+  @media (max-width:900px){ .acc-cards{grid-template-columns:1fr;} .acc-manage{flex-direction:column;align-items:stretch;} .acc-btn-gold{justify-content:center;} }
   </style>
 </head>
 <body>
@@ -1602,27 +1632,56 @@
 
         <!-- ACCOUNT SECTION -->
         <div class="account-section" id="accountSection">
-          <h1 style="font-size:28px;font-weight:800;color:#eeeeee;margin-bottom:8px;">Mon compte</h1>
-          <p style="font-size:14px;color:#a0a0a0;margin-bottom:24px;">Vos informations et votre abonnement.</p>
-
-          <div class="account-card">
-            <label>Email</label>
-            <p id="account-email">—</p>
+          <div class="acc-head">
+            <h1>Mon compte</h1>
+            <p>Tes informations et la gestion de ton abonnement.</p>
           </div>
 
-          <div class="account-card">
-            <label>Plan actuel</label>
-            <p id="account-plan">—</p>
+          <div class="acc-profile">
+            <div class="acc-pav" id="account-avatar">J</div>
+            <div class="acc-pinfo">
+              <div class="acc-pemail" id="account-email">—</div>
+              <div class="acc-pbadges">
+                <span class="acc-plan-badge" id="account-plan-badge">Plan Gratuit</span>
+                <span class="acc-since-badge" id="account-since" style="display:none;"></span>
+              </div>
+            </div>
           </div>
 
-          <div class="account-card">
-            <label>Générations restantes</label>
-            <p id="account-credits">—</p>
+          <div class="acc-cards">
+            <div class="acc-card">
+              <div class="acc-lbl"><i data-lucide="award" style="width:14px;height:14px;"></i> Plan actuel</div>
+              <div class="acc-val" id="account-plan">—</div>
+            </div>
+            <div class="acc-card">
+              <div class="acc-lbl"><i data-lucide="zap" style="width:14px;height:14px;"></i> Crédits restants</div>
+              <div class="acc-val" id="account-credits">—</div>
+              <div class="acc-cbar"><span id="account-credit-bar"></span></div>
+            </div>
+            <div class="acc-card" id="account-renew-card" style="display:none;">
+              <div class="acc-lbl"><i data-lucide="calendar" style="width:14px;height:14px;"></i> Renouvellement des crédits</div>
+              <div class="acc-val" id="account-renew">—</div>
+            </div>
+            <div class="acc-card">
+              <div class="acc-lbl"><i data-lucide="check-circle" style="width:14px;height:14px;"></i> Statut</div>
+              <div class="acc-val" id="account-status">—</div>
+            </div>
           </div>
 
-          <button id="btn-portal" type="button" onclick="openStripePortal()">
-            Gérer mon abonnement
-          </button>
+          <div class="acc-actions">
+            <div class="acc-manage">
+              <div class="acc-mtxt">
+                <div class="acc-mt">Gérer mon abonnement</div>
+                <div class="acc-md">Changer de plan, moyen de paiement, factures ou résilier — via Stripe.</div>
+              </div>
+              <button class="acc-btn-gold" id="btn-portal" type="button" onclick="openStripePortal()">
+                <i data-lucide="settings" style="width:16px;height:16px;"></i> Gérer mon abonnement
+              </button>
+            </div>
+            <button class="acc-btn-logout" type="button" onclick="document.getElementById('logoutBtn').click()">
+              <i data-lucide="log-out" style="width:16px;height:16px;"></i> Se déconnecter
+            </button>
+          </div>
         </div>
 
         <!-- GENERATION SECTION -->
@@ -1844,10 +1903,40 @@
 
     function updateAccountSection(profile) {
       const planNames = { free: 'Plan Gratuit', starter: 'Starter', pro: 'Pro', ultra: 'Ultra' };
-      document.getElementById('account-email').textContent = currentUser?.email || '—';
-      document.getElementById('account-plan').textContent = planNames[profile?.plan] || 'Plan Gratuit';
+      const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+      const email = currentUser?.email || '—';
+      const plan = profile?.plan || 'free';
       const gens = creditsToGenerations(profile?.credits ?? 0);
-      document.getElementById('account-credits').textContent = gens + ' génération' + (gens > 1 ? 's' : '') + ' restante' + (gens > 1 ? 's' : '');
+      const maxGens = creditsToGenerations(PLAN_CREDITS_MAP[plan] || 100) || 1;
+
+      setTxt('account-email', email);
+      setTxt('account-avatar', (email && email[0]) ? email[0].toUpperCase() : 'U');
+      setTxt('account-plan', planNames[plan] || 'Plan Gratuit');
+      setTxt('account-plan-badge', plan === 'free' ? 'Plan Gratuit' : '★ Plan ' + (planNames[plan] || ''));
+      setTxt('account-credits', gens + ' génération' + (gens > 1 ? 's' : ''));
+      const bar = document.getElementById('account-credit-bar');
+      if (bar) bar.style.width = Math.max(4, Math.min(100, Math.round(gens / maxGens * 100))) + '%';
+      setTxt('account-status', plan === 'free' ? 'Gratuit' : 'Actif');
+
+      // Renouvellement des crédits (credits_reset_date)
+      const renewCard = document.getElementById('account-renew-card');
+      if (profile?.credits_reset_date) {
+        try {
+          const d = new Date(profile.credits_reset_date);
+          setTxt('account-renew', d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }));
+          if (renewCard) renewCard.style.display = '';
+        } catch (e) { if (renewCard) renewCard.style.display = 'none'; }
+      } else if (renewCard) { renewCard.style.display = 'none'; }
+
+      // Membre depuis (date de création du compte auth)
+      const sinceEl = document.getElementById('account-since');
+      if (sinceEl && currentUser?.created_at) {
+        try {
+          const d = new Date(currentUser.created_at);
+          sinceEl.textContent = 'Membre depuis ' + d.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+          sinceEl.style.display = '';
+        } catch (e) {}
+      }
     }
 
     async function openStripePortal() {

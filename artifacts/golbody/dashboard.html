@@ -1223,8 +1223,8 @@
   .sidebar-nav a.active::after{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--rd-accent);}
   .sidebar-bottom{gap:12px;}
   .plan-card{background:linear-gradient(160deg,rgba(255,214,0,0.10),rgba(255,214,0,0.02));border:1px solid var(--rd-bdg);border-radius:14px;padding:14px;}
-  .plan-title{font-size:11.5px!important;font-weight:600!important;color:var(--rd-muted)!important;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:3px!important;}
-  .plan-credits{font-size:23px!important;font-weight:800!important;color:var(--rd-accent)!important;line-height:1.05;letter-spacing:-0.5px;margin:0 0 12px!important;}
+  .plan-title{font-size:13px;font-weight:700;color:var(--rd-txt);}
+  .plan-credits{font-size:13px;font-weight:800;color:var(--rd-accent);margin-top:2px;}
   .cred-bar{height:6px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;margin:10px 0 12px;}
   .cred-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#FFD600,#e6c000);border-radius:6px;transition:width .4s ease;}
   .recharge-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;background:var(--rd-accent);color:#111;font-weight:700;font-size:13px;border:none;border-radius:10px;padding:9px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;}
@@ -1233,9 +1233,8 @@
   /* ---------- MAIN ---------- */
   .main{background:transparent!important;padding:0!important;margin-left:262px;}
   .topcredits{display:flex;justify-content:flex-end;padding:18px 32px 0;}
-  .pill-credits{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,rgba(255,214,0,0.20),rgba(255,214,0,0.07));border:1.5px solid var(--rd-accent);border-radius:30px;padding:10px 20px;font-size:16px;font-weight:800;color:var(--rd-accent);letter-spacing:-0.2px;box-shadow:0 0 26px rgba(255,214,0,0.18),0 4px 14px rgba(0,0,0,0.35);}
-  .pill-credits .z{color:var(--rd-accent);display:flex;align-items:center;}
-  .pill-credits svg{width:18px;height:18px;}
+  .pill-credits{display:inline-flex;align-items:center;gap:7px;background:var(--rd-panel2);border:1px solid var(--rd-bdg);border-radius:30px;padding:8px 15px;font-size:13px;font-weight:700;color:var(--rd-txt);box-shadow:0 4px 14px rgba(0,0,0,0.3);}
+  .pill-credits .z{color:var(--rd-accent);}
   .main-inner{max-width:1180px!important;padding:14px 32px 40px;}
 
   /* ---------- GÉNÉRATION ---------- */
@@ -1339,7 +1338,8 @@
   .plan-price .period{font-size:13px!important;font-weight:500!important;color:var(--rd-muted)!important;letter-spacing:0;}
   .plan-original-price{color:var(--rd-faint)!important;}
   .plan-billing-note{color:var(--rd-faint)!important;}
-  .plan-card-big .gens{font-size:14px;font-weight:800;color:var(--rd-accent);margin-bottom:4px;}
+  .plan-card-big .gens{display:inline-block;font-size:17px;font-weight:800;color:var(--rd-accent);background:rgba(255,214,0,0.12);border:1px solid var(--rd-bdg);padding:7px 16px;border-radius:12px;margin-bottom:8px;letter-spacing:-0.2px;}
+  .plan-card-big.featured .gens{background:rgba(255,214,0,0.18);border-color:rgba(255,214,0,0.35);}
   .plan-card-big .tagline{font-size:12.5px;color:var(--rd-muted);line-height:1.4;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--rd-bd);}
   .plan-card-big .incl-label{font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--rd-faint);margin-bottom:11px;}
   .plan-card-big .plan-features{gap:9px!important;margin-bottom:auto;}
@@ -1516,8 +1516,10 @@
 
       <div class="sidebar-bottom">
         <div class="plan-card">
-          <div class="plan-title" id="user-plan">--</div>
-          <div class="plan-credits" id="user-credits">--</div>
+          <div class="pc-row">
+            <div class="plan-title" id="user-plan">--</div>
+            <div class="plan-credits" id="user-credits">--</div>
+          </div>
           <div class="cred-bar"><span id="creditBar"></span></div>
           <button class="recharge-btn" type="button" onclick="showSubscription()"><i data-lucide="zap" style="width:15px;height:15px;"></i> Recharger</button>
         </div>
@@ -1574,7 +1576,7 @@
                 <div class="plan-price" id="starterPrice">4,90€<span class="period"> /mois</span></div>
                 <div class="plan-billing-note" id="starterBilling"></div>
               </div>
-              <div class="gens">10 générations / mois</div>
+              <div class="gens">1 000 crédits / mois</div>
               <div class="tagline">Parfait pour découvrir GolBody</div>
               <div class="incl-label">Votre forfait inclut :</div>
               <ul class="plan-features">
@@ -1599,7 +1601,7 @@
                 <div class="plan-price" id="proPrice">14,90€<span class="period"> /mois</span></div>
                 <div class="plan-billing-note" id="proBilling"></div>
               </div>
-              <div class="gens">30 générations / mois</div>
+              <div class="gens">3 000 crédits / mois</div>
               <div class="tagline">Le meilleur choix pour les passionnés</div>
               <div class="incl-label">Votre forfait inclut :</div>
               <ul class="plan-features">
@@ -1625,7 +1627,7 @@
                 <div class="plan-price" id="ultraPrice">29,90€<span class="period"> /mois</span></div>
                 <div class="plan-billing-note" id="ultraBilling"></div>
               </div>
-              <div class="gens">75 générations / mois</div>
+              <div class="gens">7 500 crédits / mois</div>
               <div class="tagline">Pour les créateurs sans limites</div>
               <div class="incl-label">Votre forfait inclut :</div>
               <ul class="plan-features">
@@ -1653,14 +1655,14 @@
                 <div class="picn">⚡</div>
                 <div class="credit-pack-name">Pack Légère</div>
                 <div class="credit-pack-price">4,90€</div>
-                <div class="credit-pack-desc">5 générations supplémentaires</div>
+                <div class="credit-pack-desc">500 crédits supplémentaires</div>
                 <button class="credit-pack-btn" type="button" data-pack="small">Acheter</button>
               </div>
               <div class="credit-pack" id="packLarge" data-pack="large">
                 <div class="picn">🔥</div>
                 <div class="credit-pack-name">Pack Max</div>
                 <div class="credit-pack-price">14,90€</div>
-                <div class="credit-pack-desc">15 générations supplémentaires</div>
+                <div class="credit-pack-desc">1 500 crédits supplémentaires</div>
                 <button class="credit-pack-btn teal" type="button" data-pack="large">Acheter</button>
               </div>
             </div>

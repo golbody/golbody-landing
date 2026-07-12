@@ -1223,8 +1223,8 @@
   .sidebar-nav a.active::after{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--rd-accent);}
   .sidebar-bottom{gap:12px;}
   .plan-card{background:linear-gradient(160deg,rgba(255,214,0,0.10),rgba(255,214,0,0.02));border:1px solid var(--rd-bdg);border-radius:14px;padding:14px;}
-  .plan-title{font-size:13px;font-weight:700;color:var(--rd-txt);}
-  .plan-credits{font-size:13px;font-weight:800;color:var(--rd-accent);margin-top:2px;}
+  .plan-title{font-size:11.5px!important;font-weight:600!important;color:var(--rd-muted)!important;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:3px!important;}
+  .plan-credits{font-size:23px!important;font-weight:800!important;color:var(--rd-accent)!important;line-height:1.05;letter-spacing:-0.5px;margin:0 0 12px!important;}
   .cred-bar{height:6px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;margin:10px 0 12px;}
   .cred-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#FFD600,#e6c000);border-radius:6px;transition:width .4s ease;}
   .recharge-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;background:var(--rd-accent);color:#111;font-weight:700;font-size:13px;border:none;border-radius:10px;padding:9px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;}
@@ -1233,8 +1233,9 @@
   /* ---------- MAIN ---------- */
   .main{background:transparent!important;padding:0!important;margin-left:262px;}
   .topcredits{display:flex;justify-content:flex-end;padding:18px 32px 0;}
-  .pill-credits{display:inline-flex;align-items:center;gap:7px;background:var(--rd-panel2);border:1px solid var(--rd-bdg);border-radius:30px;padding:8px 15px;font-size:13px;font-weight:700;color:var(--rd-txt);box-shadow:0 4px 14px rgba(0,0,0,0.3);}
-  .pill-credits .z{color:var(--rd-accent);}
+  .pill-credits{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,rgba(255,214,0,0.20),rgba(255,214,0,0.07));border:1.5px solid var(--rd-accent);border-radius:30px;padding:10px 20px;font-size:16px;font-weight:800;color:var(--rd-accent);letter-spacing:-0.2px;box-shadow:0 0 26px rgba(255,214,0,0.18),0 4px 14px rgba(0,0,0,0.35);}
+  .pill-credits .z{color:var(--rd-accent);display:flex;align-items:center;}
+  .pill-credits svg{width:18px;height:18px;}
   .main-inner{max-width:1180px!important;padding:14px 32px 40px;}
 
   /* ---------- GÉNÉRATION ---------- */
@@ -1515,10 +1516,8 @@
 
       <div class="sidebar-bottom">
         <div class="plan-card">
-          <div class="pc-row">
-            <div class="plan-title" id="user-plan">--</div>
-            <div class="plan-credits" id="user-credits">--</div>
-          </div>
+          <div class="plan-title" id="user-plan">--</div>
+          <div class="plan-credits" id="user-credits">--</div>
           <div class="cred-bar"><span id="creditBar"></span></div>
           <button class="recharge-btn" type="button" onclick="showSubscription()"><i data-lucide="zap" style="width:15px;height:15px;"></i> Recharger</button>
         </div>

@@ -50,8 +50,6 @@
 
     const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
     if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
-  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
-  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
 
   const user = await validateSupabaseToken(token);
   if (!user) return res.status(401).json({ error: 'Invalid or expired token' });

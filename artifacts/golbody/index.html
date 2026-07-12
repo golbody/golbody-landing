@@ -270,6 +270,61 @@
   </div>
 </div>
 
+<style>
+  .gol-demo { position: relative; max-width: 1100px; margin: 32px auto 8px; padding: 40px 24px 24px; text-align: center; }
+  .gol-demo-badge { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: .16em; color: var(--color-accent); background: rgba(255,214,0,.07); border: 1px solid var(--color-border); padding: 7px 16px; border-radius: 100px; margin-bottom: 20px; }
+  .gol-demo h2 { font-size: clamp(28px, 4.2vw, 46px); font-weight: 800; letter-spacing: -1.2px; line-height: 1.08; margin-bottom: 14px; }
+  .gol-demo-sub { color: var(--color-text-muted); font-size: 16px; max-width: 540px; margin: 0 auto 38px; line-height: 1.55; }
+  .gol-demo-wrap { position: relative; max-width: 940px; margin: 0 auto; }
+  .gol-demo-glow { position: absolute; inset: -8% -4% -12%; z-index: 0; background: radial-gradient(ellipse 55% 60% at 50% 38%, rgba(255,214,0,.22), transparent 70%); filter: blur(34px); pointer-events: none; }
+  .gol-demo-frame { position: relative; z-index: 1; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.09); background: #141210; box-shadow: 0 40px 90px -24px rgba(0,0,0,.85), 0 0 0 1px rgba(255,214,0,.05); }
+  .gol-demo-bar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; background: #17150f; border-bottom: 1px solid rgba(255,255,255,.055); }
+  .gol-demo-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+  .gol-demo-url { margin: 0 auto; display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; color: #9a9aa2; background: #0d0c0a; border: 1px solid rgba(255,255,255,.06); padding: 6px 44px; border-radius: 8px; }
+  .gol-demo-url svg { width: 12px; height: 12px; stroke: #FFD600; opacity: .9; }
+  .gol-demo-video { display: block; width: 100%; height: auto; background: #0e0e0e; }
+  .gol-demo-card { position: absolute; z-index: 3; text-align: left; display: flex; align-items: center; gap: 11px; background: rgba(26,24,19,.92); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 12px 17px 12px 12px; box-shadow: 0 16px 40px -12px rgba(0,0,0,.7); }
+  .gol-demo-card-ic { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 14px rgba(255,214,0,.3); }
+  .gol-demo-card-ic svg { width: 19px; height: 19px; stroke: #111; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .gol-demo-card-lbl { display: block; font-size: 9.5px; font-weight: 800; letter-spacing: .14em; color: var(--color-text-muted); text-transform: uppercase; margin-bottom: 2px; }
+  .gol-demo-card-val { display: block; font-size: 14.5px; font-weight: 800; color: #fff; white-space: nowrap; }
+  .gol-demo-card-tr { top: -22px; right: -26px; animation: golFloatA 5s ease-in-out infinite; }
+  .gol-demo-card-bl { bottom: -22px; left: -26px; animation: golFloatB 5.5s ease-in-out infinite; }
+  @keyframes golFloatA { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  @keyframes golFloatB { 0%,100% { transform: translateY(0); } 50% { transform: translateY(9px); } }
+  @media (max-width: 760px) { .gol-demo-card { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .gol-demo-card { animation: none; } }
+  @media (max-width: 640px) { .gol-demo { padding: 24px 14px 12px; } .gol-demo-url { padding: 6px 20px; } }
+</style>
+
+<section class="gol-demo reveal">
+  <div class="gol-demo-badge">&#10022; L'APP EN ACTION</div>
+  <h2>Regarde GolBody <span class="gradient-text">transformer</span><br>une photo en direct</h2>
+  <p class="gol-demo-sub">De l'upload au r&eacute;sultat photor&eacute;aliste en quelques secondes. Voici exactement ce qui t'attend.</p>
+  <div class="gol-demo-wrap">
+    <div class="gol-demo-glow"></div>
+    <div class="gol-demo-frame">
+      <div class="gol-demo-bar">
+        <span class="gol-demo-dot" style="background:#ff5f57"></span>
+        <span class="gol-demo-dot" style="background:#febc2e"></span>
+        <span class="gol-demo-dot" style="background:#28c840"></span>
+        <span class="gol-demo-url"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>golbody.com</span>
+      </div>
+      <video class="gol-demo-video" autoplay muted loop playsinline preload="metadata" poster="/public/golbody-demo-poster.jpg">
+        <source src="/public/golbody-demo.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="gol-demo-card gol-demo-card-tr">
+      <div class="gol-demo-card-ic"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <div><span class="gol-demo-card-lbl">G&eacute;n&eacute;ration</span><span class="gol-demo-card-val">Ultra-Rapide</span></div>
+    </div>
+    <div class="gol-demo-card gol-demo-card-bl">
+      <div class="gol-demo-card-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+      <div><span class="gol-demo-card-lbl">Qualit&eacute;</span><span class="gol-demo-card-val">Photor&eacute;alisme 4K</span></div>
+    </div>
+  </div>
+</section>
+
 <section class="gol-results reveal" id="exemples">
   <div class="gol-results-badge">R&Eacute;SULTATS</div>
   <h2>R&eacute;sultats r&eacute;els</h2>

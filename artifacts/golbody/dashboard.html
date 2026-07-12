@@ -1204,8 +1204,116 @@
       }
     }
   </style>
+  <style>
+  /* ===================== REDESIGN 2026-07 (surcouche) ===================== */
+  :root{--rd-bg:#0e0e0e;--rd-panel:#1a1813;--rd-panel2:#211f18;--rd-inset:#141210;--rd-accent:#FFD600;--rd-accent-dk:#e6c000;--rd-txt:#f4f4f5;--rd-muted:#9a9aa2;--rd-faint:#66666f;--rd-bd:rgba(255,255,255,0.07);--rd-bdg:rgba(255,214,0,0.16);}
+  body{background:var(--rd-bg)!important;color:var(--rd-txt);}
+  #particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  @keyframes float-up{0%{transform:translateY(0) scale(1);opacity:0;}6%{opacity:1;}85%{opacity:.85;}100%{transform:translateY(-110vh) scale(.4);opacity:0;}}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 50% -8%,rgba(255,214,0,0.06),transparent 60%);}
+  .dashboard{position:relative;z-index:1;}
+  svg.rdic{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{width:262px;background:var(--rd-panel);border-right:1px solid var(--rd-bd);padding:22px 16px;}
+  .sidebar-logo{margin-bottom:18px!important;padding:0 8px;}
+  .sidebar-nav a{border-radius:11px;padding:10px 12px;}
+  .sidebar-nav a::before{display:none;}
+  .sidebar-nav a.active{background:linear-gradient(90deg,rgba(255,214,0,0.14),rgba(255,214,0,0.05));color:var(--rd-accent);font-weight:600;position:relative;}
+  .sidebar-nav a.active::after{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--rd-accent);}
+  .sidebar-bottom{gap:12px;}
+  .plan-card{background:linear-gradient(160deg,rgba(255,214,0,0.10),rgba(255,214,0,0.02));border:1px solid var(--rd-bdg);border-radius:14px;padding:14px;}
+  .plan-title{font-size:13px;font-weight:700;color:var(--rd-txt);}
+  .plan-credits{font-size:13px;font-weight:800;color:var(--rd-accent);margin-top:2px;}
+  .cred-bar{height:6px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;margin:10px 0 12px;}
+  .cred-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#FFD600,#e6c000);border-radius:6px;transition:width .4s ease;}
+  .recharge-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;background:var(--rd-accent);color:#111;font-weight:700;font-size:13px;border:none;border-radius:10px;padding:9px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;}
+  .recharge-btn:hover{background:#ffe23f;}
+
+  /* ---------- MAIN ---------- */
+  .main{background:transparent!important;padding:0!important;margin-left:262px;}
+  .topcredits{display:flex;justify-content:flex-end;padding:18px 32px 0;}
+  .pill-credits{display:inline-flex;align-items:center;gap:7px;background:var(--rd-panel2);border:1px solid var(--rd-bdg);border-radius:30px;padding:8px 15px;font-size:13px;font-weight:700;color:var(--rd-txt);box-shadow:0 4px 14px rgba(0,0,0,0.3);}
+  .pill-credits .z{color:var(--rd-accent);}
+  .main-inner{max-width:1180px!important;padding:14px 32px 40px;}
+
+  /* ---------- GÉNÉRATION ---------- */
+  #generationSection, #formZone{max-width:520px;margin:0 auto;}
+  .upload-zone{max-width:400px;margin:0 auto;min-height:400px;border:1.6px dashed var(--rd-bdg)!important;border-radius:22px!important;background:rgba(255,255,255,0.015)!important;padding:24px!important;animation:none!important;transition:min-height .25s ease,border-color .18s,background .18s;}
+  .upload-zone:hover{border-color:rgba(255,214,0,0.45)!important;background:rgba(255,214,0,0.03)!important;}
+  .form.opts-open .upload-zone{min-height:190px;}
+  .upload-placeholder{display:flex;flex-direction:column;align-items:center;}
+  .up-ic{width:58px;height:58px;border-radius:50%;background:rgba(255,214,0,0.10);display:flex;align-items:center;justify-content:center;color:var(--rd-accent);margin-bottom:16px;}
+  .up-ic svg,.up-ic i{width:26px;height:26px;color:var(--rd-accent);}
+  .form.opts-open .up-ic{width:44px;height:44px;margin-bottom:10px;}
+  .form.opts-open .up-ic svg{width:20px;height:20px;}
+  .upload-title{font-size:13px!important;font-weight:800!important;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px!important;}
+  .pill-credits svg{width:15px;height:15px;}
+  .recharge-btn svg{width:14px;height:14px;}
+  .opt-toggle svg{width:16px;height:16px;}
+  .cam-hint svg{width:13px;height:13px;}
+  .upload-hint{font-size:12.5px!important;}
+  .cam-hint{margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--rd-accent);background:rgba(255,214,0,0.08);padding:7px 14px;border-radius:20px;}
+  .preview-wrapper{max-width:260px!important;}
+
+  .opt-toggle{margin:16px auto 0;width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:var(--rd-panel2);border:1px solid var(--rd-bd);color:var(--rd-muted);font-weight:600;font-size:13.5px;border-radius:13px;padding:14px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s;}
+  .opt-toggle:hover{color:var(--rd-txt);border-color:var(--rd-bdg);}
+  .opt-toggle .cnt{background:rgba(255,214,0,0.16);color:var(--rd-accent);font-size:11px;font-weight:800;padding:1px 8px;border-radius:20px;}
+  .opt-toggle .chev{transition:transform .22s;}
+  .opt-toggle.open .chev{transform:rotate(180deg);}
+  .opt-body{display:none;margin-top:14px;}
+  .opt-body.open{display:block;}
+  .opt-lbl{font-size:11.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--rd-muted);margin:14px 0 9px;}
+  .opt-body>.opt-lbl:first-child{margin-top:2px;}
+
+  .transform-grid{grid-template-columns:repeat(3,1fr)!important;gap:8px!important;margin-top:0!important;}
+  .transform-btn{flex-direction:column!important;gap:5px!important;padding:11px 8px!important;border-radius:12px!important;background:var(--rd-panel2)!important;border:1px solid var(--rd-bd)!important;color:var(--rd-muted)!important;font-size:12.5px!important;position:relative;transition:.15s!important;box-shadow:none!important;}
+  .transform-btn:hover{border-color:var(--rd-bdg)!important;color:var(--rd-txt)!important;transform:translateY(-2px)!important;box-shadow:none!important;}
+  .transform-btn .em{font-size:21px;line-height:1;}
+  .transform-btn.selected{background:linear-gradient(135deg,#FFD600 0%,#e6c000 100%)!important;border-color:#e6c000!important;color:#111!important;font-weight:700!important;box-shadow:none!important;}
+  .transform-btn.selected:hover{color:#111!important;box-shadow:0 4px 16px rgba(255,214,0,0.3)!important;}
+
+  .prompt-extra{background:var(--rd-inset)!important;border:1px solid var(--rd-bd)!important;border-radius:12px!important;margin-top:0!important;min-height:52px;}
+  .prompt-extra:focus{border-color:var(--rd-bdg)!important;}
+
+  .generate-btn{margin-top:16px!important;width:100%;justify-content:center;background:linear-gradient(135deg,#FFD600 0%,#e6c000 100%)!important;color:#111!important;font-weight:800!important;border-radius:13px!important;padding:15px!important;animation:none!important;box-shadow:0 8px 22px rgba(255,214,0,0.22);}
+  .generate-btn:not(:disabled){animation:none!important;}
+  .generate-btn .cost{font-weight:700;font-size:12.5px;background:rgba(0,0,0,0.16);padding:2px 9px;border-radius:20px;margin-left:4px;}
+  .generate-hint{color:var(--rd-faint)!important;}
+
+  /* ---------- CHARGEMENT ---------- */
+  .loading-overlay{background:rgba(8,8,8,0.86)!important;backdrop-filter:blur(7px);gap:0!important;}
+  .loading-overlay .spinner{display:none;}
+  .loading-overlay>p{display:none;}
+  .load-card{background:var(--rd-panel);border:1px solid var(--rd-bdg);border-radius:22px;padding:36px 32px;max-width:380px;width:calc(100% - 40px);text-align:center;box-shadow:0 30px 80px rgba(0,0,0,0.6);}
+  .load-ring{position:relative;width:64px;height:64px;margin:0 auto 22px;}
+  .load-ring::before{content:"";position:absolute;inset:0;border:4px solid rgba(255,214,0,0.15);border-top-color:var(--rd-accent);border-radius:50%;animation:spin .8s linear infinite;box-shadow:0 0 26px rgba(255,214,0,0.28);}
+  .load-ring .z{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;}
+  .load-title{font-size:18px;font-weight:800;margin-bottom:8px;color:var(--rd-txt);}
+  .load-step{font-size:13.5px;color:var(--rd-accent);font-weight:600;min-height:20px;margin-bottom:18px;}
+  .load-bar{height:8px;border-radius:8px;background:rgba(255,255,255,0.08);overflow:hidden;margin-bottom:14px;}
+  .load-bar span{display:block;height:0;height:8px;width:0;background:linear-gradient(90deg,#FFD600,#e6c000);border-radius:8px;transition:width .5s ease;}
+  .load-note{font-size:11.5px;color:var(--rd-muted);}
+
+  /* ---------- RÉSULTAT ---------- */
+  .result-zone{max-width:400px;margin:0 auto!important;background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:18px;padding:18px;box-shadow:0 12px 34px rgba(0,0,0,0.45);}
+  .result-title{font-size:17px!important;font-weight:800!important;margin-bottom:14px!important;}
+  .result-image-wrapper img{max-width:320px!important;max-height:52vh!important;border-radius:14px!important;border:1px solid var(--rd-bd);}
+  .result-actions{margin-top:16px!important;}
+  .download-btn{flex:1;justify-content:center;background:linear-gradient(135deg,#FFD600 0%,#e6c000 100%)!important;color:#111!important;font-weight:800!important;}
+  .newgen-btn{flex:1;justify-content:center;border:1px solid var(--rd-bdg)!important;}
+
+  @media (max-width:900px){
+    .sidebar{display:none;}
+    .main{margin-left:0!important;}
+    .topcredits{padding:14px 18px 0;}
+    .main-inner{padding:8px 18px 40px;}
+  }
+  </style>
 </head>
 <body>
+
+  <div id="particles"></div>
 
   <div class="auth-loading" id="authLoading">
     <div class="spinner"></div>
@@ -1213,8 +1321,13 @@
   </div>
 
   <div class="loading-overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-    <p>Génération en cours...</p>
+    <div class="load-card">
+      <div class="load-ring"><span class="z">💪</span></div>
+      <div class="load-title">On sculpte ton nouveau corps</div>
+      <div class="load-step" id="loadStep">Analyse de ta photo…</div>
+      <div class="load-bar"><span id="loadBar"></span></div>
+      <div class="load-note">≈ 10 à 20 secondes · ne ferme pas la page</div>
+    </div>
   </div>
 
   <button class="mobile-nav-btn" id="mobileNavBtn" type="button" aria-label="Ouvrir le menu">☰</button>
@@ -1286,8 +1399,12 @@
 
       <div class="sidebar-bottom">
         <div class="plan-card">
-          <div class="plan-title" id="user-plan">--</div>
-          <div class="plan-credits" id="user-credits">--</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div class="plan-title" id="user-plan">--</div>
+            <div class="plan-credits" id="user-credits">--</div>
+          </div>
+          <div class="cred-bar"><span id="creditBar"></span></div>
+          <button class="recharge-btn" type="button" onclick="showSubscription()"><i data-lucide="zap" style="width:14px;height:14px;"></i> Recharger</button>
         </div>
         <div class="user-name" id="user-email">Utilisateur</div>
         <button class="logout-btn" id="logoutBtn" type="button">
@@ -1299,6 +1416,9 @@
 
     <!-- ========== MAIN ========== -->
     <main class="main">
+      <div class="topcredits">
+        <div class="pill-credits"><span class="z"><i data-lucide="zap" style="width:15px;height:15px;vertical-align:middle;"></i></span> <span id="pillCredits">--</span></div>
+      </div>
       <div class="main-inner">
         <!-- Success banner -->
         <div class="success-banner" id="successBanner">
@@ -1431,13 +1551,14 @@
         <!-- GENERATION SECTION -->
         <div id="generationSection">
           <!-- Form Zone -->
-        <div id="formZone">
+        <div id="formZone" class="form">
           <!-- Upload Zone -->
           <div class="upload-zone" id="uploadZone">
             <div class="upload-placeholder" id="uploadPlaceholder">
-              <i data-lucide="upload-cloud"></i>
+              <span class="up-ic"><i data-lucide="user"></i></span>
               <div class="upload-title">Ta photo</div>
-              <div class="upload-hint">Touche pour importer</div>
+              <div class="upload-hint">Glisse ou clique pour importer · de face ou de dos</div>
+              <span class="cam-hint"><i data-lucide="camera" style="width:13px;height:13px;"></i> Prendre une photo (mobile)</span>
             </div>
             <div class="preview-wrapper" id="previewWrapper" style="display: none;">
               <img id="previewImg" src="" alt="Aperçu">
@@ -1446,37 +1567,44 @@
             <input type="file" class="upload-input" id="uploadInput" accept="image/*">
           </div>
 
-          <!-- Transformation Options -->
-          <div class="transform-grid" id="transformGrid">
-            <button type="button" class="transform-btn" data-value="Make the biceps bigger">
-              💪 Biceps plus gros
-            </button>
-            <button type="button" class="transform-btn" data-value="Make the shoulders wider">
-              🏋️ Épaules larges
-            </button>
-            <button type="button" class="transform-btn" data-value="Make the abs visible">
-              🔥 Abdos visibles
-            </button>
-            <button type="button" class="transform-btn" data-value="Make the pectorals more developed">
-              💥 Pectoraux développés
-            </button>
-            <button type="button" class="transform-btn" data-value="Make the thighs more muscular">
-              🦵 Cuisses musclées
-            </button>
-            <button type="button" class="transform-btn" data-value="Make the body leaner and more defined">
-              📐 Corps plus sec
-            </button>
-            <button type="button" class="transform-btn" data-value="Make the back more muscular">
-              🔙 Dos musclé
-            </button>
-          </div>
+          <!-- Toggle options -->
+          <button class="opt-toggle" id="optToggle" type="button">
+            <i data-lucide="sliders-horizontal" style="width:16px;height:16px;"></i>
+            Personnaliser ma transformation
+            <span class="cnt" id="optCnt">0</span>
+            <i data-lucide="chevron-down" class="chev" style="width:16px;height:16px;"></i>
+          </button>
 
-          <!-- Optional custom prompt -->
-          <textarea class="prompt-extra" id="promptExtra" placeholder="Précisions optionnelles..." rows="3"></textarea>
+          <div class="opt-body" id="optBody">
+            <div class="opt-lbl">Zones à muscler</div>
+            <!-- Transformation Options -->
+            <div class="transform-grid" id="transformGrid">
+              <button type="button" class="transform-btn" data-value="Make the biceps bigger"><span class="em">💪</span> Biceps</button>
+              <button type="button" class="transform-btn" data-value="Make the shoulders wider"><span class="em">🏋️</span> Épaules</button>
+              <button type="button" class="transform-btn" data-value="Make the abs visible"><span class="em">🔥</span> Abdos</button>
+              <button type="button" class="transform-btn" data-value="Make the pectorals more developed"><span class="em">💥</span> Pectoraux</button>
+              <button type="button" class="transform-btn" data-value="Make the thighs more muscular"><span class="em">🦵</span> Cuisses</button>
+              <button type="button" class="transform-btn" data-value="Make the body leaner and more defined"><span class="em">📐</span> Corps sec</button>
+              <button type="button" class="transform-btn" data-value="Make the back more muscular"><span class="em">🔙</span> Dos</button>
+              <button type="button" class="transform-btn" data-value="Make the waist narrower for a V-taper physique"><span class="em">🔻</span> Taille en V</button>
+              <button type="button" class="transform-btn" data-value="Make the glutes more toned and firm"><span class="em">🍑</span> Fessiers</button>
+              <button type="button" class="transform-btn" data-value="Make the calves more muscular"><span class="em">🦿</span> Mollets</button>
+              <button type="button" class="transform-btn" data-value="Make the forearms more muscular"><span class="em">🦾</span> Avant-bras</button>
+              <button type="button" class="transform-btn" data-value="Make the trapezius muscles more developed"><span class="em">🐂</span> Trapèzes</button>
+              <button type="button" class="transform-btn" data-value="Add visible veins and vascularity on the arms"><span class="em">🩸</span> Vascularité</button>
+              <button type="button" class="transform-btn" data-value="Give the skin a natural sun tan"><span class="em">🌞</span> Bronzage</button>
+              <button type="button" class="transform-btn" data-value="Make the jawline sharper and more defined"><span class="em">🗿</span> Mâchoire</button>
+              <button type="button" class="transform-btn" data-value="Make the skin clearer and smoother"><span class="em">✨</span> Peau nette</button>
+            </div>
+
+            <div class="opt-lbl">Précisions (optionnel)</div>
+            <!-- Optional custom prompt -->
+            <textarea class="prompt-extra" id="promptExtra" placeholder="Ex : garde le t-shirt, accentue le dos…" rows="3"></textarea>
+          </div>
 
           <!-- Generate Button -->
           <button class="generate-btn" id="generateBtn" type="button" disabled>
-            Générer →
+            Générer <span class="cost">−1 crédit</span>
           </button>
           <div class="generate-hint" id="generateHint">↑ Importe une photo pour commencer</div>
         </div>
@@ -1574,11 +1702,19 @@
     function updateSidebar() {
       const gens = creditsToGenerations(currentCredits);
       const planLabel = PLAN_NAMES[currentPlan] || 'Plan Gratuit';
-      const creditsText = gens + ' génération' + (gens > 1 ? 's' : '') + ' restante' + (gens > 1 ? 's' : '');
+      const shortText = gens + ' crédit' + (gens > 1 ? 's' : '');
+      const creditsText = shortText;
       userPlan.textContent = planLabel;
       userCredits.textContent = creditsText;
       mobileUserPlan.textContent = planLabel;
       mobileUserCredits.textContent = creditsText;
+      // Badge du haut + barre de progression (redesign)
+      const pill = document.getElementById('pillCredits');
+      if (pill) pill.textContent = shortText;
+      const maxGens = creditsToGenerations(PLAN_CREDITS_MAP[currentPlan] || 100) || 1;
+      const pct = Math.max(4, Math.min(100, Math.round(gens / maxGens * 100)));
+      const bar = document.getElementById('creditBar');
+      if (bar) bar.style.width = pct + '%';
 
       // Highlight active plan card and toggle CTA vs "Plan actif"
       document.querySelectorAll('.plan-card-big').forEach(card => {
@@ -1946,18 +2082,69 @@
       clearFile();
       promptExtra.value = '';
       transformGrid.querySelectorAll('.transform-btn').forEach(btn => btn.classList.remove('selected'));
+      if (typeof refreshOptCnt === 'function') refreshOptCnt();
       resultZone.style.display = 'none';
       resultImage.src = '';
       downloadBtn.href = '#';
       formZone.style.display = 'block';
     });
 
-    // ===== Transformation selection =====
+    // ===== Transformation selection + options repliables =====
+    const optToggle = document.getElementById('optToggle');
+    const optBody = document.getElementById('optBody');
+    const optCnt = document.getElementById('optCnt');
+    function refreshOptCnt() {
+      const n = transformGrid.querySelectorAll('.transform-btn.selected').length;
+      if (optCnt) {
+        if (n > 0) { optCnt.style.display = ''; optCnt.textContent = n; }
+        else { optCnt.style.display = 'none'; }
+      }
+    }
+    if (optToggle) {
+      optToggle.addEventListener('click', () => {
+        optToggle.classList.toggle('open');
+        optBody.classList.toggle('open');
+        formZone.classList.toggle('opts-open');
+      });
+    }
     transformGrid.querySelectorAll('.transform-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         btn.classList.toggle('selected');
+        refreshOptCnt();
       });
     });
+    refreshOptCnt();
+
+    // ===== Chargement narratif (étapes + barre) =====
+    const LOAD_STEPS = ['Analyse de ta photo…','Détection de la morphologie…','On sculpte les muscles…','Ajout de la définition & du relief…','Rendu photoréaliste…','Finalisation…'];
+    let loadIv = null;
+    function startLoadSteps() {
+      const stepEl = document.getElementById('loadStep'), barEl = document.getElementById('loadBar');
+      let i = 0;
+      if (stepEl) stepEl.textContent = LOAD_STEPS[0];
+      if (barEl) barEl.style.width = '10%';
+      loadIv = setInterval(() => {
+        i++;
+        if (i < LOAD_STEPS.length - 1) {
+          if (stepEl) stepEl.textContent = LOAD_STEPS[i];
+          if (barEl) barEl.style.width = (10 + i * 15) + '%';
+        } else {
+          if (stepEl) stepEl.textContent = LOAD_STEPS[LOAD_STEPS.length - 1];
+          if (barEl) barEl.style.width = '90%';
+          clearInterval(loadIv); loadIv = null;
+        }
+      }, 1900);
+    }
+    function stopLoadSteps() {
+      if (loadIv) { clearInterval(loadIv); loadIv = null; }
+      const barEl = document.getElementById('loadBar');
+      if (barEl) barEl.style.width = '100%';
+      setTimeout(() => {
+        const b = document.getElementById('loadBar'), s = document.getElementById('loadStep');
+        if (b) b.style.width = '0';
+        if (s) s.textContent = LOAD_STEPS[0];
+      }, 450);
+    }
 
     // ===== Upload zone =====
     const generateHint = document.getElementById('generateHint');
@@ -2098,7 +2285,16 @@
       "Make the pectorals more developed": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the chest: slightly more visible pectorals with natural shape, as if the person works out occasionally. Do not change body size or proportions.",
       "Make the thighs more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the thighs: slightly more visible quadriceps and leg tone, as if the person works out occasionally. Do not change body size or proportions.",
       "Make the body leaner and more defined": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only make the body slightly leaner with subtle muscle definition and more sculpted silhouette, as if the person works out occasionally. Do not change body size or proportions.",
-      "Make the back more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the back: slightly more visible trapezius and latissimus dorsi, as if the person works out occasionally. Do not change body size or proportions."
+      "Make the back more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the back: slightly more visible trapezius and latissimus dorsi, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the waist narrower for a V-taper physique": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only slightly narrow the waist to create a subtle V-taper silhouette with broader-looking shoulders, as if the person works out occasionally. Do not change the face or proportions unrealistically.",
+      "Make the glutes more toned and firm": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle tone and firmness to the glutes, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the calves more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition to the calves, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the forearms more muscular": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle muscle definition and slight thickness to the forearms, as if the person works out occasionally. Do not change body size or proportions.",
+      "Make the trapezius muscles more developed": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle development to the trapezius muscles between the neck and shoulders, as if the person works out occasionally. Do not change body size or proportions.",
+      "Add visible veins and vascularity on the arms": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only add subtle visible veins and vascularity on the forearms and biceps for a natural athletic look. Do not change body size or proportions.",
+      "Give the skin a natural sun tan": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only give the skin a subtle, natural-looking sun tan. Keep it realistic and do not change facial features or body shape.",
+      "Make the jawline sharper and more defined": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only make the jawline slightly sharper and more defined while keeping the face fully recognizable and natural. Do not change other features.",
+      "Make the skin clearer and smoother": "Keep the photo exactly as it is — same person, same angle, same pose, same background, same lighting, same clothing. Only make the skin slightly clearer and smoother, removing minor blemishes while keeping it natural and realistic. Do not change facial features or body shape."
     };
 
     // ===== Generate =====
@@ -2114,6 +2310,7 @@
       }
 
       loadingOverlay.classList.add('is-visible');
+      startLoadSteps();
 
       try {
         const imageUrl = await fileToDataUrl(currentFile);
@@ -2173,9 +2370,25 @@
         console.error('Generation error:', err);
         showError('Erreur : ' + (err.message || 'Impossible de générer l\'image'));
       } finally {
+        stopLoadSteps();
         loadingOverlay.classList.remove('is-visible');
       }
     });
+
+    // ===== Particules dorées (float-up, comme la landing) =====
+    (function(){
+      var pc = document.getElementById('particles');
+      if (!pc) return;
+      for (var i = 0; i < 85; i++) {
+        var p = document.createElement('div');
+        var sz = Math.random() * 4 + 2.5;
+        var dur = Math.random() * 12 + 9;
+        var delay = Math.random() * -dur;
+        var op = (Math.random() * 0.45 + 0.55);
+        p.style.cssText = 'position:absolute;width:' + sz + 'px;height:' + sz + 'px;border-radius:50%;background:rgba(255,214,0,' + op.toFixed(2) + ');box-shadow:0 0 ' + (sz * 2.2).toFixed(1) + 'px rgba(255,214,0,0.85);left:' + (Math.random() * 100) + '%;top:100%;animation:float-up ' + dur + 's ' + delay + 's linear infinite;pointer-events:none';
+        pc.appendChild(p);
+      }
+    })();
 
     // ===== Lucide icons =====
     lucide.createIcons();

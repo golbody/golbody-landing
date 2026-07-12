@@ -8,23 +8,23 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
-// Stripe products (mêmes IDs que artifacts/api-server)
+// Stripe products — prix LIVE (compte acct_1TqYtWACVZ6Qm7ic)
 const PRICE_MAP = {
-  starter: { monthly: 'price_1Tqx3UAa7KFR9IQxMYKKKo0R', yearly: 'price_1Tqx6OAa7KFR9IQxuDzFeUp8' },
-  pro:     { monthly: 'price_1Tqx46Aa7KFR9IQxqmcnnpxZ', yearly: 'price_1Tqx72Aa7KFR9IQxWyTp9s0H' },
-  ultra:   { monthly: 'price_1Tqx4LAa7KFR9IQx6VwgnQ6Z', yearly: 'price_1Tqx84Aa7KFR9IQxAZ6WU7mo' },
+  starter: { monthly: 'price_1TsVBqACVZ6Qm7icIBz2xjmO', yearly: 'price_1TsVBqACVZ6Qm7icNbxvtCid' },
+  pro:     { monthly: 'price_1TsVBqACVZ6Qm7icS9h5wWgD', yearly: 'price_1TsVBqACVZ6Qm7icE0rgZLbS' },
+  ultra:   { monthly: 'price_1TsVBrACVZ6Qm7ic4WjD7F3I', yearly: 'price_1TsVBrACVZ6Qm7icmNezIP1V' },
 };
 const CREDIT_PACKS = {
-  small: { amount: 490, credits: 500, name: 'Pack Legere' },
-  large: { amount: 1490, credits: 1500, name: 'Pack Max' },
+  small: { amount: 990, credits: 1000, name: 'Recharge' },
+  large: { amount: 1990, credits: 2500, name: 'Recharge Max' },
 };
 const WH_PRICES = {
-  'price_1Tqx3UAa7KFR9IQxMYKKKo0R': { plan: 'starter', credits: 1000 },
-  'price_1Tqx6OAa7KFR9IQxuDzFeUp8': { plan: 'starter', credits: 1000 },
-  'price_1Tqx46Aa7KFR9IQxqmcnnpxZ': { plan: 'pro', credits: 3000 },
-  'price_1Tqx72Aa7KFR9IQxWyTp9s0H': { plan: 'pro', credits: 3000 },
-  'price_1Tqx4LAa7KFR9IQx6VwgnQ6Z': { plan: 'ultra', credits: 7500 },
-  'price_1Tqx84Aa7KFR9IQxAZ6WU7mo': { plan: 'ultra', credits: 7500 },
+  'price_1TsVBqACVZ6Qm7icIBz2xjmO': { plan: 'starter', credits: 1000 },
+  'price_1TsVBqACVZ6Qm7icNbxvtCid': { plan: 'starter', credits: 1000 },
+  'price_1TsVBqACVZ6Qm7icS9h5wWgD': { plan: 'pro', credits: 3000 },
+  'price_1TsVBqACVZ6Qm7icE0rgZLbS': { plan: 'pro', credits: 3000 },
+  'price_1TsVBrACVZ6Qm7ic4WjD7F3I': { plan: 'ultra', credits: 7500 },
+  'price_1TsVBrACVZ6Qm7icmNezIP1V': { plan: 'ultra', credits: 7500 },
 };
 
 // ===== HTTP helper =====

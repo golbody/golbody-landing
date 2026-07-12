@@ -1654,16 +1654,16 @@
             <div class="credits-grid">
               <div class="credit-pack" id="packSmall" data-pack="small">
                 <div class="picn">⚡</div>
-                <div class="credit-pack-name">Pack Légère</div>
-                <div class="credit-pack-price">4,90€</div>
-                <div class="credit-pack-desc">+ 500 crédits</div>
+                <div class="credit-pack-name">Recharge</div>
+                <div class="credit-pack-price">9,90€</div>
+                <div class="credit-pack-desc">+ 1 000 crédits</div>
                 <button class="credit-pack-btn" type="button" data-pack="small">Acheter</button>
               </div>
               <div class="credit-pack" id="packLarge" data-pack="large">
                 <div class="picn">🔥</div>
-                <div class="credit-pack-name">Pack Max</div>
-                <div class="credit-pack-price">14,90€</div>
-                <div class="credit-pack-desc">+ 1 500 crédits</div>
+                <div class="credit-pack-name">Recharge Max</div>
+                <div class="credit-pack-price">19,90€</div>
+                <div class="credit-pack-desc">+ 2 500 crédits</div>
                 <button class="credit-pack-btn teal" type="button" data-pack="large">Acheter</button>
               </div>
             </div>
@@ -2164,14 +2164,14 @@
     const BILLING_PRICES = {
       monthly: {
         starter: { price: '4,90€', original: '', billing: '' },
-        pro:     { price: '14,90€', original: '', billing: '' },
-        ultra:   { price: '29,90€', original: '', billing: '' },
+        pro:     { price: '17,90€', original: '', billing: '' },
+        ultra:   { price: '39,90€', original: '', billing: '' },
       },
-      // PLACEHOLDER — pas de réduction annuelle (annuel = mensuel). Prix à ajuster (marge ≥90%).
+      // Annuel = 2 mois offerts (49 / 179 / 399 €/an). Affiché en équivalent /mois.
       yearly: {
-        starter: { price: '4,90€', original: '', billing: 'Facturé annuellement' },
-        pro:     { price: '14,90€', original: '', billing: 'Facturé annuellement' },
-        ultra:   { price: '29,90€', original: '', billing: 'Facturé annuellement' },
+        starter: { price: '4,08€', original: '', billing: 'Facturé annuellement · 49€/an' },
+        pro:     { price: '14,92€', original: '', billing: 'Facturé annuellement · 179€/an' },
+        ultra:   { price: '33,25€', original: '', billing: 'Facturé annuellement · 399€/an' },
       },
     };
 
@@ -2182,7 +2182,11 @@
       const bt = document.getElementById('billingToggle');
       if (bt) bt.classList.toggle('annual', mode === 'yearly');
       const bn = document.getElementById('billingNote');
-      if (bn) bn.textContent = mode === 'yearly' ? 'Facturation annuelle' : 'Paiement mensuel · sans engagement';
+      if (bn) {
+        bn.innerHTML = mode === 'yearly'
+          ? '<span style="color:var(--rd-accent);font-weight:800;">🎁 2 mois offerts</span> · facturation annuelle'
+          : 'Paiement mensuel · sans engagement';
+      }
 
       ['starter', 'pro', 'ultra'].forEach(plan => {
         const data = BILLING_PRICES[mode][plan];

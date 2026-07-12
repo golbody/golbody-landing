@@ -1418,6 +1418,12 @@
   .sb-user-info .logout-btn{padding:0!important;font-size:11.5px!important;gap:5px;}
   .sb-user-info .logout-btn:hover{color:#ff8a8a!important;}
   .sb-user-info .logout-btn svg{width:13px;height:13px;}
+
+  /* ---------- TRANSITIONS ENTRE VUES ---------- */
+  @keyframes viewIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+  #generationSection{animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
+  .subscription-section.is-visible{animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
+  .account-section.is-visible{animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
   </style>
 </head>
 <body>

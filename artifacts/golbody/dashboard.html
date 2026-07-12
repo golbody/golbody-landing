@@ -1309,6 +1309,59 @@
     .topcredits{padding:14px 18px 0;}
     .main-inner{padding:8px 18px 40px;}
   }
+
+  /* ---------- ABONNEMENT (redesign) ---------- */
+  .subscription-section{max-width:1080px;margin:0 auto;}
+  .abo-head{text-align:center;margin-bottom:22px;}
+  .abo-head h1{font-size:30px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;color:var(--rd-txt);}
+  .abo-head p{font-size:14.5px;color:var(--rd-muted);}
+  .toggle-wrap{display:flex;justify-content:center;margin-bottom:10px;}
+  .billing-toggle{display:flex!important;position:relative;background:var(--rd-panel2)!important;border:1px solid var(--rd-bd)!important;border-radius:999px!important;padding:4px!important;width:280px;}
+  .toggle-slider{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));box-shadow:0 4px 14px rgba(255,214,0,0.25);transition:transform .3s cubic-bezier(.34,1.4,.5,1);z-index:0;}
+  .billing-toggle.annual .toggle-slider{transform:translateX(100%);}
+  .billing-toggle button{flex:1;position:relative;z-index:1;border:none;background:transparent!important;color:var(--rd-muted)!important;padding:10px 0!important;border-radius:999px;cursor:pointer;font-weight:700;font-family:'Inter',sans-serif;font-size:12.5px;letter-spacing:0.03em;transition:color .22s;}
+  .billing-toggle button.active{color:#111!important;}
+  .toggle-note{text-align:center;font-size:12px;color:var(--rd-faint);margin-bottom:26px;}
+
+  .plans-grid{grid-template-columns:repeat(3,1fr)!important;gap:16px!important;margin-top:0!important;align-items:stretch;}
+  .plan-card-big{background:var(--rd-panel)!important;border:1px solid var(--rd-bd)!important;border-radius:18px!important;padding:26px 22px 22px!important;box-shadow:0 12px 30px rgba(0,0,0,0.35);transition:.2s;}
+  .plan-card-big:hover{transform:translateY(-3px);border-color:var(--rd-bdg)!important;}
+  .plan-card-big.featured{border-color:var(--rd-accent)!important;box-shadow:0 0 0 1px var(--rd-accent),0 18px 46px rgba(255,214,0,0.12)!important;background:linear-gradient(180deg,rgba(255,214,0,0.05),var(--rd-panel) 40%)!important;}
+  .plan-card-big.active{border-color:var(--rd-accent)!important;box-shadow:0 0 0 1px var(--rd-accent)!important;}
+  .plan-badge{border-radius:20px!important;}
+  .plan-badge.best-value{background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk))!important;color:#111!important;}
+  .plan-badge.exclusif{background:var(--rd-panel2)!important;color:var(--rd-accent)!important;border:1px solid var(--rd-bdg);}
+  .plan-card-big .pname{font-size:15px;font-weight:800;letter-spacing:0.02em;color:var(--rd-muted);text-transform:uppercase;margin-bottom:14px;}
+  .plan-card-big.featured .pname{color:var(--rd-accent);}
+  .plan-price-area{margin-bottom:6px!important;}
+  .plan-price{font-size:34px!important;font-weight:800!important;color:var(--rd-txt)!important;letter-spacing:-1px;}
+  .plan-price .period{font-size:13px!important;font-weight:500!important;color:var(--rd-muted)!important;letter-spacing:0;}
+  .plan-original-price{color:var(--rd-faint)!important;}
+  .plan-billing-note{color:var(--rd-faint)!important;}
+  .plan-card-big .gens{font-size:14px;font-weight:800;color:var(--rd-accent);margin-bottom:4px;}
+  .plan-card-big .tagline{font-size:12.5px;color:var(--rd-muted);line-height:1.4;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--rd-bd);}
+  .plan-card-big .incl-label{font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--rd-faint);margin-bottom:11px;}
+  .plan-card-big .plan-features{gap:9px!important;margin-bottom:auto;}
+  .plan-card-big .plan-features li{font-size:13px!important;color:#d5d5d8!important;gap:9px!important;border-bottom:none!important;padding:0!important;align-items:flex-start!important;}
+  .plan-features .check-icon{width:16px!important;height:16px!important;color:var(--rd-accent)!important;margin-top:2px;flex-shrink:0;}
+  .subscribe-btn{background:transparent!important;border:1px solid var(--rd-bdg)!important;color:var(--rd-txt)!important;border-radius:12px!important;padding:14px!important;font-weight:800!important;font-size:14px!important;margin-top:20px!important;letter-spacing:0!important;}
+  .subscribe-btn:hover:not(:disabled){border-color:var(--rd-accent)!important;}
+  .subscribe-btn.teal{background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk))!important;color:#111!important;border:none!important;box-shadow:0 8px 22px rgba(255,214,0,0.22);}
+  .plan-active-label{border-color:var(--rd-accent)!important;color:var(--rd-accent)!important;border-radius:12px!important;}
+  .plan-footer-text{color:var(--rd-faint)!important;}
+
+  .credits-recharge{border-top:1px solid var(--rd-bd)!important;}
+  .credits-recharge-title{color:var(--rd-txt)!important;font-size:20px!important;}
+  .credit-pack{background:var(--rd-panel)!important;border:1px solid var(--rd-bd)!important;border-radius:16px!important;transition:.2s;}
+  .credit-pack:hover{border-color:var(--rd-bdg)!important;transform:translateY(-2px);}
+  .credit-pack .picn{font-size:26px;margin-bottom:8px;}
+  .credit-pack-name{color:var(--rd-txt)!important;}
+  .credit-pack-price{color:var(--rd-accent)!important;}
+  .credit-pack-btn{background:transparent!important;border:1px solid var(--rd-bdg)!important;color:var(--rd-txt)!important;border-radius:12px!important;font-weight:700!important;}
+  .credit-pack-btn:hover{border-color:var(--rd-accent)!important;}
+  .credit-pack-btn.teal{background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk))!important;color:#111!important;border:none!important;}
+
+  @media (max-width:900px){ .plans-grid{grid-template-columns:1fr!important;} }
   </style>
 </head>
 <body>
@@ -1430,75 +1483,97 @@
 
         <!-- SUBSCRIPTION SECTION -->
         <div class="subscription-section" id="subscriptionSection">
-          <h1 style="font-size:28px;font-weight:800;color:#eeeeee;margin-bottom:8px;text-align:center;">Abonnement</h1>
-          <p style="font-size:14px;color:#a0a0a0;margin-bottom:24px;text-align:center;">Choisissez le plan qui vous correspond. Changez ou annulez à tout moment.</p>
+          <div class="abo-head">
+            <h1>Abonnement</h1>
+            <p>Choisissez le plan qui vous correspond. Changez ou annulez à tout moment.</p>
+          </div>
 
           <!-- Billing toggle -->
-          <div style="text-align:center;">
-            <div class="billing-toggle">
-              <button type="button" id="btnMonthly" onclick="setBilling('monthly')">MENSUEL</button>
-              <button type="button" class="active" id="btnYearly" onclick="setBilling('yearly')">ANNUEL</button>
+          <div class="toggle-wrap">
+            <div class="billing-toggle annual" id="billingToggle">
+              <span class="toggle-slider"></span>
+              <button type="button" id="btnMonthly" onclick="setBilling('monthly')">Mensuel</button>
+              <button type="button" class="active" id="btnYearly" onclick="setBilling('yearly')">Annuel</button>
             </div>
           </div>
+          <div class="toggle-note" id="billingNote">Facturation annuelle</div>
 
           <div class="plans-grid">
             <!-- Starter -->
             <div class="plan-card-big" id="planStarter" data-plan="starter">
-              <div class="plan-name">Starter</div>
+              <div class="pname">Starter</div>
               <div class="plan-price-area">
                 <div class="plan-original-price" id="starterOriginal"></div>
                 <div class="plan-price" id="starterPrice">4,90€<span class="period"> /mois</span></div>
                 <div class="plan-billing-note" id="starterBilling"></div>
               </div>
+              <div class="gens">10 générations / mois</div>
+              <div class="tagline">Parfait pour découvrir GolBody</div>
+              <div class="incl-label">Votre forfait inclut :</div>
               <ul class="plan-features">
-                <li><i data-lucide="check" class="check-icon"></i> 10 générations/mois</li>
-                <li><i data-lucide="check" class="check-icon"></i> Haute qualité</li>
+                <li><i data-lucide="check" class="check-icon"></i> Accès à la génération IA</li>
+                <li><i data-lucide="check" class="check-icon"></i> Transformation photo réaliste</li>
+                <li><i data-lucide="check" class="check-icon"></i> Qualité haute définition</li>
+                <li><i data-lucide="check" class="check-icon"></i> Téléchargement des résultats</li>
                 <li><i data-lucide="check" class="check-icon"></i> Support email</li>
-                <li><i data-lucide="check" class="check-icon"></i> Satisfait ou remboursé immédiatement</li>
+                <li><i data-lucide="check" class="check-icon"></i> Accès à l'historique</li>
               </ul>
-              <button class="subscribe-btn" type="button" data-plan="starter">Débloquer mes photos</button>
+              <button class="subscribe-btn" type="button" data-plan="starter">Choisir Starter</button>
               <div class="plan-active-label" id="starterActive">Plan actif</div>
-              <div class="plan-footer-text">Abonnement résiliable à tout moment<br>Satisfait ou remboursé immédiatement</div>
+              <div class="plan-footer-text">Résiliable à tout moment sans engagement</div>
             </div>
 
             <!-- Pro -->
-            <div class="plan-card-big" id="planPro" data-plan="pro">
+            <div class="plan-card-big featured" id="planPro" data-plan="pro">
               <div class="plan-badge best-value">Best Value</div>
-              <div class="plan-name">Pro</div>
+              <div class="pname">Pro</div>
               <div class="plan-price-area">
                 <div class="plan-original-price" id="proOriginal"></div>
                 <div class="plan-price" id="proPrice">14,90€<span class="period"> /mois</span></div>
                 <div class="plan-billing-note" id="proBilling"></div>
               </div>
+              <div class="gens">30 générations / mois</div>
+              <div class="tagline">Le meilleur choix pour les passionnés</div>
+              <div class="incl-label">Votre forfait inclut :</div>
               <ul class="plan-features">
-                <li><i data-lucide="check" class="check-icon"></i> 30 générations/mois</li>
+                <li><i data-lucide="check" class="check-icon"></i> Accès à la génération IA</li>
+                <li><i data-lucide="check" class="check-icon"></i> Transformation photo réaliste</li>
                 <li><i data-lucide="check" class="check-icon"></i> Qualité 4K</li>
+                <li><i data-lucide="check" class="check-icon"></i> Téléchargement des résultats</li>
                 <li><i data-lucide="check" class="check-icon"></i> Support prioritaire</li>
-                <li><i data-lucide="check" class="check-icon"></i> Satisfait ou remboursé immédiatement</li>
+                <li><i data-lucide="check" class="check-icon"></i> Accès à l'historique</li>
+                <li><i data-lucide="check" class="check-icon"></i> Génération accélérée</li>
               </ul>
-              <button class="subscribe-btn teal" type="button" data-plan="pro">Débloquer mes photos</button>
+              <button class="subscribe-btn teal" type="button" data-plan="pro">Choisir Pro</button>
               <div class="plan-active-label" id="proActive">Plan actif</div>
-              <div class="plan-footer-text">Abonnement résiliable à tout moment<br>Satisfait ou remboursé immédiatement</div>
+              <div class="plan-footer-text">Résiliable à tout moment sans engagement</div>
             </div>
 
             <!-- Ultra -->
             <div class="plan-card-big" id="planUltra" data-plan="ultra">
               <div class="plan-badge exclusif">Exclusif</div>
-              <div class="plan-name">Ultra</div>
+              <div class="pname">Ultra</div>
               <div class="plan-price-area">
                 <div class="plan-original-price" id="ultraOriginal"></div>
                 <div class="plan-price" id="ultraPrice">29,90€<span class="period"> /mois</span></div>
                 <div class="plan-billing-note" id="ultraBilling"></div>
               </div>
+              <div class="gens">75 générations / mois</div>
+              <div class="tagline">Pour les créateurs sans limites</div>
+              <div class="incl-label">Votre forfait inclut :</div>
               <ul class="plan-features">
-                <li><i data-lucide="check" class="check-icon"></i> 75 générations/mois</li>
-                <li><i data-lucide="check" class="check-icon"></i> Ultra haute qualité 8K</li>
-                <li><i data-lucide="check" class="check-icon"></i> Support dédié 24/7</li>
-                <li><i data-lucide="check" class="check-icon"></i> Satisfait ou remboursé immédiatement</li>
+                <li><i data-lucide="check" class="check-icon"></i> Accès à la génération IA</li>
+                <li><i data-lucide="check" class="check-icon"></i> Transformation photo réaliste</li>
+                <li><i data-lucide="check" class="check-icon"></i> Qualité 8K</li>
+                <li><i data-lucide="check" class="check-icon"></i> Téléchargement des résultats</li>
+                <li><i data-lucide="check" class="check-icon"></i> Support 24/7 dédié</li>
+                <li><i data-lucide="check" class="check-icon"></i> Accès à l'historique</li>
+                <li><i data-lucide="check" class="check-icon"></i> Génération prioritaire</li>
+                <li><i data-lucide="check" class="check-icon"></i> File d'attente prioritaire</li>
               </ul>
-              <button class="subscribe-btn" type="button" data-plan="ultra">Débloquer mes photos</button>
+              <button class="subscribe-btn" type="button" data-plan="ultra">Choisir Ultra</button>
               <div class="plan-active-label" id="ultraActive">Plan actif</div>
-              <div class="plan-footer-text">Abonnement résiliable à tout moment<br>Satisfait ou remboursé immédiatement</div>
+              <div class="plan-footer-text">Résiliable à tout moment sans engagement</div>
             </div>
           </div>
 
@@ -1508,16 +1583,18 @@
             <div class="credits-recharge-subtitle">Besoin d’un coup de pouce ponctuel ? Achetez des crédits sans engagement.</div>
             <div class="credits-grid">
               <div class="credit-pack" id="packSmall" data-pack="small">
+                <div class="picn">⚡</div>
                 <div class="credit-pack-name">Pack Légère</div>
                 <div class="credit-pack-price">4,90€</div>
                 <div class="credit-pack-desc">5 générations supplémentaires</div>
                 <button class="credit-pack-btn" type="button" data-pack="small">Acheter</button>
               </div>
               <div class="credit-pack" id="packLarge" data-pack="large">
+                <div class="picn">🔥</div>
                 <div class="credit-pack-name">Pack Max</div>
                 <div class="credit-pack-price">14,90€</div>
                 <div class="credit-pack-desc">15 générations supplémentaires</div>
-                <button class="credit-pack-btn" type="button" data-pack="large">Acheter</button>
+                <button class="credit-pack-btn teal" type="button" data-pack="large">Acheter</button>
               </div>
             </div>
           </div>
@@ -1958,10 +2035,11 @@
         pro:     { price: '14,90€', original: '', billing: '' },
         ultra:   { price: '29,90€', original: '', billing: '' },
       },
+      // PLACEHOLDER — pas de réduction annuelle (annuel = mensuel). Prix à ajuster (marge ≥90%).
       yearly: {
-        starter: { price: '9,90€', original: '', billing: 'Facturé annuellement' },
-        pro:     { price: '29,90€', original: '', billing: 'Facturé annuellement' },
-        ultra:   { price: '74,90€', original: '', billing: 'Facturé annuellement' },
+        starter: { price: '4,90€', original: '', billing: 'Facturé annuellement' },
+        pro:     { price: '14,90€', original: '', billing: 'Facturé annuellement' },
+        ultra:   { price: '29,90€', original: '', billing: 'Facturé annuellement' },
       },
     };
 
@@ -1969,6 +2047,10 @@
       billingMode = mode;
       document.getElementById('btnMonthly').classList.toggle('active', mode === 'monthly');
       document.getElementById('btnYearly').classList.toggle('active', mode === 'yearly');
+      const bt = document.getElementById('billingToggle');
+      if (bt) bt.classList.toggle('annual', mode === 'yearly');
+      const bn = document.getElementById('billingNote');
+      if (bn) bn.textContent = mode === 'yearly' ? 'Facturation annuelle' : 'Paiement mensuel · sans engagement';
 
       ['starter', 'pro', 'ultra'].forEach(plan => {
         const data = BILLING_PRICES[mode][plan];
@@ -1977,6 +2059,7 @@
         document.getElementById(plan + 'Billing').textContent = data.billing;
       });
     }
+    setBilling(billingMode);
 
     document.querySelectorAll('.subscribe-btn').forEach(btn => {
       console.log('[Subscribe] Attaching listener to', btn.dataset.plan);

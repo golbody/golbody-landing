@@ -1380,6 +1380,7 @@
   .acc-lbl{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--rd-faint);margin-bottom:10px;display:flex;align-items:center;gap:7px;}
   .acc-lbl svg{color:var(--rd-accent);}
   .acc-val{font-size:20px;font-weight:800;color:var(--rd-txt);}
+  .acc-val small{font-size:12.5px;font-weight:600;color:var(--rd-muted);margin-left:4px;}
   .acc-cbar{height:6px;border-radius:6px;background:rgba(255,255,255,0.08);overflow:hidden;margin-top:10px;}
   .acc-cbar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rd-accent),var(--rd-accent-dk));border-radius:6px;transition:width .4s ease;}
   .acc-actions{display:flex;flex-direction:column;gap:12px;}
@@ -1740,7 +1741,7 @@
 
           <!-- Generate Button -->
           <button class="generate-btn" id="generateBtn" type="button" disabled>
-            Générer <span class="cost">−1 crédit</span>
+            Générer <span class="cost">−100 crédits</span>
           </button>
           <div class="generate-hint" id="generateHint">↑ Importe une photo pour commencer</div>
         </div>
@@ -1836,19 +1837,18 @@
     }
 
     function updateSidebar() {
-      const gens = creditsToGenerations(currentCredits);
       const planLabel = PLAN_NAMES[currentPlan] || 'Plan Gratuit';
-      const shortText = gens + ' crédit' + (gens > 1 ? 's' : '');
+      const shortText = currentCredits.toLocaleString('fr-FR') + ' crédits';
       const creditsText = shortText;
       userPlan.textContent = planLabel;
       userCredits.textContent = creditsText;
       mobileUserPlan.textContent = planLabel;
       mobileUserCredits.textContent = creditsText;
-      // Badge du haut + barre de progression (redesign)
+      // Badge du haut + barre de progression (redesign) — en crédits bruts (1 génération = 100 crédits)
       const pill = document.getElementById('pillCredits');
       if (pill) pill.textContent = shortText;
-      const maxGens = creditsToGenerations(PLAN_CREDITS_MAP[currentPlan] || 100) || 1;
-      const pct = Math.max(4, Math.min(100, Math.round(gens / maxGens * 100)));
+      const maxCredits = (PLAN_CREDITS_MAP[currentPlan] || 100) || 1;
+      const pct = Math.max(4, Math.min(100, Math.round(currentCredits / maxCredits * 100)));
       const bar = document.getElementById('creditBar');
       if (bar) bar.style.width = pct + '%';
 
@@ -1906,16 +1906,18 @@
       const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
       const email = currentUser?.email || '—';
       const plan = profile?.plan || 'free';
-      const gens = creditsToGenerations(profile?.credits ?? 0);
-      const maxGens = creditsToGenerations(PLAN_CREDITS_MAP[plan] || 100) || 1;
+      const credits = profile?.credits ?? 0;
+      const gens = creditsToGenerations(credits);
+      const maxCredits = (PLAN_CREDITS_MAP[plan] || 100) || 1;
 
       setTxt('account-email', email);
       setTxt('account-avatar', (email && email[0]) ? email[0].toUpperCase() : 'U');
       setTxt('account-plan', planNames[plan] || 'Plan Gratuit');
       setTxt('account-plan-badge', plan === 'free' ? 'Plan Gratuit' : '★ Plan ' + (planNames[plan] || ''));
-      setTxt('account-credits', gens + ' génération' + (gens > 1 ? 's' : ''));
+      const accCred = document.getElementById('account-credits');
+      if (accCred) accCred.innerHTML = credits.toLocaleString('fr-FR') + ' crédits <small>≈ ' + gens + ' génération' + (gens > 1 ? 's' : '') + '</small>';
       const bar = document.getElementById('account-credit-bar');
-      if (bar) bar.style.width = Math.max(4, Math.min(100, Math.round(gens / maxGens * 100))) + '%';
+      if (bar) bar.style.width = Math.max(4, Math.min(100, Math.round(credits / maxCredits * 100))) + '%';
       setTxt('account-status', plan === 'free' ? 'Gratuit' : 'Actif');
 
       // Renouvellement des crédits (credits_reset_date)

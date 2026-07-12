@@ -2,14 +2,14 @@ const https = require('https');
 
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MjMyNTAsImV4cCI6MjA5ODk5OTI1MH0.CWkSUpjHFE3wV6vJmCbYmMNv291rEW1SPgkWIO5W6G4';
 
-function httpsRequest(options, body) {
-  return new Promise(function(resolve, reject) {
-    var req = https.request(options, function(res) {
-      var data = '';
-      res.on('data', function(chunk) { data += chunk; });
-      res.on('end', function() {
+function httpsRequest(options, body = null) {
+  return new Promise((resolve, reject) => {
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
         try { resolve({ status: res.statusCode, body: JSON.parse(data) }); }
-        catch(e) { resolve({ status: res.statusCode, body: data }); }
+        catch { resolve({ status: res.statusCode, body: data }); }
       });
     });
     req.on('error', reject);
@@ -18,67 +18,71 @@ function httpsRequest(options, body) {
   });
 }
 
-function validateToken(tok) {
-  return httpsRequest({
+async function validateSupabaseToken(token) {
+  const result = await httpsRequest({
     hostname: 'quvqqxrfewrsbajsllzk.supabase.co',
     path: '/auth/v1/user',
     method: 'GET',
-    headers: { 'Authorization': 'Bearer ' + tok, 'apikey': SUPABASE_ANON_KEY }
-  }).then(function(r) { return r.status === 200 ? r.body : null; });
+    headers: { 'Authorization': `Bearer ${token}`, 'apikey': SUPABASE_ANON_KEY },
+  });
+  return result.status === 200 ? result.body : null;
 }
 
-function callFal(apiKey, imageUrl, prompt) {
-  var body = JSON.stringify({ prompt: prompt, image_url: imageUrl });
-  return httpsRequest({
+async function callFalAi(apiKey, imageUrl, prompt) {
+  const body = JSON.stringify({ prompt, image_url: imageUrl });
+  const result = await httpsRequest({
     hostname: 'fal.run',
     path: '/fal-ai/flux-pro/kontext',
     method: 'POST',
     headers: {
-      'Authorization': 'Key ' + apiKey,
+      'Authorization': `Key ${apiKey}`,
       'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(body)
-    }
-  }, body).then(function(r) {
-    if (r.status >= 200 && r.status < 300) return r.body;
-    throw new Error('fal.ai error ' + r.status + ': ' + JSON.stringify(r.body));
-  });
+      'Content-Length': Buffer.byteLength(body),
+    },
+  }, body);
+  if (result.status >= 200 && result.status < 300) return result.body;
+  throw new Error(`fal.ai error ${result.status}: ${JSON.stringify(result.body)}`);
 }
 
-module.exports = function(req, res) {
+async function handleGenerate(req, res) {
+  const { imageUrl, prompt } = req.body || {};
+  if (!imageUrl || !prompt) return res.status(400).json({ error: 'Missing imageUrl or prompt' });
+
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+
+  const falKey = process.env.FAL_API_KEY;
+  if (!falKey) return res.status(500).json({ error: 'FAL_API_KEY not configured' });
+
+  const result = await callFalAi(falKey, imageUrl, prompt);
+  const url = result.images?.[0]?.url || result.image?.url || result.url;
+  if (!url) throw new Error('No image URL in fal.ai response: ' + JSON.stringify(result));
+
+  res.status(200).json({ imageUrl: url });
+}
+
+module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  if (req.method === 'OPTIONS') { res.status(200).end(); return; }
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
-  var path = (req.url || '').split('?')[0];
+  const path = (req.url || '').split('?')[0].replace(/\/$/, '');
 
-  if (path === '/api/generate' && req.method === 'POST') {
-    var imageUrl = (req.body || {}).imageUrl;
-    var prompt = (req.body || {}).prompt;
-    if (!imageUrl || !prompt) { res.status(400).json({ error: 'Missing imageUrl or prompt' }); return; }
-
-    var authHeader = req.headers.authorization || '';
-    var tok = authHeader.replace(/^Bearer\s+/i, '');
-    if (!tok) { res.status(401).json({ error: 'Missing Authorization header' }); return; }
-
-    var falKey = process.env.FAL_API_KEY;
-    if (!falKey) { res.status(500).json({ error: 'FAL_API_KEY not configured' }); return; }
-
-    validateToken(tok).then(function(user) {
-      if (!user) { res.status(401).json({ error: 'Invalid token' }); return; }
-      return callFal(falKey, imageUrl, prompt).then(function(result) {
-        var url = (result.images && result.images[0] && result.images[0].url) || result.url;
-        if (!url) throw new Error('No image URL in response: ' + JSON.stringify(result));
-        res.status(200).json({ imageUrl: url });
-      });
-    }).catch(function(err) {
-      console.error(err);
-      res.status(500).json({ error: err.message });
-    });
-    return;
+  try {
+    if (path === '/api/generate' && req.method === 'POST') {
+      return await handleGenerate(req, res);
+    }
+    res.status(404).json({ error: 'Route not found: ' + path });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
-
-  res.status(404).json({ error: 'Not found: ' + path });
 };
 
-module.exports.config = { api: { bodyParser: { sizeLimit: '25mb' } } };
+module.exports.config = {
+  api: { bodyParser: { sizeLimit: '25mb' } },
+};

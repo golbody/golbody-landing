@@ -1342,6 +1342,36 @@
   .pw-foot svg{width:12px;height:12px;stroke:var(--rd-faint);fill:none;stroke-width:2.2;}
   .pw-later{display:block;margin:14px auto 0;font-size:12.5px;color:var(--rd-faint);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:inherit;}
   @media(max-width:560px){.pw-plans{grid-template-columns:1fr;gap:9px;}.pw-plan{flex-direction:row;justify-content:space-between;align-items:center;text-align:left;padding:12px 14px;}.pw-gens{display:none;}.pw-choose{width:auto;padding:9px 16px;}}
+
+  /* ===== Enquête (gagne des crédits) ===== */
+  .sv-modal{position:fixed;inset:0;z-index:4200;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,8,8,.86);backdrop-filter:blur(7px);}
+  .sv-modal.is-open{display:flex;}
+  .sv{width:100%;max-width:520px;background:linear-gradient(160deg,#211f18,#141210);border:1px solid var(--rd-bdg);border-radius:22px;padding:26px 26px 24px;box-shadow:0 40px 100px -20px rgba(0,0,0,.9);position:relative;animation:viewIn .35s cubic-bezier(.22,.61,.36,1) both;}
+  .sv-close{position:absolute;top:14px;right:16px;color:var(--rd-faint);font-size:24px;cursor:pointer;background:none;border:none;line-height:1;font-family:inherit;}
+  .sv-pill{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--rd-accent);background:rgba(255,214,0,.09);border:1px solid var(--rd-bdg);padding:6px 13px;border-radius:100px;margin-bottom:14px;}
+  .sv-h{font-size:22px;font-weight:900;letter-spacing:-.5px;margin-bottom:6px;color:var(--rd-txt);}
+  .sv-sub{font-size:13.5px;color:var(--rd-muted);margin-bottom:18px;}
+  .sv-prog{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+  .sv-bar{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden;}
+  .sv-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rd-accent),var(--rd-accent-dk));border-radius:6px;transition:width .5s cubic-bezier(.22,.61,.36,1);}
+  .sv-earned{font-size:12.5px;font-weight:800;color:var(--rd-accent);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .sv-q{font-size:16px;font-weight:700;margin-bottom:16px;line-height:1.35;color:var(--rd-txt);}
+  .sv-opts{display:flex;flex-direction:column;gap:9px;}
+  .sv-opt{text-align:left;background:var(--rd-inset);border:1px solid var(--rd-bd);color:var(--rd-txt);font-family:inherit;font-size:14px;font-weight:600;padding:13px 15px;border-radius:12px;cursor:pointer;transition:.15s;}
+  .sv-opt:hover{border-color:var(--rd-accent);background:rgba(255,214,0,.06);}
+  .sv-scale{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;}
+  .sv-num{aspect-ratio:1;background:var(--rd-inset);border:1px solid var(--rd-bd);color:var(--rd-txt);font-family:inherit;font-weight:800;font-size:14px;border-radius:9px;cursor:pointer;transition:.15s;}
+  .sv-num:hover{border-color:var(--rd-accent);background:var(--rd-accent);color:#111;}
+  .sv-scale-lbl{display:flex;justify-content:space-between;font-size:10.5px;color:var(--rd-faint);margin-top:7px;}
+  .sv textarea{width:100%;min-height:96px;background:var(--rd-inset);border:1px solid var(--rd-bd);border-radius:12px;color:var(--rd-txt);font-family:inherit;font-size:14px;padding:12px 14px;resize:vertical;}
+  .sv textarea:focus{outline:none;border-color:var(--rd-bdg);}
+  .sv-send{margin-top:14px;width:100%;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;font-weight:800;font-size:14.5px;border:none;border-radius:12px;padding:13px;cursor:pointer;font-family:inherit;}
+  .sv-later{display:block;margin:14px auto 0;font-size:12.5px;color:var(--rd-faint);text-decoration:underline;background:none;border:none;cursor:pointer;font-family:inherit;}
+  .sv-plus{position:fixed;top:38%;left:50%;transform:translate(-50%,0);font-size:26px;font-weight:900;color:var(--rd-accent);opacity:0;pointer-events:none;z-index:4300;}
+  .sv-plus.go{animation:svPlus 1s ease forwards;}
+  @keyframes svPlus{0%{opacity:0;transform:translate(-50%,10px) scale(.8)}20%{opacity:1;transform:translate(-50%,-10px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-60px) scale(1)}}
+  .sv-done{text-align:center;padding:16px 0 4px;}
+  .sv-done .em{font-size:44px;}.sv-done h3{font-size:22px;font-weight:900;margin:10px 0 6px;color:var(--rd-txt);}.sv-done p{color:var(--rd-muted);font-size:14px;}
   .download-btn{flex:1;justify-content:center;background:linear-gradient(135deg,#FFD600 0%,#e6c000 100%)!important;color:#111!important;font-weight:800!important;}
   .newgen-btn{flex:1;justify-content:center;border:1px solid var(--rd-bdg)!important;}
 
@@ -1760,6 +1790,13 @@
                 <i data-lucide="settings" style="width:16px;height:16px;"></i> Gérer mon abonnement
               </button>
             </div>
+            <div class="acc-manage" id="acc-survey" style="cursor:pointer;" onclick="window.golOpenSurvey&&window.golOpenSurvey()">
+              <div class="acc-mtxt">
+                <div class="acc-mt">🎁 Gagne jusqu'à 100 crédits</div>
+                <div class="acc-md">Réponds à l'enquête du mois — +25 crédits par question.</div>
+              </div>
+              <span class="acc-btn-gold">Répondre</span>
+            </div>
             <a class="acc-manage" id="acc-admin" href="https://www.golbody.com/admin.html" style="display:none;text-decoration:none;">
               <div class="acc-mtxt">
                 <div class="acc-mt">📊 Statistiques (Admin)</div>
@@ -1894,6 +1931,19 @@
     </div>
   </div>
 
+  <div class="sv-modal" id="surveyModal">
+    <div class="sv">
+      <button class="sv-close" id="svClose" type="button">&times;</button>
+      <div class="sv-pill">🎁 Gagne jusqu'à 100 crédits</div>
+      <div class="sv-h">Aide-nous à améliorer GolBody</div>
+      <div class="sv-sub"><b style="color:var(--rd-accent)">+25 crédits</b> par question · 4 questions rapides (+ 1 bonus)</div>
+      <div class="sv-prog"><div class="sv-bar"><span id="svBar"></span></div><div class="sv-earned" id="svEarned">0 / 100 crédits</div></div>
+      <div id="svStep"></div>
+      <button class="sv-later" id="svLater" type="button">Plus tard</button>
+    </div>
+  </div>
+  <div class="sv-plus" id="svPlus">+25 crédits 🔥</div>
+
   <script>
     // ===== Supabase =====
     const supabaseClient = window.supabase.createClient(
@@ -2018,6 +2068,7 @@
         updateSidebar();
         updateAccountSection(profile || { plan: 'free', credits: 100 });
         if (typeof maybeRevealResult === 'function') maybeRevealResult();
+        if (window.golMaybeSurvey) window.golMaybeSurvey();
       } catch (err) {
         console.error('[Profile] Load error:', err);
         currentCredits = 200;
@@ -2458,6 +2509,66 @@
         }
       });
     });
+
+    // ===== Enquête « gagne des crédits » =====
+    (function(){
+      const QS=[
+       {t:"scale",r:true,q:"Sur 10, à quel point recommanderais-tu GolBody à un ami ?",lo:"Pas du tout",hi:"Absolument"},
+       {t:"choice",r:true,q:"Qu'est-ce qui te ferait passer à un abonnement payant ?",o:["Un prix plus bas","Des résultats plus réalistes","Plus de générations gratuites","Plus de zones / d'options","Rien, je suis déjà convaincu"]},
+       {t:"choice",r:true,q:"Que devrait-on améliorer en priorité ?",o:["Le réalisme des photos","La vitesse de génération","Le prix","L'interface / la simplicité","Ajouter des fonctionnalités"]},
+       {t:"choice",r:true,q:"Comment as-tu connu GolBody ?",o:["TikTok","Instagram","Recherche Google","Un ami / bouche-à-oreille","Une publicité","Autre"]},
+       {t:"text",r:false,q:"Une suggestion, ou un truc qui t'a gêné ? (optionnel — ne rapporte pas de crédits, mais nous aide beaucoup ❤️)"},
+      ];
+      const modal=document.getElementById('surveyModal'); if(!modal) return;
+      const step=document.getElementById('svStep'), bar=document.getElementById('svBar'), earnedEl=document.getElementById('svEarned');
+      const period=new Date().toISOString().slice(0,7), KEY='golbody_survey_'+period;
+      const getA=()=>{ try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return [];} };
+      const setA=a=>{ try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){} };
+      let i=0, earned=0, busy=false;
+      function refresh(){ earned=getA().filter(x=>x>=0&&x<=3).length*25; bar.style.width=earned+'%'; earnedEl.textContent=earned+' / 100 crédits'; }
+      function firstUn(){ const a=getA(); for(let k=0;k<QS.length;k++) if(a.indexOf(k)<0) return k; return QS.length; }
+      function openSurvey(){ i=firstUn(); refresh(); modal.classList.add('is-open'); render(); try{window.clarity&&clarity('event','survey_opened')}catch(e){} }
+      function close(){ modal.classList.remove('is-open'); }
+      window.golOpenSurvey=openSurvey;
+      async function submit(qid, ans){
+        try{
+          const s=await supabaseClient.auth.getSession(); const token=s.data.session?.access_token;
+          const res=await fetch('https://www.golbody.com/api/survey-answer',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({question_id:qid,answer:ans})});
+          const d=await res.json();
+          if(typeof d.credits==='number'){ currentCredits=d.credits; updateSidebar(); }
+          return d;
+        }catch(e){ return {credited:0}; }
+      }
+      async function answer(ans){
+        if(busy) return; busy=true; const Q=QS[i], qid=i;
+        const d=await submit(qid, ans);
+        const a=getA(); if(a.indexOf(qid)<0){ a.push(qid); setA(a); }
+        if(Q.r && d.credited>0){ refresh(); const p=document.getElementById('svPlus'); if(p){p.classList.remove('go');void p.offsetWidth;p.classList.add('go');} try{window.clarity&&clarity('event','survey_answer')}catch(e){} }
+        i++; busy=false;
+        setTimeout(()=>{ if(i>=QS.length){ try{window.clarity&&clarity('event','survey_completed')}catch(e){} } render(); }, (Q.r&&d.credited>0)?350:60);
+      }
+      function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+      function render(){
+        if(i>=QS.length){ step.innerHTML='<div class="sv-done"><div class="em">🎉</div><h3>Merci !</h3><p>Tu as gagné <b style="color:var(--rd-accent)">'+earned+' crédits</b> ce mois-ci. Reviens le mois prochain pour une nouvelle enquête.</p></div>'; document.getElementById('svLater').textContent='Fermer'; return; }
+        const Q=QS[i]; let html='<div class="sv-q">'+esc(Q.q)+'</div>';
+        if(Q.t==='scale'){ html+='<div class="sv-scale">'; for(let n=1;n<=10;n++) html+='<button class="sv-num" data-v="'+n+'">'+n+'</button>'; html+='</div><div class="sv-scale-lbl"><span>'+esc(Q.lo)+'</span><span>'+esc(Q.hi)+'</span></div>'; }
+        else if(Q.t==='choice'){ html+='<div class="sv-opts">'+Q.o.map(o=>'<button class="sv-opt">'+esc(o)+'</button>').join('')+'</div>'; }
+        else { html+='<textarea id="svTa" placeholder="Écris ici…"></textarea><button class="sv-send" id="svSend">Envoyer et terminer</button>'; }
+        step.innerHTML=html;
+        step.querySelectorAll('.sv-num').forEach(b=>b.addEventListener('click',()=>answer(b.dataset.v)));
+        step.querySelectorAll('.sv-opt').forEach(b=>b.addEventListener('click',()=>answer(b.textContent)));
+        const send=document.getElementById('svSend'); if(send) send.addEventListener('click',()=>answer(((document.getElementById('svTa').value||'').trim())||'(vide)'));
+      }
+      const snooze=()=>{ try{sessionStorage.setItem('golbody_survey_snooze','1')}catch(e){} close(); };
+      document.getElementById('svLater').addEventListener('click',snooze);
+      document.getElementById('svClose').addEventListener('click',snooze);
+      modal.addEventListener('click',e=>{ if(e.target===modal) snooze(); });
+      window.golMaybeSurvey=function(){
+        if(firstUn()>=QS.length) return;
+        try{ if(sessionStorage.getItem('golbody_survey_snooze')) return; }catch(e){}
+        setTimeout(openSurvey, 1800);
+      };
+    })();
 
     // Run auth initialization
     initAuth();

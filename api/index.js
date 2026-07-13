@@ -401,6 +401,35 @@ async function handleAdminStats(req, res) {
   });
 }
 
+// ===== Enquête (gagne des crédits) =====
+async function handleSurveyAnswer(body, req, res) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+
+  const qid = parseInt(body && body.question_id, 10);
+  if (isNaN(qid) || qid < 0 || qid > 4) return res.status(400).json({ error: 'Invalid question_id' });
+  const answer = String((body && body.answer) || '').slice(0, 1000);
+  const period = new Date().toISOString().slice(0, 7); // YYYY-MM
+  const reward = (qid >= 0 && qid <= 3) ? 25 : 0; // seules les 4 questions à choix créditent
+
+  async function currentCredits() { const pr = await supa('GET', `profiles?id=eq.${user.id}&select=credits`); return firstRow(pr) ? firstRow(pr).credits : null; }
+
+  // Insert d'abord : la contrainte unique (user, period, question) empêche tout double crédit (anti-race)
+  const ins = await supa('POST', 'survey_responses', { user_id: user.id, period, question_id: qid, answer, credited: reward });
+  if (ins.status >= 300) {
+    return res.status(200).json({ credited: 0, credits: await currentCredits(), already: true });
+  }
+  let credits = await currentCredits();
+  if (reward > 0 && typeof credits === 'number') {
+    credits = credits + reward;
+    await supa('PATCH', `profiles?id=eq.${user.id}`, { credits });
+  }
+  res.status(200).json({ credited: reward, credits });
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
@@ -426,6 +455,7 @@ module.exports = async (req, res) => {
     if (path === '/use-credit' && req.method === 'POST') return await handleUseCredit(body, res);
     if (path.startsWith('/profile/') && req.method === 'GET') return await handleProfile(path.split('/').pop(), res);
     if (path === '/api/admin-stats' && req.method === 'GET') return await handleAdminStats(req, res);
+    if (path === '/api/survey-answer' && req.method === 'POST') return await handleSurveyAnswer(body, req, res);
 
     res.status(404).json({ error: 'Route not found: ' + path });
   } catch (err) {

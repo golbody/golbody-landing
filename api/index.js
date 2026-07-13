@@ -351,7 +351,12 @@ async function handleAdminStats(req, res) {
   if (!ADMIN_EMAILS.includes((user.email || '').toLowerCase())) return res.status(403).json({ error: 'Acces refuse' });
 
   const pr = await supa('GET', 'profiles?select=email,plan,credits,stripe_subscription_id,created_at&order=created_at.desc');
-  const rows = Array.isArray(pr.body) ? pr.body : [];
+  // Exclut tes comptes perso/test des stats (pour ne voir que les vrais utilisateurs)
+  const EXCLUDED = ['jeantondut5@gmail.com', 'feahbaehfba@gmail.com', 'testgolbody@gmail.com'];
+  const rows = (Array.isArray(pr.body) ? pr.body : []).filter(r => {
+    const e = (r.email || '').toLowerCase();
+    return !EXCLUDED.includes(e) && !e.startsWith('golbodytest+');
+  });
 
   const now = new Date();
   const dayMs = 86400000;

@@ -78,11 +78,11 @@ document.getElementById('form').addEventListener('submit',async e=>{
   btn.disabled=true;btn.textContent='Connexion en cours…';err.style.display='none';
   const{data,error}=await sb.auth.signInWithPassword({email:document.getElementById('email').value,password:document.getElementById('pwd').value});
   if(error){err.textContent=error.message;err.style.display='block';btn.disabled=false;btn.textContent='Commencer ma transformation →';return}
-  if(data.user)window.location.href='dashboard.html'
+  if(data.user){try{window.clarity&&clarity('event','login_success')}catch(_){}window.location.href='dashboard.html'}
 });
 document.getElementById('gbtn').addEventListener('click',async()=>{
   const gbtn=document.getElementById('gbtn'),err=document.getElementById('err');
-  gbtn.disabled=true;err.style.display='none';
+  gbtn.disabled=true;err.style.display='none';try{window.clarity&&clarity('event','login_google')}catch(_){}
   const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/dashboard.html'}});
   if(error){err.textContent=error.message;err.style.display='block';gbtn.disabled=false}
 });

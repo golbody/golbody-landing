@@ -1935,6 +1935,7 @@
     const generationSection = document.getElementById('generationSection');
     const accountSection = document.getElementById('accountSection');
     const successBanner = document.getElementById('successBanner');
+    function gtrack(n){ try{ window.clarity && clarity('event', n); }catch(e){} }
     const canceledBanner = document.getElementById('canceledBanner');
 
     let currentFile = null;
@@ -2131,6 +2132,7 @@
 
     // ===== URL params =====
     if (urlParams.get('success') === 'true') {
+      gtrack('checkout_success');
       successBanner.classList.add('is-visible');
       setTimeout(() => successBanner.classList.remove('is-visible'), 6000);
     }
@@ -2296,6 +2298,7 @@
       console.log('[Subscribe] Attaching listener to', btn.dataset.plan);
       btn.addEventListener('click', async () => {
         const plan = btn.dataset.plan;
+        gtrack('checkout_started');
         console.log('[Subscribe] Clicked plan:', plan);
 
         const user = await ensureUser();
@@ -2346,6 +2349,7 @@
     document.querySelectorAll('.credit-pack-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const pack = btn.dataset.pack;
+        gtrack('pack_purchase');
         const user = await ensureUser();
         if (!user) {
           showError('Veuillez vous connecter pour acheter des crédits.');
@@ -2396,6 +2400,7 @@
     function showGenResult(url) {
       resultImage.src = url;
       if (isLocked()) {
+        gtrack('paywall_shown');
         try { localStorage.setItem(LOCK_KEY, url); } catch (e) {}
         resultWrap.classList.add('is-locked');
         resultLock.style.display = 'flex';
@@ -2424,7 +2429,7 @@
 
     function openPaywall() { paywallModal.classList.add('is-open'); }
     function closePaywall() { paywallModal.classList.remove('is-open'); }
-    if (unlockBtn) unlockBtn.addEventListener('click', openPaywall);
+    if (unlockBtn) unlockBtn.addEventListener('click', function(){ gtrack('unlock_clicked'); openPaywall(); });
     document.getElementById('pwClose').addEventListener('click', closePaywall);
     document.getElementById('pwLater').addEventListener('click', closePaywall);
     paywallModal.addEventListener('click', (e) => { if (e.target === paywallModal) closePaywall(); });
@@ -2433,6 +2438,7 @@
     document.querySelectorAll('.pw-choose').forEach(btn => {
       btn.addEventListener('click', async () => {
         const plan = btn.dataset.plan;
+        gtrack('checkout_started');
         const user = await ensureUser();
         if (!user) { showError('Veuillez vous connecter pour continuer.'); return; }
         const original = btn.textContent;
@@ -2587,6 +2593,7 @@
     uploadInput.addEventListener('change', (e) => {
       if (e.target.files.length > 0) {
         handleFile(e.target.files[0]);
+        gtrack('photo_uploaded');
       }
     });
 
@@ -2699,6 +2706,7 @@
 
       loadingOverlay.classList.add('is-visible');
       startLoadSteps();
+      gtrack('generation_started');
 
       try {
         const imageUrl = await fileToDataUrl(currentFile);
@@ -2741,6 +2749,7 @@
           updateSidebar();
         }
 
+        gtrack('generation_success');
         formZone.style.display = 'none';
         showGenResult(afterUrl);
         lucide.createIcons();

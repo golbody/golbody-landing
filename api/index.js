@@ -338,6 +338,64 @@ async function handleWebhook(rawBody, req, res) {
 }
 
 // ===== Router =====
+// ===== Admin stats =====
+const ADMIN_EMAILS = ['jeantondut5@gmail.com'];
+const PLAN_PRICE = { starter: 4.90, pro: 17.90, ultra: 39.90 };
+
+async function handleAdminStats(req, res) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+  if (!ADMIN_EMAILS.includes((user.email || '').toLowerCase())) return res.status(403).json({ error: 'Acces refuse' });
+
+  const pr = await supa('GET', 'profiles?select=email,plan,credits,stripe_subscription_id,created_at&order=created_at.desc');
+  const rows = Array.isArray(pr.body) ? pr.body : [];
+
+  const now = new Date();
+  const dayMs = 86400000;
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const byPlan = { free: 0, starter: 0, pro: 0, ultra: 0 };
+  let paying = 0, credits = 0, today = 0, d7 = 0, d30 = 0;
+  const dayCounts = {};
+  for (const r of rows) {
+    const plan = r.plan || 'free';
+    if (byPlan[plan] === undefined) byPlan[plan] = 0;
+    byPlan[plan]++;
+    if (plan === 'starter' || plan === 'pro' || plan === 'ultra') paying++;
+    credits += (r.credits || 0);
+    if (r.created_at) {
+      const t = new Date(r.created_at).getTime();
+      if (t >= startOfToday) today++;
+      if (t >= now.getTime() - 7 * dayMs) d7++;
+      if (t >= now.getTime() - 30 * dayMs) d30++;
+      const key = new Date(r.created_at).toISOString().slice(0, 10);
+      dayCounts[key] = (dayCounts[key] || 0) + 1;
+    }
+  }
+  const series = [];
+  for (let i = 29; i >= 0; i--) {
+    const key = new Date(startOfToday - i * dayMs).toISOString().slice(0, 10);
+    series.push({ date: key, count: dayCounts[key] || 0 });
+  }
+  const total = rows.length;
+  const mrr = byPlan.starter * PLAN_PRICE.starter + byPlan.pro * PLAN_PRICE.pro + byPlan.ultra * PLAN_PRICE.ultra;
+  const recent = rows.slice(0, 25).map(r => ({ email: r.email, plan: r.plan || 'free', credits: r.credits || 0, created_at: r.created_at }));
+
+  res.status(200).json({
+    total, byPlan, paying,
+    conversion: total ? paying / total : 0,
+    signups: { today, d7, d30 },
+    series,
+    mrr: Math.round(mrr * 100) / 100,
+    arpuTotal: total ? Math.round(mrr / total * 100) / 100 : 0,
+    arpuPaying: paying ? Math.round(mrr / paying * 100) / 100 : 0,
+    creditsInCirculation: credits,
+    recent,
+  });
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
@@ -362,6 +420,7 @@ module.exports = async (req, res) => {
     if (path === '/create-portal-session' && req.method === 'POST') return await handlePortal(body, req, res);
     if (path === '/use-credit' && req.method === 'POST') return await handleUseCredit(body, res);
     if (path.startsWith('/profile/') && req.method === 'GET') return await handleProfile(path.split('/').pop(), res);
+    if (path === '/api/admin-stats' && req.method === 'GET') return await handleAdminStats(req, res);
 
     res.status(404).json({ error: 'Route not found: ' + path });
   } catch (err) {

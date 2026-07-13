@@ -21,6 +21,8 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background: var(--color-bg); min-height: 100vh; color: #fff; overflow-x: hidden; }
+    #golEnergy { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+    body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none; background: radial-gradient(circle 600px at 12% 22%, rgba(255,180,0,0.045), transparent 60%), radial-gradient(circle 640px at 88% 68%, rgba(255,214,0,0.045), transparent 60%), radial-gradient(ellipse 70% 50% at 50% 108%, rgba(255,160,0,0.05), transparent 65%); }
     html { scroll-padding-top: 80px; }
 
     .gol-nav { position: fixed; top: 0; left: 0; right: 0; height: 64px; display: flex; align-items: center; padding: 0 48px; background: rgba(14,14,14,0.88); backdrop-filter: blur(16px); border-bottom: 1px solid var(--color-border); z-index: 1000; }
@@ -44,7 +46,7 @@
     @media (max-width: 639px) { .gol-nav { padding: 0 20px; } .gol-links { display: none; } .gol-cta .gol-btn { display: none; } .gol-menu-toggle { display: flex; } }
 
     /* HERO */
-    .gol-hero { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 160px 24px 100px; background: radial-gradient(ellipse 90% 70% at 50% -10%, rgba(255,214,0,0.14) 0%, transparent 65%), var(--color-bg); }
+    .gol-hero { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 160px 24px 100px; background: radial-gradient(ellipse 90% 70% at 50% -10%, rgba(255,214,0,0.14) 0%, transparent 65%); }
     #particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
     @keyframes float-up { 0% { transform: translateY(0) scale(1); opacity: 0; } 8% { opacity: 1; } 90% { opacity: 0.4; } 100% { transform: translateY(-110vh) scale(0.3); opacity: 0; } }
     @keyframes shimmer { 0% { background-position: -300% center; } 100% { background-position: 300% center; } }
@@ -223,6 +225,7 @@
   </style>
 </head>
 <body>
+<canvas id="golEnergy"></canvas>
 
 <nav class="gol-nav" role="navigation" aria-label="Navigation principale">
   <div class="gol-nav-inner">
@@ -250,7 +253,6 @@
 </div>
 
 <section class="gol-hero" id="commencer">
-  <div id="particles"></div>
   <div class="gol-hero-badge">&#10022; L'IA #1 de transformation corporelle</div>
   <h1 id="heroTitle">De <span class="gradient-text">skinny&nbsp;&agrave;&nbsp;muscl&eacute;</span> en un seul clic</h1>
   <p class="gol-hero-subtitle">Transformez votre apparence physique en quelques secondes avec notre IA de pointe.&nbsp;R&eacute;sultats r&eacute;alistes, garantis.</p>
@@ -477,9 +479,6 @@
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&isOpen)closeMenu();});
   document.addEventListener('click',function(e){if(isOpen&&!mobileMenu.contains(e.target)&&!menuToggle.contains(e.target))closeMenu();});
 
-  // Particles
-  var pc=document.getElementById('particles');
-  for(var i=0;i<28;i++){var p=document.createElement('div');var sz=Math.random()*3+1.5;var dur=Math.random()*14+10;var delay=Math.random()*-dur;p.style.cssText='position:absolute;width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:rgba(255,214,0,'+(Math.random()*0.5+0.3)+');left:'+(Math.random()*100)+'%;top:100%;animation:float-up '+dur+'s '+delay+'s linear infinite;pointer-events:none';pc.appendChild(p);}
 
   // Hero title
   var ht=document.getElementById('heroTitle');
@@ -557,5 +556,25 @@
     <div class="gol-loader-brand">Gol<span>Body</span></div>
     <div class="gol-loader-sub">Pr&eacute;paration de votre transformation&hellip;</div>
   </div>
+<script>
+/* Fond animé "Énergie montante" — particules dorées reliées qui montent */
+(function(){
+  var cv=document.getElementById('golEnergy'); if(!cv) return;
+  var ctx=cv.getContext('2d'), W, H, pts=[];
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function rs(){ W=cv.width=window.innerWidth; H=cv.height=window.innerHeight; pts=[]; var n=Math.min(80, Math.floor(W*H/20000)); for(var i=0;i<n;i++) pts.push({x:Math.random()*W,y:Math.random()*H,vy:-(Math.random()*0.5+0.25),vx:(Math.random()-0.5)*0.25,r:Math.random()*1.6+0.5}); }
+  rs(); window.addEventListener('resize', rs);
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<pts.length;i++){ var p=pts[i];
+      if(!reduce){ p.y+=p.vy; p.x+=p.vx; if(p.y<-5){p.y=H+5;p.x=Math.random()*W;} }
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.28);ctx.fillStyle='rgba(255,214,0,0.5)';ctx.fill();
+      for(var j=i+1;j<pts.length;j++){ var q=pts[j],dx=p.x-q.x,dy=p.y-q.y,d=dx*dx+dy*dy;
+        if(d<13000){ ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle='rgba(255,214,0,'+(0.12*(1-d/13000))+')';ctx.lineWidth=0.6;ctx.stroke(); } } }
+    if(!reduce) requestAnimationFrame(frame);
+  }
+  frame();
+})();
+</script>
 </body>
 </html>

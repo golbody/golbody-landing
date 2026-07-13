@@ -276,26 +276,35 @@ async function handleWebhook(rawBody, req, res) {
       }
     } else if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated') {
       const sub = event.data.object;
-      const priceId = sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].price && sub.items.data[0].price.id || '';
-      const info = WH_PRICES[priceId] || { plan: 'free', credits: 200 };
-      if (sub.status === 'active' || sub.status === 'trialing') {
-        let pr = await supa('GET', `profiles?stripe_customer_id=eq.${sub.customer}&select=id`);
-        let profiles = Array.isArray(pr.body) ? pr.body : [];
-        if (!profiles.length) {
-          const cust = await stripeGet('customers/' + sub.customer);
-          const email = cust.body && cust.body.email;
-          if (email) { const r = await supa('GET', `profiles?email=eq.${encodeURIComponent(email)}&select=id`); profiles = Array.isArray(r.body) ? r.body : []; }
+      // Annulation demandée (fin de période) ou statut terminal → 0 crédit + plan gratuit IMMÉDIATEMENT
+      const canceling = sub.cancel_at_period_end === true || ['canceled', 'unpaid', 'incomplete_expired'].includes(sub.status);
+      if (canceling) {
+        const pr = await supa('GET', `profiles?stripe_customer_id=eq.${sub.customer}&select=id`);
+        for (const p of (Array.isArray(pr.body) ? pr.body : [])) {
+          await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: 'free', credits: 0, credits_reset_date: null });
         }
-        const today = new Date().toISOString().split('T')[0];
-        for (const p of profiles) {
-          await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: info.plan, stripe_customer_id: sub.customer, stripe_subscription_id: sub.id, credits: info.credits, credits_reset_date: today });
+      } else {
+        const priceId = sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].price && sub.items.data[0].price.id || '';
+        const info = WH_PRICES[priceId] || { plan: 'free', credits: 200 };
+        if (sub.status === 'active' || sub.status === 'trialing') {
+          let pr = await supa('GET', `profiles?stripe_customer_id=eq.${sub.customer}&select=id`);
+          let profiles = Array.isArray(pr.body) ? pr.body : [];
+          if (!profiles.length) {
+            const cust = await stripeGet('customers/' + sub.customer);
+            const email = cust.body && cust.body.email;
+            if (email) { const r = await supa('GET', `profiles?email=eq.${encodeURIComponent(email)}&select=id`); profiles = Array.isArray(r.body) ? r.body : []; }
+          }
+          const today = new Date().toISOString().split('T')[0];
+          for (const p of profiles) {
+            await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: info.plan, stripe_customer_id: sub.customer, stripe_subscription_id: sub.id, credits: info.credits, credits_reset_date: today });
+          }
         }
       }
     } else if (event.type === 'customer.subscription.deleted') {
       const sub = event.data.object;
       const pr = await supa('GET', `profiles?stripe_customer_id=eq.${sub.customer}&select=id`);
       for (const p of (Array.isArray(pr.body) ? pr.body : [])) {
-        await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: 'free', stripe_subscription_id: null, credits: 200, credits_reset_date: null });
+        await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: 'free', stripe_subscription_id: null, credits: 0, credits_reset_date: null });
       }
     } else if (event.type === 'invoice.paid') {
       const inv = event.data.object;

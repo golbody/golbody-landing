@@ -178,6 +178,7 @@ async function handleCheckout(body, req, res) {
     if (!priceId) return res.status(400).json({ error: 'Invalid plan' });
     const s = await stripePost('checkout/sessions', formEncode({
       customer: customerId, mode: 'subscription',
+      allow_promotion_codes: true,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/dashboard.html?success=true`,
       cancel_url: `${origin}/dashboard.html?canceled=true`,
@@ -192,6 +193,7 @@ async function handleCheckout(body, req, res) {
     if (!pd) return res.status(400).json({ error: 'Invalid pack' });
     const s = await stripePost('checkout/sessions', formEncode({
       customer: customerId, mode: 'payment',
+      allow_promotion_codes: true,
       line_items: [{ price_data: { currency: 'eur', product_data: { name: pd.name }, unit_amount: pd.amount }, quantity: 1 }],
       success_url: `${origin}/dashboard.html?success=true`,
       cancel_url: `${origin}/dashboard.html?canceled=true`,

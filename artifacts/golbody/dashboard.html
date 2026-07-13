@@ -1300,6 +1300,40 @@
   .result-title{font-size:17px!important;font-weight:800!important;margin-bottom:14px!important;}
   .result-image-wrapper img{max-width:320px!important;max-height:52vh!important;border-radius:14px!important;border:1px solid var(--rd-bd);}
   .result-actions{margin-top:16px!important;}
+
+  /* ===== Paywall freemium (résultat flouté + modal déblocage) ===== */
+  .result-image-wrapper{position:relative;}
+  .result-image-wrapper.is-locked img{filter:blur(9px) saturate(1.08) brightness(.94);transform:scale(1.1);}
+  .result-lock{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:10px;padding:18px;border-radius:14px;background:linear-gradient(to bottom,rgba(10,9,6,.04) 0%,rgba(10,9,6,.10) 42%,rgba(10,9,6,.82) 100%);}
+  .result-lock .lock-p{font-size:13px;font-weight:600;color:#fff;text-align:center;max-width:250px;line-height:1.4;text-shadow:0 1px 10px rgba(0,0,0,.85);margin:0;}
+  .unlock-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;font-weight:800;font-size:15px;border:none;border-radius:12px;padding:13px 24px;cursor:pointer;font-family:inherit;box-shadow:0 8px 30px rgba(255,214,0,.42);transition:transform .15s,filter .15s;}
+  .unlock-btn:hover{filter:brightness(1.06);transform:translateY(-1px);}
+  .unlock-btn svg{width:16px;height:16px;stroke:#111;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+  .pw-modal{position:fixed;inset:0;z-index:4000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,8,8,.86);backdrop-filter:blur(7px);}
+  .pw-modal.is-open{display:flex;}
+  .paywall{width:100%;max-width:560px;background:linear-gradient(160deg,#211f18,#141210);border:1px solid var(--rd-bdg);border-radius:22px;padding:30px 26px 26px;box-shadow:0 40px 100px -20px rgba(0,0,0,.9);text-align:center;position:relative;animation:viewIn .35s cubic-bezier(.22,.61,.36,1) both;}
+  .pw-close{position:absolute;top:12px;right:16px;color:var(--rd-faint);font-size:26px;cursor:pointer;line-height:1;background:none;border:none;font-family:inherit;}
+  .pw-close:hover{color:var(--rd-txt);}
+  .pw-pill{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--rd-accent);background:rgba(255,214,0,.09);border:1px solid var(--rd-bdg);padding:6px 14px;border-radius:100px;margin-bottom:16px;}
+  .pw-pill svg{width:13px;height:13px;stroke:var(--rd-accent);fill:none;stroke-width:2.3;}
+  .pw-h{font-size:25px;font-weight:900;letter-spacing:-.6px;line-height:1.1;margin-bottom:10px;color:var(--rd-txt);}
+  .pw-h b{color:var(--rd-accent);}
+  .pw-sub{font-size:14px;color:var(--rd-muted);max-width:400px;margin:0 auto 24px;line-height:1.5;}
+  .pw-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:18px;}
+  .pw-plan{background:var(--rd-inset);border:1px solid var(--rd-bd);border-radius:15px;padding:16px 12px 15px;text-align:center;position:relative;display:flex;flex-direction:column;gap:9px;}
+  .pw-plan.pop{border-color:var(--rd-bdg);background:linear-gradient(160deg,rgba(255,214,0,.09),rgba(255,214,0,.02));}
+  .pw-pop-tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#111;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));padding:3px 10px;border-radius:100px;white-space:nowrap;}
+  .pw-name{font-size:13px;font-weight:800;color:var(--rd-txt);}
+  .pw-price{font-size:22px;font-weight:900;letter-spacing:-.5px;color:var(--rd-txt);}
+  .pw-price span{font-size:12px;font-weight:600;color:var(--rd-muted);}
+  .pw-gens{font-size:11px;color:var(--rd-muted);min-height:30px;line-height:1.35;}
+  .pw-choose{margin-top:2px;width:100%;border:1px solid var(--rd-bdg);background:transparent;color:var(--rd-accent);font-weight:800;font-size:12.5px;border-radius:9px;padding:9px;cursor:pointer;font-family:inherit;transition:.15s;}
+  .pw-choose:hover{background:rgba(255,214,0,.08);}
+  .pw-plan.pop .pw-choose{background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;border-color:transparent;}
+  .pw-foot{font-size:12px;color:var(--rd-faint);display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px;}
+  .pw-foot svg{width:12px;height:12px;stroke:var(--rd-faint);fill:none;stroke-width:2.2;}
+  .pw-later{display:block;margin:14px auto 0;font-size:12.5px;color:var(--rd-faint);text-decoration:underline;cursor:pointer;background:none;border:none;font-family:inherit;}
+  @media(max-width:560px){.pw-plans{grid-template-columns:1fr;gap:9px;}.pw-plan{flex-direction:row;justify-content:space-between;align-items:center;text-align:left;padding:12px 14px;}.pw-gens{display:none;}.pw-choose{width:auto;padding:9px 16px;}}
   .download-btn{flex:1;justify-content:center;background:linear-gradient(135deg,#FFD600 0%,#e6c000 100%)!important;color:#111!important;font-weight:800!important;}
   .newgen-btn{flex:1;justify-content:center;border:1px solid var(--rd-bdg)!important;}
 
@@ -1791,10 +1825,14 @@
         <!-- Result Zone -->
         <div class="result-zone" id="resultZone" style="display: none;">
           <div class="result-title">Résultat</div>
-          <div class="result-image-wrapper">
+          <div class="result-image-wrapper" id="resultWrap">
             <img id="resultImage" src="" alt="Résultat">
+            <div class="result-lock" id="resultLock" style="display:none;">
+              <p class="lock-p">Résultat généré — débloque-le pour le voir</p>
+              <button class="unlock-btn" id="unlockBtn" type="button"><svg viewBox="0 0 24 24"><path d="M7 11V7a5 5 0 0 1 9.9-1"/><rect x="3" y="11" width="18" height="11" rx="2"/></svg> Débloquer ma photo</button>
+            </div>
           </div>
-          <div class="result-actions">
+          <div class="result-actions" id="resultActions">
             <a class="download-btn" id="downloadBtn" href="#" download="golbody-result.jpg">
               <i data-lucide="download"></i>
               Télécharger
@@ -1807,6 +1845,38 @@
       </div>
       </div>
     </main>
+  </div>
+
+  <div class="pw-modal" id="paywallModal">
+    <div class="paywall">
+      <button class="pw-close" id="pwClose" type="button" aria-label="Fermer">&times;</button>
+      <div class="pw-pill"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Résultat verrouillé</div>
+      <div class="pw-h">Débloque ta <b>transformation</b></div>
+      <div class="pw-sub">Ta photo est prête. Choisis un plan pour la révéler en HD et générer sans limite.</div>
+      <div class="pw-plans">
+        <div class="pw-plan">
+          <div class="pw-name">Starter</div>
+          <div class="pw-price">4,90€<span>/mois</span></div>
+          <div class="pw-gens">1 000 crédits<br>≈ 10 générations</div>
+          <button class="pw-choose" type="button" data-plan="starter">Choisir</button>
+        </div>
+        <div class="pw-plan pop">
+          <div class="pw-pop-tag">Populaire</div>
+          <div class="pw-name">Pro</div>
+          <div class="pw-price">17,90€<span>/mois</span></div>
+          <div class="pw-gens">3 000 crédits<br>≈ 30 générations</div>
+          <button class="pw-choose" type="button" data-plan="pro">Choisir</button>
+        </div>
+        <div class="pw-plan">
+          <div class="pw-name">Ultra</div>
+          <div class="pw-price">39,90€<span>/mois</span></div>
+          <div class="pw-gens">7 500 crédits<br>≈ 75 générations</div>
+          <button class="pw-choose" type="button" data-plan="ultra">Choisir</button>
+        </div>
+      </div>
+      <div class="pw-foot"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Paiement sécurisé · Sans engagement · Résiliable à tout moment</div>
+      <button class="pw-later" id="pwLater" type="button">Plus tard</button>
+    </div>
   </div>
 
   <script>
@@ -1931,6 +2001,7 @@
         }
         updateSidebar();
         updateAccountSection(profile || { plan: 'free', credits: 100 });
+        if (typeof maybeRevealResult === 'function') maybeRevealResult();
       } catch (err) {
         console.error('[Profile] Load error:', err);
         currentCredits = 200;
@@ -2287,6 +2358,77 @@
       });
     });
 
+    // ===== Paywall freemium (flou résultat + déblocage) =====
+    const resultWrap = document.getElementById('resultWrap');
+    const resultLock = document.getElementById('resultLock');
+    const resultActions = document.getElementById('resultActions');
+    const unlockBtn = document.getElementById('unlockBtn');
+    const paywallModal = document.getElementById('paywallModal');
+    const LOCK_KEY = 'golbody_locked_result';
+
+    function isLocked() { return (currentPlan || 'free') === 'free'; }
+
+    // Affiche le résultat : flouté + CTA déblocage si plan gratuit, sinon net + téléchargement
+    function showGenResult(url) {
+      resultImage.src = url;
+      if (isLocked()) {
+        try { localStorage.setItem(LOCK_KEY, url); } catch (e) {}
+        resultWrap.classList.add('is-locked');
+        resultLock.style.display = 'flex';
+        resultActions.style.display = 'none';
+        downloadBtn.href = '#';
+      } else {
+        try { localStorage.removeItem(LOCK_KEY); } catch (e) {}
+        resultWrap.classList.remove('is-locked');
+        resultLock.style.display = 'none';
+        resultActions.style.display = '';
+        downloadBtn.href = url;
+      }
+      resultZone.style.display = 'block';
+    }
+
+    // Retour de Stripe : si le plan est devenu payant et qu'un résultat attend → on le révèle net
+    function maybeRevealResult() {
+      let url = null;
+      try { url = localStorage.getItem(LOCK_KEY); } catch (e) {}
+      if (url && !isLocked()) {
+        formZone.style.display = 'none';
+        showGenResult(url);
+        try { lucide.createIcons(); } catch (e) {}
+      }
+    }
+
+    function openPaywall() { paywallModal.classList.add('is-open'); }
+    function closePaywall() { paywallModal.classList.remove('is-open'); }
+    if (unlockBtn) unlockBtn.addEventListener('click', openPaywall);
+    document.getElementById('pwClose').addEventListener('click', closePaywall);
+    document.getElementById('pwLater').addEventListener('click', closePaywall);
+    paywallModal.addEventListener('click', (e) => { if (e.target === paywallModal) closePaywall(); });
+
+    // Boutons plans de la modal → checkout Stripe (mensuel, prix affichés = mensuel)
+    document.querySelectorAll('.pw-choose').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const plan = btn.dataset.plan;
+        const user = await ensureUser();
+        if (!user) { showError('Veuillez vous connecter pour continuer.'); return; }
+        const original = btn.textContent;
+        try {
+          btn.disabled = true; btn.textContent = '…';
+          const res = await fetch('/create-checkout-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan, billing: 'monthly', customerEmail: user.email, user_id: user.id }),
+          });
+          const data = await res.json();
+          if (data.url) { window.location.href = data.url; }
+          else { showError(data.error || 'Erreur lors de la création du paiement.'); btn.disabled = false; btn.textContent = original; }
+        } catch (err) {
+          console.error('[Paywall] Error:', err);
+          showError('Erreur de connexion. Réessayez.'); btn.disabled = false; btn.textContent = original;
+        }
+      });
+    });
+
     // Run auth initialization
     initAuth();
 
@@ -2305,6 +2447,9 @@
       resultZone.style.display = 'none';
       resultImage.src = '';
       downloadBtn.href = '#';
+      resultWrap.classList.remove('is-locked');
+      resultLock.style.display = 'none';
+      resultActions.style.display = '';
       formZone.style.display = 'block';
     });
 
@@ -2580,10 +2725,8 @@
           }
         }
 
-        resultImage.src = afterUrl;
-        downloadBtn.href = afterUrl;
         formZone.style.display = 'none';
-        resultZone.style.display = 'block';
+        showGenResult(afterUrl);
         lucide.createIcons();
       } catch (err) {
         console.error('Generation error:', err);

@@ -1759,6 +1759,13 @@
                 <i data-lucide="settings" style="width:16px;height:16px;"></i> Gérer mon abonnement
               </button>
             </div>
+            <a class="acc-manage" id="acc-admin" href="admin.html" style="display:none;text-decoration:none;">
+              <div class="acc-mtxt">
+                <div class="acc-mt">📊 Statistiques (Admin)</div>
+                <div class="acc-md">Utilisateurs, abonnés, MRR, inscriptions — ton tableau de bord.</div>
+              </div>
+              <span class="acc-btn-gold"><i data-lucide="bar-chart-2" style="width:16px;height:16px;"></i> Voir mes stats</span>
+            </a>
             <button class="acc-btn-logout" type="button" onclick="document.getElementById('logoutBtn').click()">
               <i data-lucide="log-out" style="width:16px;height:16px;"></i> Se déconnecter
             </button>
@@ -2028,6 +2035,8 @@
       const maxCredits = (PLAN_CREDITS_MAP[plan] || 100) || 1;
 
       setTxt('account-email', email);
+      const adminEl = document.getElementById('acc-admin');
+      if (adminEl) adminEl.style.display = (email && email.toLowerCase() === 'jeantondut5@gmail.com') ? 'flex' : 'none';
       setTxt('account-avatar', (email && email[0]) ? email[0].toUpperCase() : 'U');
       setTxt('account-plan', planNames[plan] || 'Plan Gratuit');
       setTxt('account-plan-badge', plan === 'free' ? 'Plan Gratuit' : '★ Plan ' + (planNames[plan] || ''));

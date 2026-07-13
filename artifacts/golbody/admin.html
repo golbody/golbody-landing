@@ -141,7 +141,7 @@ async function init(){
 async function load(token){
   show('state');
   try{
-    const res=await fetch('/api/admin-stats',{headers:{'Authorization':'Bearer '+token}});
+    const res=await fetch('https://www.golbody.com/api/admin-stats',{headers:{'Authorization':'Bearer '+token}});
     if(res.status===403||res.status===401){ show('denied'); return; }
     if(!res.ok) throw new Error('http '+res.status);
     render(await res.json()); show('content');

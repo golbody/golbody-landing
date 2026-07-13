@@ -289,7 +289,7 @@ async function handleWebhook(rawBody, req, res) {
     } else if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated') {
       const sub = event.data.object;
       // Annulation demandée (fin de période) ou statut terminal → 0 crédit + plan gratuit IMMÉDIATEMENT
-      const canceling = sub.cancel_at_period_end === true || ['canceled', 'unpaid', 'incomplete_expired'].includes(sub.status);
+      const canceling = sub.cancel_at_period_end === true || sub.cancel_at != null || sub.canceled_at != null || ['canceled', 'unpaid', 'incomplete_expired'].includes(sub.status);
       if (canceling) {
         const profiles = await findProfileIdsByCustomer(sub.customer);
         for (const p of profiles) {

@@ -253,6 +253,18 @@ function verifyStripeSig(rawBody, sigHeader, secret) {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
+// Trouve les profils liés à un customer Stripe : par stripe_customer_id, sinon repli par email
+async function findProfileIdsByCustomer(customer) {
+  let pr = await supa('GET', `profiles?stripe_customer_id=eq.${customer}&select=id`);
+  let profiles = Array.isArray(pr.body) ? pr.body : [];
+  if (!profiles.length) {
+    const cust = await stripeGet('customers/' + customer);
+    const email = cust.body && cust.body.email;
+    if (email) { const r = await supa('GET', `profiles?email=eq.${encodeURIComponent(email)}&select=id`); profiles = Array.isArray(r.body) ? r.body : []; }
+  }
+  return profiles;
+}
+
 async function handleWebhook(rawBody, req, res) {
   if (!STRIPE_SECRET_KEY || !STRIPE_WEBHOOK_SECRET) { res.status(400).send('Stripe not configured'); return; }
   if (!verifyStripeSig(rawBody, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET)) {
@@ -279,9 +291,9 @@ async function handleWebhook(rawBody, req, res) {
       // Annulation demandée (fin de période) ou statut terminal → 0 crédit + plan gratuit IMMÉDIATEMENT
       const canceling = sub.cancel_at_period_end === true || ['canceled', 'unpaid', 'incomplete_expired'].includes(sub.status);
       if (canceling) {
-        const pr = await supa('GET', `profiles?stripe_customer_id=eq.${sub.customer}&select=id`);
-        for (const p of (Array.isArray(pr.body) ? pr.body : [])) {
-          await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: 'free', credits: 0, credits_reset_date: null });
+        const profiles = await findProfileIdsByCustomer(sub.customer);
+        for (const p of profiles) {
+          await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: 'free', stripe_subscription_id: null, credits: 0, credits_reset_date: null });
         }
       } else {
         const priceId = sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].price && sub.items.data[0].price.id || '';
@@ -302,8 +314,8 @@ async function handleWebhook(rawBody, req, res) {
       }
     } else if (event.type === 'customer.subscription.deleted') {
       const sub = event.data.object;
-      const pr = await supa('GET', `profiles?stripe_customer_id=eq.${sub.customer}&select=id`);
-      for (const p of (Array.isArray(pr.body) ? pr.body : [])) {
+      const profiles = await findProfileIdsByCustomer(sub.customer);
+      for (const p of profiles) {
         await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: 'free', stripe_subscription_id: null, credits: 0, credits_reset_date: null });
       }
     } else if (event.type === 'invoice.paid') {

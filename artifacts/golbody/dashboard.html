@@ -2081,7 +2081,14 @@
     async function initAuth() {
       const hasOAuthCode = urlParams.has('code');
 
-      const { data: { session } } = await supabaseClient.auth.getSession();
+      let { data: { session } } = await supabaseClient.auth.getSession();
+      // Retour OAuth : laisser le temps à l'échange du code PKCE (detectSessionInUrl) avant de conclure
+      if (!session && hasOAuthCode) {
+        for (let i = 0; i < 12 && !session; i++) {
+          await new Promise(r => setTimeout(r, 250));
+          ({ data: { session } } = await supabaseClient.auth.getSession());
+        }
+      }
       if (!session) {
         window.location.href = 'login.html';
         return;

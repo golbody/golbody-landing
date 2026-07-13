@@ -70,7 +70,7 @@ for(var i=0;i<28;i++){var p=document.createElement('div');var sz=Math.random()*3
   <p class="secure">&#128274; Donn&eacute;es s&eacute;curis&eacute;es &middot; R&eacute;siliable &agrave; tout moment</p>
 </div>
 <script>
-const sb=supabase.createClient('https://quvqqxrfewrsbajsllzk.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MjMyNTAsImV4cCI6MjA5ODk5OTI1MH0.CWkSUpjHFE3wV6vJmCbYmMNv291rEW1SPgkWIO5W6G4');
+const sb=supabase.createClient('https://quvqqxrfewrsbajsllzk.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1dnFxeHJmZXdyc2JhanNsbHprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MjMyNTAsImV4cCI6MjA5ODk5OTI1MH0.CWkSUpjHFE3wV6vJmCbYmMNv291rEW1SPgkWIO5W6G4',{auth:{flowType:'pkce',detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
 document.getElementById('form').addEventListener('submit',async e=>{
   e.preventDefault();
   const btn=document.getElementById('btn'),err=document.getElementById('err');

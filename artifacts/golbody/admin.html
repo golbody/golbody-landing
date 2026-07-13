@@ -143,9 +143,9 @@ async function load(token){
   try{
     const res=await fetch('https://www.golbody.com/api/admin-stats',{headers:{'Authorization':'Bearer '+token}});
     if(res.status===403||res.status===401){ show('denied'); return; }
-    if(!res.ok) throw new Error('http '+res.status);
-    render(await res.json()); show('content');
-  }catch(e){ $('state').textContent='Erreur de chargement — réessaie.'; show('state'); }
+    if(!res.ok){ let t=''; try{t=await res.text();}catch(_){}; throw new Error('HTTP '+res.status+(t?' — '+t.slice(0,160):'')); }
+    const data=await res.json(); show('content'); render(data);
+  }catch(e){ $('state').textContent='Erreur : '+((e&&e.message)?e.message:e); show('state'); }
 }
 function render(d){
   $('k-total').textContent=fr(d.total);
@@ -180,7 +180,8 @@ function render(d){
 function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 function drawChart(series){
   const cv=$('chart'); if(!cv||!series) return;
-  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=180;
+  const W=cv.clientWidth; if(!W){ requestAnimationFrame(()=>drawChart(series)); return; }
+  const dpr=window.devicePixelRatio||1, H=180;
   cv.width=W*dpr; cv.height=H*dpr; const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
   ctx.clearRect(0,0,W,H);
   const max=Math.max(1,...series.map(s=>s.count));

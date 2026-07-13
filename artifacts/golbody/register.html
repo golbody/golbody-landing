@@ -68,7 +68,7 @@ document.getElementById('form').addEventListener('submit',async e=>{
   btn.disabled=true;btn.textContent='Création en cours…';err.style.display='none';
   const{data,error}=await sb.auth.signUp({email:document.getElementById('email').value,password:document.getElementById('pwd').value});
   if(error){err.textContent=error.message;err.style.display='block';btn.disabled=false;btn.textContent='Commencer ma transformation →';return}
-  if(data.user){await sb.from('profiles').insert({id:data.user.id,credits:100});window.location.href='dashboard.html'}
+  if(data.user){window.location.href='dashboard.html'}
 });
 </script>
 

@@ -136,11 +136,23 @@ async function handleGenerate(body, req, res) {
   const falKey = process.env.FAL_API_KEY;
   if (!falKey) return res.status(500).json({ error: 'FAL_API_KEY not configured' });
 
+  // ===== Contrôle des crédits CÔTÉ SERVEUR (anti-abus, non contournable) =====
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const cr = await supa('GET', `profiles?id=eq.${user.id}&select=credits`);
+  const cprofile = firstRow(cr);
+  if (!cprofile) return res.status(403).json({ error: 'Profil introuvable' });
+  const credits = cprofile.credits || 0;
+  if (credits < 100) return res.status(402).json({ error: 'Crédits insuffisants', credits });
+
   const result = await callFalAi(falKey, imageUrl, prompt);
   const url = result.images?.[0]?.url || result.image?.url || result.url;
   if (!url) throw new Error('No image URL in fal.ai response: ' + JSON.stringify(result));
 
-  res.status(200).json({ imageUrl: url });
+  // Déduction des 100 crédits APRÈS génération réussie
+  const newCredits = credits - 100;
+  await supa('PATCH', `profiles?id=eq.${user.id}`, { credits: newCredits });
+
+  res.status(200).json({ imageUrl: url, credits: newCredits });
 }
 
 async function handleCheckout(body, req, res) {

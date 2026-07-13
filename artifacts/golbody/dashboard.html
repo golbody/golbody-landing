@@ -2702,27 +2702,19 @@
         });
         if (submitRes.status === 401) { window.location.href = 'login.html'; return; }
         const submitData = await submitRes.json();
+        if (submitRes.status === 402) {
+          if (typeof isLocked === 'function' && isLocked()) { openPaywall(); }
+          else { showError('Crédits insuffisants — rechargez dans l\'onglet Abonnement.'); }
+          return;
+        }
         if (!submitRes.ok) throw new Error(submitData.error || 'Erreur lors de la soumission');
         const afterUrl = submitData.imageUrl;
         if (!afterUrl) throw new Error('Aucune image retournée par l\'API');
 
-        // Deduct credits after successful generation
-        if (currentUser) {
-          try {
-            const { data: profile, error } = await supabaseClient
-              .from('profiles')
-              .select('credits')
-              .eq('id', currentUser.id)
-              .single();
-            if (profile && (profile.credits ?? 0) >= 100) {
-              const newCredits = profile.credits - 100;
-              await supabaseClient.from('profiles').update({ credits: newCredits }).eq('id', currentUser.id);
-              currentCredits = newCredits;
-              updateSidebar();
-            }
-          } catch (err) {
-            console.error('Credit deduction error:', err);
-          }
+        // Crédits déduits CÔTÉ SERVEUR par /api/generate → on lit la valeur renvoyée
+        if (typeof submitData.credits === 'number') {
+          currentCredits = submitData.credits;
+          updateSidebar();
         }
 
         formZone.style.display = 'none';

@@ -279,12 +279,18 @@ async function handleWebhook(rawBody, req, res) {
       const s = event.data.object;
       const userId = s.metadata && s.metadata.user_id;
       const pack = s.metadata && s.metadata.pack;
+      const plan = s.metadata && s.metadata.plan;
       const credits = parseInt((s.metadata && s.metadata.credits) || '0', 10);
       if (userId && s.customer) await supa('PATCH', `profiles?id=eq.${userId}`, { stripe_customer_id: s.customer });
       if (pack && credits && userId) {
         const pr = await supa('GET', `profiles?id=eq.${userId}&select=credits`);
         const cur = (firstRow(pr) && firstRow(pr).credits) || 0;
         await supa('PATCH', `profiles?id=eq.${userId}`, { credits: cur + credits });
+      } else if (plan && userId) {
+        // Abonnement : upgrade immédiat via la metadata du checkout (fiable, sans lookup)
+        const PLAN_CREDITS = { starter: 1000, pro: 3000, ultra: 7500 };
+        const today = new Date().toISOString().split('T')[0];
+        await supa('PATCH', `profiles?id=eq.${userId}`, { plan, credits: PLAN_CREDITS[plan] || 200, stripe_customer_id: s.customer, stripe_subscription_id: s.subscription || null, credits_reset_date: today });
       }
     } else if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated') {
       const sub = event.data.object;
@@ -320,11 +326,12 @@ async function handleWebhook(rawBody, req, res) {
       }
     } else if (event.type === 'invoice.paid') {
       const inv = event.data.object;
-      const subId = inv.subscription;
-      if (subId) {
-        const subR = await stripeGet('subscriptions/' + subId);
-        const sub = subR.body || {};
-        const priceId = sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].price && sub.items.data[0].price.id || '';
+      // API récente : inv.subscription peut être absent → on récupère l'abo actif du customer
+      let sub = null;
+      if (inv.subscription) { const r = await stripeGet('subscriptions/' + inv.subscription); sub = r.body; }
+      if ((!sub || !sub.items) && inv.customer) { const r = await stripeGet('subscriptions?customer=' + inv.customer + '&status=active&limit=1'); sub = r.body && r.body.data && r.body.data[0]; }
+      if (sub && sub.items && inv.customer) {
+        const priceId = sub.items.data && sub.items.data[0] && sub.items.data[0].price && sub.items.data[0].price.id || '';
         const info = WH_PRICES[priceId] || { plan: 'free', credits: 200 };
         const today = new Date().toISOString().split('T')[0];
         const pr = await supa('GET', `profiles?stripe_customer_id=eq.${inv.customer}&select=id`);

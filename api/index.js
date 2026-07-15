@@ -395,6 +395,18 @@ async function handleAdminStats(req, res) {
   const mrr = byPlan.starter * PLAN_PRICE.starter + byPlan.pro * PLAN_PRICE.pro + byPlan.ultra * PLAN_PRICE.ultra;
   const recent = rows.slice(0, 25).map(r => ({ email: r.email, plan: r.plan || 'free', credits: r.credits || 0, created_at: r.created_at }));
 
+  // ===== Stripe (revenu réel, indépendant de la règle d'annulation) =====
+  let salesCount = 0, revenueTotal = 0, activeSubs = 0;
+  try {
+    const ch = await stripeGet('charges?limit=100');
+    for (const c of ((ch.body && ch.body.data) || [])) {
+      if (c.status === 'succeeded' && c.paid) { salesCount++; revenueTotal += (c.amount - (c.amount_refunded || 0)); }
+    }
+    const subs = await stripeGet('subscriptions?status=active&limit=100');
+    activeSubs = ((subs.body && subs.body.data) || []).length;
+  } catch (e) {}
+  revenueTotal = Math.round(revenueTotal) / 100;
+
   res.status(200).json({
     total, byPlan, paying,
     conversion: total ? paying / total : 0,
@@ -404,6 +416,7 @@ async function handleAdminStats(req, res) {
     arpuTotal: total ? Math.round(mrr / total * 100) / 100 : 0,
     arpuPaying: paying ? Math.round(mrr / paying * 100) / 100 : 0,
     creditsInCirculation: credits,
+    stripe: { salesCount, revenueTotal, activeSubs },
     recent,
   });
 }

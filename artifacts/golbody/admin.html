@@ -98,6 +98,13 @@
       <div class="kpi"><div class="lbl">Crédits en circulation</div><div class="val" id="k-credits">—</div><div class="sub" id="k-credits-sub"></div></div>
     </div>
 
+    <div style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:2px 2px 12px;">💳 Stripe — revenu réel</div>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="kpi good"><div class="lbl">Revenu encaissé</div><div class="val" id="k-rev">—</div><div class="sub">net, après remboursements</div></div>
+      <div class="kpi accent"><div class="lbl">Ventes totales</div><div class="val" id="k-sales">—</div><div class="sub">paiements réussis</div></div>
+      <div class="kpi"><div class="lbl">Abonnés actifs</div><div class="val" id="k-activesubs">—</div><div class="sub">abonnements Stripe actifs</div></div>
+    </div>
+
     <div class="row2">
       <div class="card">
         <h3>Inscriptions — 30 derniers jours</h3>
@@ -161,6 +168,7 @@ function render(d){
   $('k-arpu-sub').textContent=eur(d.arpuTotal)+' / utilisateur';
   $('k-credits').textContent=fr(d.creditsInCirculation);
   $('k-credits-sub').textContent='≈ '+fr(Math.round(d.creditsInCirculation/100))+' générations';
+  const st=d.stripe||{}; $('k-rev').textContent=eur(st.revenueTotal||0); $('k-sales').textContent=fr(st.salesCount||0); $('k-activesubs').textContent=fr(st.activeSubs||0);
   // plans
   const tot=Math.max(1,d.total);
   const order=[['free','Free','free'],['starter','Starter',''],['pro','Pro',''],['ultra','Ultra','']];
@@ -204,7 +212,7 @@ window.addEventListener('resize',()=>{ if(!$('content').classList.contains('hidd
 const _r=render; render=function(d){window._lastSeries=d.series;_r(d);};
 
 // demo data (aperçu local via ?demo)
-const DEMO={total:1284,byPlan:{free:1010,starter:150,pro:98,ultra:26},paying:274,conversion:0.213,signups:{today:37,d7:196,d30:642},mrr:150*4.9+98*17.9+26*39.9,arpuTotal:0,arpuPaying:0,creditsInCirculation:187400,recent:[{email:'lucas.martin@gmail.com',plan:'pro',credits:2800,created_at:'2026-07-13'},{email:'sofia_fit@gmail.com',plan:'ultra',credits:7500,created_at:'2026-07-13'},{email:'kevin90@gmail.com',plan:'free',credits:0,created_at:'2026-07-12'},{email:'newuser@gmail.com',plan:'starter',credits:900,created_at:'2026-07-12'}],series:Array.from({length:30},(_,i)=>({date:'2026-06-'+String(14+i).padStart(2,'0'),count:Math.floor(6+18*Math.abs(Math.sin(i/3))+((i*7)%9))}))};
+const DEMO={total:1284,byPlan:{free:1010,starter:150,pro:98,ultra:26},paying:274,conversion:0.213,signups:{today:37,d7:196,d30:642},mrr:150*4.9+98*17.9+26*39.9,arpuTotal:0,arpuPaying:0,creditsInCirculation:187400,stripe:{salesCount:12,revenueTotal:148.80,activeSubs:9},recent:[{email:'lucas.martin@gmail.com',plan:'pro',credits:2800,created_at:'2026-07-13'},{email:'sofia_fit@gmail.com',plan:'ultra',credits:7500,created_at:'2026-07-13'},{email:'kevin90@gmail.com',plan:'free',credits:0,created_at:'2026-07-12'},{email:'newuser@gmail.com',plan:'starter',credits:900,created_at:'2026-07-12'}],series:Array.from({length:30},(_,i)=>({date:'2026-06-'+String(14+i).padStart(2,'0'),count:Math.floor(6+18*Math.abs(Math.sin(i/3))+((i*7)%9))}))};
 DEMO.arpuTotal=Math.round(DEMO.mrr/DEMO.total*100)/100; DEMO.arpuPaying=Math.round(DEMO.mrr/DEMO.paying*100)/100; DEMO.mrr=Math.round(DEMO.mrr*100)/100;
 init();
 </script>

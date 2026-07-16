@@ -2910,11 +2910,11 @@
 
   <!-- ===== Chat général public ===== -->
   <style>
-    #gcLauncher{position:fixed;right:22px;bottom:96px;z-index:9998;display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,#FFD600,#e6c000);color:#111;font-weight:800;font-size:14px;border:none;border-radius:100px;padding:12px 18px;cursor:pointer;box-shadow:0 8px 30px rgba(255,214,0,.35);font-family:inherit}
+    #gcLauncher{position:fixed;right:22px;bottom:22px;z-index:9998;display:flex;align-items:center;gap:9px;background:linear-gradient(135deg,#FFD600,#e6c000);color:#111;font-weight:800;font-size:14px;border:none;border-radius:100px;padding:12px 18px;cursor:pointer;box-shadow:0 8px 30px rgba(255,214,0,.35);font-family:inherit}
     #gcLauncher .gc-dot{width:8px;height:8px;border-radius:50%;background:#1db954;box-shadow:0 0 0 3px rgba(29,185,84,.25)}
     #gcLauncher .gc-badge{background:#111;color:#FFD600;font-size:11px;font-weight:800;padding:1px 7px;border-radius:100px;min-width:18px;text-align:center;display:none}
     #gcLauncher .gc-badge.on{display:inline-block}
-    #gcPanel{position:fixed;right:22px;bottom:96px;z-index:9999;width:340px;max-width:calc(100vw - 40px);height:min(520px,calc(100vh - 120px));background:#141210;border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden;font-family:'Inter',sans-serif}
+    #gcPanel{position:fixed;right:22px;bottom:22px;z-index:9999;width:340px;max-width:calc(100vw - 40px);height:min(520px,calc(100vh - 120px));background:#141210;border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden;font-family:'Inter',sans-serif}
     #gcPanel.on{display:flex}
     .gc-head{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#1a1813;border-bottom:1px solid rgba(255,255,255,.06)}
     .gc-head .gc-av{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#FFD600,#e6c000);display:flex;align-items:center;justify-content:center;font-size:16px}
@@ -2936,7 +2936,7 @@
     .gc-foot input::placeholder{color:#66666f}
     .gc-foot button{background:linear-gradient(135deg,#FFD600,#e6c000);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;color:#111;font-size:15px;flex:0 0 auto}
     .gc-foot button:disabled{opacity:.5;cursor:default}
-    @media(max-width:480px){#gcPanel{width:calc(100vw - 24px);right:12px;bottom:88px;height:70vh}#gcLauncher{right:14px;bottom:84px}}
+    @media(max-width:480px){#gcPanel{width:calc(100vw - 24px);right:12px;bottom:16px;height:70vh}#gcLauncher{right:14px;bottom:16px}}
   </style>
   <button id="gcLauncher"><span class="gc-dot"></span> Chat général <span class="gc-badge" id="gcBadge">0</span></button>
   <div id="gcPanel" role="dialog" aria-label="Chat général">

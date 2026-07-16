@@ -450,6 +450,78 @@ async function handleSurveyAnswer(body, req, res) {
   res.status(200).json({ credited: reward, credits });
 }
 
+// ===== Chat général public =====
+const CHAT_ADJ = ['Maxx','Léo','Ryan','Sasha','Nino','Théo','Adam','Kylian','Enzo','Lucas','Noah','Ethan','Gabin','Marius','Naël','Tiago','Axel','Ilan','Rayan','Yanis','Nathan','Hugo','Jules','Malo'];
+const CHAT_ANIM = ['Loup','Fauve','Aigle','Tigre','Ours','Faucon','Puma','Lynx','Cobra','Requin','Panthère','Bison','Renard','Taureau','Faon','Rhino','Jaguar','Condor','Élan','Bélier','Aigle','Serpent','Guépard','Hibou'];
+function handleForUser(uid) {
+  let h = 0; const s = String(uid || '');
+  for (let i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) >>> 0; }
+  const a = CHAT_ADJ[h % CHAT_ADJ.length];
+  const an = CHAT_ANIM[Math.floor(h / 7) % CHAT_ANIM.length];
+  const n = (h % 90) + 10; // 10..99
+  return a + '_' + an + '_' + n;
+}
+function chatClean(text) {
+  let t = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!t) return { ok: false, reason: 'empty' };
+  if (t.length > 280) t = t.slice(0, 280);
+  const low = t.toLowerCase();
+  // anti-spam / anti-scam : pas de liens
+  if (/https?:\/\/|www\.|\.com|\.fr|\.net|\.io|\.gg|t\.me|discord\.gg/i.test(low)) return { ok: false, reason: 'no_links' };
+  // blocklist haine / contenus graves (pas les insultes casual)
+  const BAD = ['nigger', 'négro', 'negro', 'bougnoule', 'sale juif', 'sale arabe', 'sale noir', 'sale blanc', 'heil hitler', 'pédophile', 'pedophile', 'zoophil'];
+  for (const b of BAD) { if (low.includes(b)) return { ok: false, reason: 'blocked' }; }
+  return { ok: true, text: t };
+}
+
+async function handleChatGet(req, res) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+
+  const qs = (req.url || '').split('?')[1] || '';
+  const after = parseInt(new URLSearchParams(qs).get('after') || '', 10);
+  const sel = 'select=id,handle,body,is_seed,created_at';
+  let path, reverse = false;
+  if (!isNaN(after) && after > 0) {
+    path = `chat_messages?id=gt.${after}&order=id.asc&limit=60&${sel}`;
+  } else {
+    path = `chat_messages?order=id.desc&limit=60&${sel}`;
+    reverse = true; // on veut l'ordre chronologique pour l'affichage initial
+  }
+  const r = await supa('GET', path);
+  let rows = Array.isArray(r.body) ? r.body : [];
+  if (reverse) rows = rows.reverse();
+  res.status(200).json({ messages: rows, me: handleForUser(user.id) });
+}
+
+async function handleChatPost(body, req, res) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+
+  const clean = chatClean(body && body.body);
+  if (!clean.ok) return res.status(400).json({ error: 'message_rejected', reason: clean.reason });
+
+  // Rate limit : 1 message / 5 s par utilisateur
+  const last = await supa('GET', `chat_messages?user_id=eq.${user.id}&order=id.desc&limit=1&select=created_at`);
+  const lastRow = firstRow(last);
+  if (lastRow && lastRow.created_at) {
+    const dt = Date.now() - new Date(lastRow.created_at).getTime();
+    if (dt < 5000) return res.status(429).json({ error: 'slow_down' });
+  }
+
+  const handle = handleForUser(user.id);
+  const ins = await supa('POST', 'chat_messages?select=id,handle,body,is_seed,created_at', { user_id: user.id, handle, body: clean.text });
+  const row = firstRow(ins);
+  if (!row) return res.status(500).json({ error: 'insert_failed' });
+  res.status(200).json({ ok: true, message: row });
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
@@ -476,6 +548,8 @@ module.exports = async (req, res) => {
     if (path.startsWith('/profile/') && req.method === 'GET') return await handleProfile(path.split('/').pop(), res);
     if (path === '/api/admin-stats' && req.method === 'GET') return await handleAdminStats(req, res);
     if (path === '/api/survey-answer' && req.method === 'POST') return await handleSurveyAnswer(body, req, res);
+    if (path === '/api/chat' && req.method === 'GET') return await handleChatGet(req, res);
+    if (path === '/api/chat' && req.method === 'POST') return await handleChatPost(body, req, res);
 
     res.status(404).json({ error: 'Route not found: ' + path });
   } catch (err) {

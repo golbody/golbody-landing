@@ -2286,7 +2286,7 @@
           showError('Veuillez vous connecter pour accéder au portail d\'abonnement.');
           return;
         }
-        const res = await fetch('/create-portal-session', {
+        const res = await fetch('https://www.golbody.com/create-portal-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user_id: user.id })
@@ -2524,7 +2524,7 @@
           const originalText = btn.textContent;
           btn.textContent = 'Chargement...';
           console.log('[Subscribe] Calling /create-checkout-session with plan:', plan, 'billing:', billingMode, 'userId:', user.id);
-          const res = await fetch('/create-checkout-session', {
+          const res = await fetch('https://www.golbody.com/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2570,7 +2570,7 @@
           btn.disabled = true;
           const originalText = btn.textContent;
           btn.textContent = 'Chargement...';
-          const res = await fetch('/create-checkout-session', {
+          const res = await fetch('https://www.golbody.com/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -2761,7 +2761,7 @@
         const original = btn.textContent;
         try {
           btn.disabled = true; btn.textContent = '…';
-          const res = await fetch('/create-checkout-session', {
+          const res = await fetch('https://www.golbody.com/create-checkout-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ plan, billing: 'monthly', customerEmail: user.email, user_id: user.id }),
@@ -3168,7 +3168,7 @@
         const session = await supabaseClient.auth.getSession();
         const token = session.data.session?.access_token;
 
-        const submitRes = await fetch('/api/generate', {
+        const submitRes = await fetch('https://www.golbody.com/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({ imageUrl, prompt: promptText })

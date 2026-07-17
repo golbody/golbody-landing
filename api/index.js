@@ -168,49 +168,58 @@ async function handleCheckout(body, req, res) {
   const { plan, billing, pack, customerEmail, user_id } = body || {};
   if (!user_id) return res.status(400).json({ error: 'Missing user_id' });
 
-  // customer Stripe
-  const pr = await supa('GET', `profiles?id=eq.${user_id}&select=stripe_customer_id`);
-  let customerId = firstRow(pr) && firstRow(pr).stripe_customer_id;
-  if (!customerId) {
+  // Crée un nouveau customer Stripe et l'enregistre sur le profil
+  async function createCustomer() {
     const c = await stripePost('customers', formEncode({ email: customerEmail, metadata: { user_id } }));
     if (c.status >= 400) throw new Error('Stripe customer: ' + JSON.stringify(c.body));
-    customerId = c.body.id;
-    await supa('PATCH', `profiles?id=eq.${user_id}`, { stripe_customer_id: customerId });
+    await supa('PATCH', `profiles?id=eq.${user_id}`, { stripe_customer_id: c.body.id });
+    return c.body.id;
   }
 
-  const origin = req.headers.origin || 'https://golbody.com';
+  // customer Stripe : repris du profil, sinon créé
+  const pr = await supa('GET', `profiles?id=eq.${user_id}&select=stripe_customer_id`);
+  let customerId = (firstRow(pr) && firstRow(pr).stripe_customer_id) || null;
+  if (!customerId) customerId = await createCustomer();
 
+  const origin = req.headers.origin || 'https://www.golbody.com';
+
+  // Paramètres de la session selon plan (abonnement) ou pack (achat unique)
+  let params;
   if (plan) {
     const priceId = (PRICE_MAP[plan] || {})[billing || 'monthly'] || (PRICE_MAP[plan] || {}).monthly;
     if (!priceId) return res.status(400).json({ error: 'Invalid plan' });
-    const s = await stripePost('checkout/sessions', formEncode({
-      customer: customerId, mode: 'subscription',
-      allow_promotion_codes: true,
+    params = {
+      mode: 'subscription', allow_promotion_codes: true,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/dashboard.html?success=true`,
       cancel_url: `${origin}/dashboard.html?canceled=true`,
       metadata: { user_id, plan, billing: billing || 'monthly' },
-    }));
-    if (s.status >= 400) throw new Error('Stripe session: ' + JSON.stringify(s.body));
-    return res.status(200).json({ url: s.body.url });
-  }
-
-  if (pack) {
+    };
+  } else if (pack) {
     const pd = CREDIT_PACKS[pack];
     if (!pd) return res.status(400).json({ error: 'Invalid pack' });
-    const s = await stripePost('checkout/sessions', formEncode({
-      customer: customerId, mode: 'payment',
-      allow_promotion_codes: true,
+    params = {
+      mode: 'payment', allow_promotion_codes: true,
       line_items: [{ price_data: { currency: 'eur', product_data: { name: pd.name }, unit_amount: pd.amount }, quantity: 1 }],
       success_url: `${origin}/dashboard.html?success=true`,
       cancel_url: `${origin}/dashboard.html?canceled=true`,
       metadata: { user_id, pack, credits: String(pd.credits) },
-    }));
-    if (s.status >= 400) throw new Error('Stripe session: ' + JSON.stringify(s.body));
-    return res.status(200).json({ url: s.body.url });
+    };
+  } else {
+    return res.status(400).json({ error: 'Missing plan or pack' });
   }
 
-  res.status(400).json({ error: 'Missing plan or pack' });
+  // Crée la session. Si le customer_id stocké est périmé (ancien compte / sandbox →
+  // « No such customer »), on recrée un customer et on réessaie UNE fois : auto-réparation,
+  // plus besoin de nettoyer le profil à la main.
+  const postSession = (cid) => stripePost('checkout/sessions', formEncode({ customer: cid, ...params }));
+  let s = await postSession(customerId);
+  if (s.status >= 400 && JSON.stringify(s.body || '').includes('No such customer')) {
+    customerId = await createCustomer();
+    s = await postSession(customerId);
+  }
+  if (s.status >= 400) throw new Error('Stripe session: ' + JSON.stringify(s.body));
+  return res.status(200).json({ url: s.body.url });
 }
 
 async function handlePortal(body, req, res) {

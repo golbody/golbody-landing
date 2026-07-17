@@ -1709,7 +1709,7 @@
               <div class="pname">Starter</div>
               <div class="plan-price-area">
                 <div class="plan-original-price" id="starterOriginal"></div>
-                <div class="plan-price" id="starterPrice">4,90€<span class="period"> /mois</span></div>
+                <div class="plan-price" id="starterPrice">9,90€<span class="period"> /mois</span></div>
                 <div class="plan-billing-note" id="starterBilling"></div>
               </div>
               <div class="gens">1 000 crédits / mois</div>
@@ -1734,7 +1734,7 @@
               <div class="pname">Pro</div>
               <div class="plan-price-area">
                 <div class="plan-original-price" id="proOriginal"></div>
-                <div class="plan-price" id="proPrice">14,90€<span class="period"> /mois</span></div>
+                <div class="plan-price" id="proPrice">19,90€<span class="period"> /mois</span></div>
                 <div class="plan-billing-note" id="proBilling"></div>
               </div>
               <div class="gens">3 000 crédits / mois</div>
@@ -1760,7 +1760,7 @@
               <div class="pname">Ultra</div>
               <div class="plan-price-area">
                 <div class="plan-original-price" id="ultraOriginal"></div>
-                <div class="plan-price" id="ultraPrice">29,90€<span class="period"> /mois</span></div>
+                <div class="plan-price" id="ultraPrice">39,90€<span class="period"> /mois</span></div>
                 <div class="plan-billing-note" id="ultraBilling"></div>
               </div>
               <div class="gens">7 500 crédits / mois</div>
@@ -1983,14 +1983,14 @@
       <div class="pw-plans">
         <div class="pw-plan">
           <div class="pw-name">Starter</div>
-          <div class="pw-price">4,90€<span>/mois</span></div>
+          <div class="pw-price">9,90€<span>/mois</span></div>
           <div class="pw-gens">1 000 crédits<br>≈ 10 générations</div>
           <button class="pw-choose" type="button" data-plan="starter">Choisir</button>
         </div>
         <div class="pw-plan pop">
           <div class="pw-pop-tag">Populaire</div>
           <div class="pw-name">Pro</div>
-          <div class="pw-price">17,90€<span>/mois</span></div>
+          <div class="pw-price">19,90€<span>/mois</span></div>
           <div class="pw-gens">3 000 crédits<br>≈ 30 générations</div>
           <button class="pw-choose" type="button" data-plan="pro">Choisir</button>
         </div>
@@ -2006,7 +2006,7 @@
     </div>
   </div>
 
-  <!-- AUDIT 2026-07-17 · Onboarding 3 étapes — premier login uniquement (flag localStorage) -->
+  <!-- AUDIT 2026-07-17 · PRIX 9.90/19.90/39.90 · Onboarding 3 étapes — premier login uniquement (flag localStorage) -->
   <div class="ob-modal" id="obModal">
     <div class="ob">
       <button class="ob-skip" id="obSkip" type="button">Passer</button>
@@ -2470,14 +2470,14 @@
 
     const BILLING_PRICES = {
       monthly: {
-        starter: { price: '4,90€', original: '', billing: '' },
-        pro:     { price: '17,90€', original: '', billing: '' },
+        starter: { price: '9,90€', original: '', billing: '' },
+        pro:     { price: '19,90€', original: '', billing: '' },
         ultra:   { price: '39,90€', original: '', billing: '' },
       },
       // Annuel = 2 mois offerts. On affiche le prix mensuel de référence + le total /an.
       yearly: {
-        starter: { price: '4,90€', original: '', billing: 'Facturé annuellement · 49€/an' },
-        pro:     { price: '17,90€', original: '', billing: 'Facturé annuellement · 179€/an' },
+        starter: { price: '9,90€', original: '', billing: 'Facturé annuellement · 99€/an' },
+        pro:     { price: '19,90€', original: '', billing: 'Facturé annuellement · 199€/an' },
         ultra:   { price: '39,90€', original: '', billing: 'Facturé annuellement · 399€/an' },
       },
     };

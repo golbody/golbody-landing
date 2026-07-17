@@ -9,9 +9,10 @@ const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
 // Stripe products — prix LIVE (compte acct_1TqYtWACVZ6Qm7ic)
+// Nouveaux prix LIVE 2026-07-17 : Starter 9,90/99 · Pro 19,90/199 · Ultra 39,90/399 (inchangé)
 const PRICE_MAP = {
-  starter: { monthly: 'price_1TsVBqACVZ6Qm7icIBz2xjmO', yearly: 'price_1TsVBqACVZ6Qm7icNbxvtCid' },
-  pro:     { monthly: 'price_1TsVBqACVZ6Qm7icS9h5wWgD', yearly: 'price_1TsVBqACVZ6Qm7icE0rgZLbS' },
+  starter: { monthly: 'price_1TuDGHACVZ6Qm7icR6OSTUgU', yearly: 'price_1TuDGgACVZ6Qm7icavooNaMa' },
+  pro:     { monthly: 'price_1TuDHZACVZ6Qm7icQt36yIvZ', yearly: 'price_1TuDHjACVZ6Qm7icRDgwR4Z7' },
   ultra:   { monthly: 'price_1TsVBrACVZ6Qm7ic4WjD7F3I', yearly: 'price_1TsVBrACVZ6Qm7icmNezIP1V' },
 };
 const CREDIT_PACKS = {
@@ -19,12 +20,18 @@ const CREDIT_PACKS = {
   large: { amount: 1990, credits: 2500, name: 'Recharge Max' },
 };
 const WH_PRICES = {
+  // Anciens prix (abonnés existants « grandfathered ») — À GARDER pour leurs renouvellements
   'price_1TsVBqACVZ6Qm7icIBz2xjmO': { plan: 'starter', credits: 1000 },
   'price_1TsVBqACVZ6Qm7icNbxvtCid': { plan: 'starter', credits: 1000 },
   'price_1TsVBqACVZ6Qm7icS9h5wWgD': { plan: 'pro', credits: 3000 },
   'price_1TsVBqACVZ6Qm7icE0rgZLbS': { plan: 'pro', credits: 3000 },
   'price_1TsVBrACVZ6Qm7ic4WjD7F3I': { plan: 'ultra', credits: 7500 },
   'price_1TsVBrACVZ6Qm7icmNezIP1V': { plan: 'ultra', credits: 7500 },
+  // Nouveaux prix LIVE 2026-07-17
+  'price_1TuDGgACVZ6Qm7icavooNaMa': { plan: 'starter', credits: 1000 },
+  'price_1TuDGHACVZ6Qm7icR6OSTUgU': { plan: 'starter', credits: 1000 },
+  'price_1TuDHjACVZ6Qm7icRDgwR4Z7': { plan: 'pro', credits: 3000 },
+  'price_1TuDHZACVZ6Qm7icQt36yIvZ': { plan: 'pro', credits: 3000 },
 };
 
 // ===== HTTP helper =====

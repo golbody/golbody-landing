@@ -3162,7 +3162,10 @@
           promptText = detailedPrompts.join('. ');
           if (extra) promptText += ' Additionally: ' + extra + '.';
         } else if (extra) {
-          promptText = "Keep this as a real photograph of the exact same person. Apply this body transformation exactly as requested by the user: \"" + extra + "\". Make the change clearly visible and impressive but 100% realistic — keep the same face, pose, angle, background and clothing, with natural lighting, correct highlights and cast shadows matching the original photo, and natural skin texture. The result must look like a genuine unretouched photograph, fully undetectable, never plastic, airbrushed or CGI.";
+          // Texte libre : on MÈNE avec la demande de l'user, on la rend impérative, et on ne
+          // préserve QUE l'identité (surtout PAS les vêtements, sinon les retouches peau/épaule
+          // deviennent impossibles). nano-banana suit très bien une instruction directe.
+          promptText = "You are editing this real photograph of a person. Apply this exact edit now: " + extra + ". This change MUST be clearly visible in the result — do not return the image unchanged. Keep the same face and identity, the same pose, camera angle, framing and background. Clothing rule: by DEFAULT keep the person's exact same clothes. If the edit changes the body or physique (for example 'more muscular'), show it naturally THROUGH the existing clothes (fuller sleeves, broader shoulders, tighter fit) and do NOT undress the person. ONLY if the edit truly requires bare skin that is currently covered (for example a tan line, a tattoo, or skin tone on a covered area) may you uncover just that specific area, minimally, and nothing else. Match the original lighting, shadows and skin texture so it looks like a genuine unretouched photograph, never plastic or CGI. Change only what the requested edit needs and leave everything else untouched.";
         }
 
         const session = await supabaseClient.auth.getSession();

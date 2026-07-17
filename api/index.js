@@ -8,6 +8,10 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
+// Modèle de génération d'image. 'nano-banana' = Gemini 2.5 Flash Image (meilleur suivi des
+// instructions en langage naturel). Pour revenir à FLUX Kontext : mettre 'flux'.
+const GEN_MODEL = process.env.GEN_MODEL || 'nano-banana';
+
 // Stripe products — prix LIVE (compte acct_1TqYtWACVZ6Qm7ic)
 // Nouveaux prix LIVE 2026-07-17 : Starter 9,90/99 · Pro 19,90/199 · Ultra 39,90/399 (inchangé)
 const PRICE_MAP = {
@@ -116,9 +120,21 @@ async function validateSupabaseToken(token) {
 }
 
 async function callFalAi(apiKey, imageUrl, prompt) {
-  const body = JSON.stringify({ prompt, image_url: imageUrl });
+  let path, payload;
+  if (GEN_MODEL === 'nano-banana') {
+    // Gemini 2.5 Flash Image (nano-banana) — édition d'image guidée par instruction.
+    // image_urls = TABLEAU. safety_tolerance '5' = permissif (photos torse/muscle légitimes
+    // sinon bloquées au défaut '4'). Réponse : images[0].url (géré par handleGenerate).
+    path = '/fal-ai/nano-banana/edit';
+    payload = { prompt, image_urls: [imageUrl], output_format: 'jpeg', aspect_ratio: 'auto', safety_tolerance: '5' };
+  } else {
+    // FLUX Pro Kontext (repli via GEN_MODEL='flux')
+    path = '/fal-ai/flux-pro/kontext';
+    payload = { prompt, image_url: imageUrl };
+  }
+  const body = JSON.stringify(payload);
   const result = await httpsRequest({
-    hostname: 'fal.run', path: '/fal-ai/flux-pro/kontext', method: 'POST',
+    hostname: 'fal.run', path, method: 'POST',
     headers: {
       'Authorization': `Key ${apiKey}`,
       'Content-Type': 'application/json',

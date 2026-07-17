@@ -2870,6 +2870,9 @@
         let seen = null;
         try { seen = localStorage.getItem(KEY); } catch (e) { return false; }
         if (seen) return false;
+        // Marqué « vu » DÈS l'affichage : ne réapparaît jamais, même si l'user ferme/rafraîchit
+        // avant d'avoir cliqué Suivant jusqu'au bout ou Passer.
+        try { localStorage.setItem(KEY, '1'); } catch (e) {}
         step = 0;
         render();
         modal.classList.add('is-open');

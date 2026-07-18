@@ -8,9 +8,12 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 
-// Modèle de génération d'image. 'nano-banana' = Gemini 2.5 Flash Image (meilleur suivi des
-// instructions en langage naturel). Pour revenir à FLUX Kontext : mettre 'flux'.
-const GEN_MODEL = process.env.GEN_MODEL || 'nano-banana';
+// Modèle de génération d'image.
+//  'flux-max' = FLUX Pro Kontext MAX (choisi : muscle réaliste, visage préservé — testé 2026-07-18).
+//  'flux'     = FLUX Pro Kontext (base, moins cher mais muscle plus caricatural).
+//  'nano-banana' = Gemini 2.5 Flash Image : ABANDONNÉ (refuse les éditions du corps, renvoie l'image inchangée).
+// Surchargeable sans redéployer via l'env var GEN_MODEL sur Vercel.
+const GEN_MODEL = process.env.GEN_MODEL || 'flux-max';
 
 // Stripe products — prix LIVE (compte acct_1TqYtWACVZ6Qm7ic)
 // Nouveaux prix LIVE 2026-07-17 : Starter 9,90/99 · Pro 19,90/199 · Ultra 39,90/399 (inchangé)
@@ -122,14 +125,16 @@ async function validateSupabaseToken(token) {
 async function callFalAi(apiKey, imageUrl, prompt) {
   let path, payload;
   if (GEN_MODEL === 'nano-banana') {
-    // Gemini 2.5 Flash Image (nano-banana) — édition d'image guidée par instruction.
-    // image_urls = TABLEAU. safety_tolerance '5' = permissif (photos torse/muscle légitimes
-    // sinon bloquées au défaut '4'). Réponse : images[0].url (géré par handleGenerate).
+    // Gemini 2.5 Flash Image (nano-banana) — ABANDONNÉ (refuse les éditions du corps). Repli seulement.
     path = '/fal-ai/nano-banana/edit';
     payload = { prompt, image_urls: [imageUrl], output_format: 'jpeg', aspect_ratio: 'auto', safety_tolerance: '5' };
-  } else {
-    // FLUX Pro Kontext (repli via GEN_MODEL='flux')
+  } else if (GEN_MODEL === 'flux') {
+    // FLUX Pro Kontext (base) — repli moins cher
     path = '/fal-ai/flux-pro/kontext';
+    payload = { prompt, image_url: imageUrl };
+  } else {
+    // FLUX Pro Kontext MAX (défaut) — muscle réaliste + visage préservé. Réponse images[0].url.
+    path = '/fal-ai/flux-pro/kontext/max';
     payload = { prompt, image_url: imageUrl };
   }
   const body = JSON.stringify(payload);

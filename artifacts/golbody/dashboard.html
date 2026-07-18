@@ -1835,6 +1835,11 @@
               <div class="acc-val" id="account-credits">—</div>
               <div class="acc-cbar"><span id="account-credit-bar"></span></div>
             </div>
+            <div class="acc-card" id="account-cagnotte-card" style="display:none;background:linear-gradient(160deg,rgba(255,214,0,.10),rgba(255,214,0,.02));border-color:var(--rd-bdg);">
+              <div class="acc-lbl"><i data-lucide="gift" style="width:14px;height:14px;"></i> Cagnotte fidélité</div>
+              <div class="acc-val" id="account-cagnotte">—</div>
+              <div style="font-size:11.5px;color:var(--rd-muted);margin-top:6px;">Grandit chaque mois · perdue si tu annules</div>
+            </div>
             <div class="acc-card" id="account-renew-card" style="display:none;">
               <div class="acc-lbl"><i data-lucide="calendar" style="width:14px;height:14px;"></i> Renouvellement des crédits</div>
               <div class="acc-val" id="account-renew">—</div>
@@ -1851,7 +1856,7 @@
                 <div class="acc-mt">Gérer mon abonnement</div>
                 <div class="acc-md">Changer de plan, moyen de paiement, factures ou résilier — via Stripe.</div>
               </div>
-              <button class="acc-btn-gold" id="btn-portal" type="button" onclick="openStripePortal()">
+              <button class="acc-btn-gold" id="btn-portal" type="button" onclick="openCancelWarning()">
                 <i data-lucide="settings" style="width:16px;height:16px;"></i> Gérer mon abonnement
               </button>
             </div>
@@ -2044,6 +2049,20 @@
     </div>
   </div>
 
+  <!-- Modal rétention : avant d'ouvrir le portail Stripe (gérer/annuler l'abonnement) -->
+  <div class="pw-modal" id="retentionModal">
+    <div class="paywall" style="max-width:480px;">
+      <button class="pw-close" id="retClose" type="button" aria-label="Fermer">&times;</button>
+      <div class="pw-pill"><svg viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Avant d'annuler</div>
+      <div class="pw-h">Tu vas perdre tes <b id="retCredits">crédits</b></div>
+      <div class="pw-sub" id="retSub">Si tu annules ton abonnement, tes crédits restants sont perdus immédiatement — tu ne les récupères pas, même en te réabonnant. Tant que tu restes, tes crédits se rechargent chaque mois.</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="unlock-btn" id="retStay" type="button" style="width:100%;justify-content:center;">Rester abonné &amp; garder mes crédits</button>
+        <button class="pw-later" id="retContinue" type="button" style="margin:2px auto 0;">Continuer vers la gestion de l'abonnement</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal recharge : client PAYANT à court de crédits (≠ paywall des gratuits) -->
   <div class="pw-modal" id="rechargeModal">
     <div class="paywall">
@@ -2131,7 +2150,9 @@
     let currentFile = null;
     let currentUser = null;
     let currentCredits = 0;
+    let currentLoyalty = 0; // cagnotte fidélité (crédits bonus utilisables, perdus si annulation)
     let currentPlan = 'free';
+    function totalCr() { return (currentCredits || 0) + (currentLoyalty || 0); } // solde dépensable total
 
     const PLAN_NAMES = {
       free: 'Plan Gratuit',
@@ -2153,7 +2174,8 @@
 
     function updateSidebar() {
       const planLabel = PLAN_NAMES[currentPlan] || 'Plan Gratuit';
-      const shortText = currentCredits.toLocaleString('fr-FR') + ' crédits';
+      // Solde affiché = crédits du plan + cagnotte fidélité (tout ce qui est dépensable)
+      const shortText = totalCr().toLocaleString('fr-FR') + ' crédits';
       const creditsText = shortText;
       userPlan.textContent = planLabel;
       userCredits.textContent = creditsText;
@@ -2163,7 +2185,7 @@
       const pill = document.getElementById('pillCredits');
       if (pill) pill.textContent = shortText;
       const maxCredits = (PLAN_CREDITS_MAP[currentPlan] || 100) || 1;
-      const pct = Math.max(4, Math.min(100, Math.round(currentCredits / maxCredits * 100)));
+      const pct = Math.max(4, Math.min(100, Math.round(totalCr() / maxCredits * 100)));
       const bar = document.getElementById('creditBar');
       if (bar) bar.style.width = pct + '%';
 
@@ -2171,7 +2193,7 @@
       // Les gratuits ont déjà le paywall — un bandeau en plus serait du bruit.
       const lowBanner = document.getElementById('lowCreditBanner');
       if (lowBanner) {
-        const gensLeft = Math.floor(currentCredits / 100);
+        const gensLeft = Math.floor(totalCr() / 100);
         const isPaid = (currentPlan || 'free') !== 'free';
         if (isPaid && gensLeft <= 2) {
           const lowTxt = document.getElementById('lowCreditText');
@@ -2210,7 +2232,7 @@
       try {
         const { data: profile, error } = await supabaseClient
           .from('profiles')
-          .select('credits, plan, stripe_customer_id, stripe_subscription_id, credits_reset_date')
+          .select('credits, plan, stripe_customer_id, stripe_subscription_id, credits_reset_date, loyalty_credits, loyalty_months')
           .eq('id', userId)
           .single();
 
@@ -2218,10 +2240,12 @@
           console.log('[Profile] No profile found, creating default');
           await supabaseClient.from('profiles').insert({ id: userId, credits: 200, plan: 'free' });
           currentCredits = 200;
+          currentLoyalty = 0;
           currentPlan = 'free';
         } else {
           console.log('[Profile] Loaded:', profile.plan, profile.credits, 'credits');
           currentCredits = profile.credits ?? 100;
+          currentLoyalty = profile.loyalty_credits ?? 0;
           currentPlan = profile.plan || 'free';
         }
         updateSidebar();
@@ -2240,6 +2264,29 @@
       }
     }
 
+    // Met à jour la carte « Crédits restants » (plan + cagnotte) et la carte cagnotte, depuis les globals
+    function updateAccountCagnotte() {
+      const plan = currentPlan || 'free';
+      const total = totalCr();
+      const gens = Math.floor(total / 100);
+      const maxCredits = (PLAN_CREDITS_MAP[plan] || 100) || 1;
+      const accCred = document.getElementById('account-credits');
+      if (accCred) accCred.innerHTML = total.toLocaleString('fr-FR') + ' crédits <small>≈ ' + gens + ' génération' + (gens > 1 ? 's' : '') + '</small>';
+      const bar = document.getElementById('account-credit-bar');
+      if (bar) bar.style.width = Math.max(4, Math.min(100, Math.round(total / maxCredits * 100))) + '%';
+      const card = document.getElementById('account-cagnotte-card');
+      const cval = document.getElementById('account-cagnotte');
+      if (card && cval) {
+        if ((currentLoyalty || 0) > 0) {
+          const cg = Math.floor(currentLoyalty / 100);
+          cval.innerHTML = currentLoyalty.toLocaleString('fr-FR') + ' crédits <small>≈ ' + cg + ' génération' + (cg > 1 ? 's' : '') + '</small>';
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      }
+    }
+
     function updateAccountSection(profile) {
       const planNames = { free: 'Plan Gratuit', starter: 'Starter', pro: 'Pro', ultra: 'Ultra' };
       const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
@@ -2255,10 +2302,7 @@
       setTxt('account-avatar', (email && email[0]) ? email[0].toUpperCase() : 'U');
       setTxt('account-plan', planNames[plan] || 'Plan Gratuit');
       setTxt('account-plan-badge', plan === 'free' ? 'Plan Gratuit' : '★ Plan ' + (planNames[plan] || ''));
-      const accCred = document.getElementById('account-credits');
-      if (accCred) accCred.innerHTML = credits.toLocaleString('fr-FR') + ' crédits <small>≈ ' + gens + ' génération' + (gens > 1 ? 's' : '') + '</small>';
-      const bar = document.getElementById('account-credit-bar');
-      if (bar) bar.style.width = Math.max(4, Math.min(100, Math.round(credits / maxCredits * 100))) + '%';
+      updateAccountCagnotte(); // crédits (plan + cagnotte) + carte cagnotte
       setTxt('account-status', plan === 'free' ? 'Gratuit' : 'Actif');
 
       // Renouvellement des crédits (credits_reset_date)
@@ -2281,6 +2325,45 @@
         } catch (e) {}
       }
     }
+
+    // Modal de rétention avant le portail Stripe : rappelle que l'annulation = perte immédiate
+    // des crédits restants (comportement réel du webhook). Objectif : garder l'abonné.
+    function openCancelWarning() {
+      const gratuit = (currentPlan || 'free') === 'free';
+      const retModal = document.getElementById('retentionModal');
+      if (!retModal || gratuit) { openStripePortal(); return; } // gratuit = rien à perdre → direct
+      const total = totalCr();
+      const gens = Math.floor(total / 100);
+      const cag = currentLoyalty || 0;
+      const cEl = document.getElementById('retCredits');
+      const sEl = document.getElementById('retSub');
+      if (cEl) cEl.textContent = total.toLocaleString('fr-FR') + ' crédits';
+      let msg = 'Si tu annules, tes ' + total.toLocaleString('fr-FR')
+        + ' crédits (≈ ' + gens + ' génération' + (gens > 1 ? 's' : '')
+        + ') sont perdus immédiatement — tu ne les récupères pas, même en te réabonnant.';
+      if (cag > 0) {
+        msg += ' Dont ta cagnotte fidélité de ' + cag.toLocaleString('fr-FR')
+          + ' crédits, qui grandit chaque mois où tu restes. En partant, tu repars de zéro.';
+      } else {
+        msg += ' Et ta cagnotte fidélité, qui grandit chaque mois où tu restes, repart de zéro.';
+      }
+      if (sEl) sEl.textContent = msg;
+      retModal.classList.add('is-open');
+      gtrack('retention_shown');
+      try { lucide.createIcons(); } catch (e) {}
+    }
+    (function(){
+      const retModal = document.getElementById('retentionModal');
+      if (!retModal) return;
+      const close = () => retModal.classList.remove('is-open');
+      const cl = document.getElementById('retClose');
+      const stay = document.getElementById('retStay');
+      const cont = document.getElementById('retContinue');
+      if (cl) cl.addEventListener('click', () => { gtrack('retention_stayed'); close(); });
+      if (stay) stay.addEventListener('click', () => { gtrack('retention_stayed'); close(); });
+      if (cont) cont.addEventListener('click', () => { gtrack('retention_continued'); close(); openStripePortal(); });
+      retModal.addEventListener('click', (e) => { if (e.target === retModal) close(); });
+    })();
 
     async function openStripePortal() {
       try {
@@ -3227,10 +3310,12 @@
         const afterUrl = submitData.imageUrl;
         if (!afterUrl) throw new Error('Aucune image retournée par l\'API');
 
-        // Crédits déduits CÔTÉ SERVEUR par /api/generate → on lit la valeur renvoyée
+        // Crédits déduits CÔTÉ SERVEUR par /api/generate → on lit les valeurs renvoyées
         if (typeof submitData.credits === 'number') {
           currentCredits = submitData.credits;
+          if (typeof submitData.loyalty_credits === 'number') currentLoyalty = submitData.loyalty_credits;
           updateSidebar();
+          if (typeof updateAccountCagnotte === 'function') updateAccountCagnotte();
         }
 
         gtrack('generation_success');

@@ -166,21 +166,26 @@ async function handleGenerate(body, req, res) {
 
   // ===== Contrôle des crédits CÔTÉ SERVEUR (anti-abus, non contournable) =====
   if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
-  const cr = await supa('GET', `profiles?id=eq.${user.id}&select=credits`);
+  const cr = await supa('GET', `profiles?id=eq.${user.id}&select=credits,loyalty_credits`);
   const cprofile = firstRow(cr);
   if (!cprofile) return res.status(403).json({ error: 'Profil introuvable' });
   const credits = cprofile.credits || 0;
-  if (credits < 100) return res.status(402).json({ error: 'Crédits insuffisants', credits });
+  const loyalty = cprofile.loyalty_credits || 0;
+  // On peut générer si crédits du plan + cagnotte >= 100
+  if (credits + loyalty < 100) return res.status(402).json({ error: 'Crédits insuffisants', credits, loyalty_credits: loyalty });
 
   const result = await callFalAi(falKey, imageUrl, prompt);
   const url = result.images?.[0]?.url || result.image?.url || result.url;
   if (!url) throw new Error('No image URL in fal.ai response: ' + JSON.stringify(result));
 
-  // Déduction des 100 crédits APRÈS génération réussie
-  const newCredits = credits - 100;
-  await supa('PATCH', `profiles?id=eq.${user.id}`, { credits: newCredits });
+  // Déduction des 100 crédits APRÈS génération : d'abord le plan, puis la cagnotte
+  let newCredits = credits, newLoyalty = loyalty;
+  const fromPlan = Math.min(100, credits);
+  newCredits = credits - fromPlan;
+  newLoyalty = loyalty - (100 - fromPlan);
+  await supa('PATCH', `profiles?id=eq.${user.id}`, { credits: newCredits, loyalty_credits: newLoyalty });
 
-  res.status(200).json({ imageUrl: url, credits: newCredits });
+  res.status(200).json({ imageUrl: url, credits: newCredits, loyalty_credits: newLoyalty });
 }
 
 async function handleCheckout(body, req, res) {
@@ -336,7 +341,7 @@ async function handleWebhook(rawBody, req, res) {
       if (canceling) {
         const profiles = await findProfileIdsByCustomer(sub.customer);
         for (const p of profiles) {
-          await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: 'free', stripe_subscription_id: null, credits: 0, credits_reset_date: null });
+          await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: 'free', stripe_subscription_id: null, credits: 0, credits_reset_date: null, loyalty_credits: 0, loyalty_months: 0 });
         }
       } else {
         const priceId = sub.items && sub.items.data && sub.items.data[0] && sub.items.data[0].price && sub.items.data[0].price.id || '';
@@ -359,7 +364,7 @@ async function handleWebhook(rawBody, req, res) {
       const sub = event.data.object;
       const profiles = await findProfileIdsByCustomer(sub.customer);
       for (const p of profiles) {
-        await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: 'free', stripe_subscription_id: null, credits: 0, credits_reset_date: null });
+        await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: 'free', stripe_subscription_id: null, credits: 0, credits_reset_date: null, loyalty_credits: 0, loyalty_months: 0 });
       }
     } else if (event.type === 'invoice.paid') {
       const inv = event.data.object;
@@ -371,9 +376,13 @@ async function handleWebhook(rawBody, req, res) {
         const priceId = sub.items.data && sub.items.data[0] && sub.items.data[0].price && sub.items.data[0].price.id || '';
         const info = WH_PRICES[priceId] || { plan: 'free', credits: 200 };
         const today = new Date().toISOString().split('T')[0];
-        const pr = await supa('GET', `profiles?stripe_customer_id=eq.${inv.customer}&select=id`);
+        const pr = await supa('GET', `profiles?stripe_customer_id=eq.${inv.customer}&select=id,loyalty_months,loyalty_credits`);
         for (const p of (Array.isArray(pr.body) ? pr.body : [])) {
-          await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: info.plan, credits: info.credits, credits_reset_date: today });
+          // Cagnotte fidélité : mois N → +N générations (plafonné à +5/mois). S'accumule, perdue à l'annulation.
+          const months = (p.loyalty_months || 0) + 1;
+          const bonus = Math.min(months, 5) * 100;
+          const newLoyalty = (p.loyalty_credits || 0) + bonus;
+          await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: info.plan, credits: info.credits, credits_reset_date: today, loyalty_months: months, loyalty_credits: newLoyalty });
         }
       }
     }

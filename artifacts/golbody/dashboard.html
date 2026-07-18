@@ -1334,7 +1334,8 @@
 
   /* ===== Paywall freemium (résultat flouté + modal déblocage) ===== */
   .result-image-wrapper{position:relative;}
-  .result-image-wrapper.is-locked img{filter:blur(9px) saturate(1.08) brightness(.94);transform:scale(1.1);}
+  /* Flou LÉGER (~20%) : l'image reste bien visible (tease) mais pas exploitable. scale léger = masque les bords adoucis. */
+  .result-image-wrapper.is-locked img{filter:blur(3px) brightness(.98);transform:scale(1.04);}
   .result-lock{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:10px;padding:18px;border-radius:14px;background:linear-gradient(to bottom,rgba(10,9,6,.04) 0%,rgba(10,9,6,.10) 42%,rgba(10,9,6,.82) 100%);}
   .result-lock .lock-p{font-size:13px;font-weight:600;color:#fff;text-align:center;max-width:250px;line-height:1.4;text-shadow:0 1px 10px rgba(0,0,0,.85);margin:0;}
   .unlock-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;font-weight:800;font-size:15px;border:none;border-radius:12px;padding:13px 24px;cursor:pointer;font-family:inherit;box-shadow:0 8px 30px rgba(255,214,0,.42);transition:transform .15s,filter .15s;}
@@ -1951,7 +1952,7 @@
           <div class="result-image-wrapper" id="resultWrap" data-clarity-mask="true">
             <img id="resultImage" src="" alt="Résultat">
             <div class="result-lock" id="resultLock" style="display:none;">
-              <p class="lock-p">Résultat généré — débloque-le pour le voir</p>
+              <p class="lock-p">Aperçu de ta transformation — débloque la version nette en HD</p>
               <button class="unlock-btn" id="unlockBtn" type="button"><svg viewBox="0 0 24 24"><path d="M7 11V7a5 5 0 0 1 9.9-1"/><rect x="3" y="11" width="18" height="11" rx="2"/></svg> Débloquer ma photo</button>
             </div>
           </div>

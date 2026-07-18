@@ -1329,7 +1329,8 @@
   /* ---------- RÉSULTAT ---------- */
   .result-zone{max-width:400px;margin:0 auto!important;background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:18px;padding:18px;box-shadow:0 12px 34px rgba(0,0,0,0.45);}
   .result-title{font-size:17px!important;font-weight:800!important;margin-bottom:14px!important;}
-  .result-image-wrapper img{max-width:320px!important;max-height:52vh!important;border-radius:14px!important;border:1px solid var(--rd-bd);}
+  /* width:auto annule le width:100% de base → l'image garde son ratio dans le cadre (plus d'aplatissement) */
+  .result-image-wrapper img{width:auto!important;height:auto!important;max-width:320px!important;max-height:52vh!important;object-fit:contain;border-radius:14px!important;border:1px solid var(--rd-bd);}
   .result-actions{margin-top:16px!important;}
 
   /* ===== Paywall freemium (résultat flouté + modal déblocage) ===== */

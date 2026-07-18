@@ -166,26 +166,30 @@ async function handleGenerate(body, req, res) {
 
   // ===== Contrôle des crédits CÔTÉ SERVEUR (anti-abus, non contournable) =====
   if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
-  const cr = await supa('GET', `profiles?id=eq.${user.id}&select=credits,loyalty_credits`);
+  const cr = await supa('GET', `profiles?id=eq.${user.id}&select=credits,loyalty_credits,bonus_credits`);
   const cprofile = firstRow(cr);
   if (!cprofile) return res.status(403).json({ error: 'Profil introuvable' });
   const credits = cprofile.credits || 0;
   const loyalty = cprofile.loyalty_credits || 0;
-  // On peut générer si crédits du plan + cagnotte >= 100
-  if (credits + loyalty < 100) return res.status(402).json({ error: 'Crédits insuffisants', credits, loyalty_credits: loyalty });
+  const bonus = cprofile.bonus_credits || 0;
+  // On peut générer si plan + cagnotte + bonus (gagnés) >= 100
+  if (credits + loyalty + bonus < 100) return res.status(402).json({ error: 'Crédits insuffisants', credits, loyalty_credits: loyalty, bonus_credits: bonus });
 
   const result = await callFalAi(falKey, imageUrl, prompt);
   const url = result.images?.[0]?.url || result.image?.url || result.url;
   if (!url) throw new Error('No image URL in fal.ai response: ' + JSON.stringify(result));
 
-  // Déduction des 100 crédits APRÈS génération : d'abord le plan, puis la cagnotte
-  let newCredits = credits, newLoyalty = loyalty;
-  const fromPlan = Math.min(100, credits);
-  newCredits = credits - fromPlan;
-  newLoyalty = loyalty - (100 - fromPlan);
-  await supa('PATCH', `profiles?id=eq.${user.id}`, { credits: newCredits, loyalty_credits: newLoyalty });
+  // Déduction des 100 crédits : plan → cagnotte → bonus
+  let need = 100;
+  const fromPlan = Math.min(need, credits); need -= fromPlan;
+  const fromLoyalty = Math.min(need, loyalty); need -= fromLoyalty;
+  const fromBonus = Math.min(need, bonus); need -= fromBonus;
+  const newCredits = credits - fromPlan;
+  const newLoyalty = loyalty - fromLoyalty;
+  const newBonus = bonus - fromBonus;
+  await supa('PATCH', `profiles?id=eq.${user.id}`, { credits: newCredits, loyalty_credits: newLoyalty, bonus_credits: newBonus });
 
-  res.status(200).json({ imageUrl: url, credits: newCredits, loyalty_credits: newLoyalty });
+  res.status(200).json({ imageUrl: url, credits: newCredits, loyalty_credits: newLoyalty, bonus_credits: newBonus });
 }
 
 async function handleCheckout(body, req, res) {
@@ -333,6 +337,24 @@ async function handleWebhook(rawBody, req, res) {
         const PLAN_CREDITS = { starter: 1000, pro: 3000, ultra: 7500 };
         const today = new Date().toISOString().split('T')[0];
         await supa('PATCH', `profiles?id=eq.${userId}`, { plan, credits: PLAN_CREDITS[plan] || 200, stripe_customer_id: s.customer, stripe_subscription_id: s.subscription || null, credits_reset_date: today });
+
+        // Récompense parrainage : au 1er paiement du filleul, on crédite le parrain (une seule fois)
+        const fR = await supa('GET', `profiles?id=eq.${userId}&select=referred_by,referral_rewarded`);
+        const filleul = firstRow(fR);
+        if (filleul && filleul.referred_by && !filleul.referral_rewarded) {
+          const spR = await supa('GET', `profiles?referral_code=eq.${filleul.referred_by}&select=id,bonus_credits,referral_earned`);
+          const parrain = firstRow(spR);
+          if (parrain && parrain.id !== userId) {
+            const reward = REFERRAL_REWARD[plan] || 0;
+            if (reward > 0) {
+              await supa('PATCH', `profiles?id=eq.${parrain.id}`, {
+                bonus_credits: (parrain.bonus_credits || 0) + reward,
+                referral_earned: (parrain.referral_earned || 0) + reward,
+              });
+              await supa('PATCH', `profiles?id=eq.${userId}`, { referral_rewarded: true });
+            }
+          }
+        }
       }
     } else if (event.type === 'customer.subscription.created' || event.type === 'customer.subscription.updated') {
       const sub = event.data.object;
@@ -568,6 +590,77 @@ async function handleChatPost(body, req, res) {
   res.status(200).json({ ok: true, message: row });
 }
 
+// ===== Parrainage « Invite et Gagne » =====
+function genRefCode() {
+  const alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // sans I,O,0,1,L (ambigus)
+  const b = crypto.randomBytes(6);
+  let s = '';
+  for (let i = 0; i < 6; i++) s += alphabet[b[i] % alphabet.length];
+  return s;
+}
+function maskEmail(email) {
+  if (!email || email.indexOf('@') < 0) return 'utilisateur';
+  const [u, d] = email.split('@');
+  return (u[0] || '') + '***@' + d;
+}
+const REFERRAL_REWARD = { starter: 1000, pro: 2000, ultra: 4000 };
+
+async function handleReferralInfo(req, res) {
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+
+  const meR = await supa('GET', `profiles?id=eq.${user.id}&select=referral_code,referral_earned`);
+  const me = firstRow(meR) || {};
+  let code = me.referral_code;
+  if (!code) {
+    for (let i = 0; i < 5 && !code; i++) {
+      const cand = genRefCode();
+      const exists = await supa('GET', `profiles?referral_code=eq.${cand}&select=id`);
+      if (!(Array.isArray(exists.body) && exists.body.length)) {
+        await supa('PATCH', `profiles?id=eq.${user.id}`, { referral_code: cand });
+        code = cand;
+      }
+    }
+  }
+  const filleulsR = await supa('GET', `profiles?referred_by=eq.${code}&select=email,plan,referral_rewarded`);
+  const rows = Array.isArray(filleulsR.body) ? filleulsR.body : [];
+  const subscribed = rows.filter(r => r.referral_rewarded).length;
+  const filleuls = rows.map(r => ({
+    emailMasked: maskEmail(r.email),
+    status: r.referral_rewarded ? 'abonné' : 'inscrit',
+    reward: r.referral_rewarded ? (REFERRAL_REWARD[r.plan] || 0) : 0,
+  }));
+  res.status(200).json({
+    code,
+    link: `https://www.golbody.com/register.html?ref=${code}`,
+    stats: { subscribed, earned: me.referral_earned || 0, signups: rows.length, pending: rows.length - subscribed },
+    filleuls,
+  });
+}
+
+async function handleReferralAttribute(body, req, res) {
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const code = (body && body.code || '').toString().trim().toUpperCase();
+  if (!code) return res.status(200).json({ ok: false });
+
+  const meR = await supa('GET', `profiles?id=eq.${user.id}&select=referred_by,plan,stripe_customer_id`);
+  const me = firstRow(meR);
+  if (!me || me.referred_by || (me.plan && me.plan !== 'free') || me.stripe_customer_id) {
+    return res.status(200).json({ ok: false });
+  }
+  const ownerR = await supa('GET', `profiles?referral_code=eq.${code}&select=id`);
+  const owner = firstRow(ownerR);
+  if (!owner || owner.id === user.id) return res.status(200).json({ ok: false });
+
+  await supa('PATCH', `profiles?id=eq.${user.id}`, { referred_by: code });
+  res.status(200).json({ ok: true });
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
@@ -594,6 +687,8 @@ module.exports = async (req, res) => {
     if (path.startsWith('/profile/') && req.method === 'GET') return await handleProfile(path.split('/').pop(), res);
     if (path === '/api/admin-stats' && req.method === 'GET') return await handleAdminStats(req, res);
     if (path === '/api/survey-answer' && req.method === 'POST') return await handleSurveyAnswer(body, req, res);
+    if (path === '/api/referral-info' && req.method === 'GET') return await handleReferralInfo(req, res);
+    if (path === '/api/referral-attribute' && req.method === 'POST') return await handleReferralAttribute(body, req, res);
     if (path === '/api/chat' && req.method === 'GET') return await handleChatGet(req, res);
     if (path === '/api/chat' && req.method === 'POST') return await handleChatPost(body, req, res);
 

@@ -1389,6 +1389,35 @@
   /* Bandeau crédits faibles — orange, persistant tant que ≤ 2 générations */
   .low-banner{display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:rgba(255,145,0,.09);border:1px solid rgba(255,145,0,.32);border-radius:14px;padding:12px 16px;margin-bottom:18px;}
   .low-banner.is-on{display:flex;}
+  /* ===== Invite et Gagne (parrainage) ===== */
+  .referral-section{display:none;max-width:1000px;margin:0 auto;padding:8px 4px 40px;animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
+  .referral-section.is-visible{display:block;}
+  .ref-head{text-align:left;margin-bottom:24px;}
+  .ref-badge{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--rd-accent);background:rgba(255,214,0,.09);border:1px solid var(--rd-bdg);padding:6px 14px;border-radius:100px;margin-bottom:14px;}
+  .ref-title{font-size:clamp(34px,6vw,56px);font-weight:900;letter-spacing:-1.5px;line-height:1;margin:0 0 12px;color:var(--rd-txt);}
+  .ref-sub{color:var(--rd-muted);font-size:15px;max-width:520px;line-height:1.55;margin:0;}
+  .ref-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0;}
+  .ref-stat{background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:16px;padding:18px;}
+  .ref-stat i{width:18px;height:18px;color:var(--rd-accent);}
+  .ref-stat-val{font-size:28px;font-weight:800;color:var(--rd-txt);margin-top:8px;}
+  .ref-stat-lbl{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--rd-faint);margin-top:4px;}
+  .ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+  .ref-card{background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:18px;padding:22px;}
+  .ref-card h3{font-size:17px;font-weight:800;color:var(--rd-txt);margin:0 0 6px;display:flex;align-items:center;gap:8px;}
+  .ref-card-sub{font-size:13px;color:var(--rd-muted);margin:0 0 16px;}
+  .ref-link-row{display:flex;gap:8px;margin-bottom:12px;}
+  .ref-link-row input{flex:1;background:var(--rd-inset);border:1px solid var(--rd-bd);border-radius:12px;padding:12px 14px;color:var(--rd-txt);font-size:13px;font-family:inherit;}
+  .ref-link-row button{background:var(--rd-panel2);border:1px solid var(--rd-bdg);border-radius:12px;width:46px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-accent);}
+  .ref-share-btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;}
+  .ref-empty{text-align:center;color:var(--rd-faint);padding:24px 0;font-size:13px;}
+  .ref-filleul{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--rd-bd);font-size:13.5px;}
+  .ref-filleul:last-child{border-bottom:none;}
+  .ref-filleul .fst{color:var(--rd-accent);font-weight:700;}
+  .ref-bareme{background:var(--rd-inset);border:1px solid var(--rd-bd);border-radius:16px;padding:18px 22px;}
+  .ref-bareme-title{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--rd-faint);margin-bottom:12px;}
+  .ref-bareme-row{display:flex;justify-content:space-between;padding:8px 0;color:var(--rd-txt);}
+  .ref-bareme-row b{color:var(--rd-accent);}
+  @media(max-width:760px){.ref-stats{grid-template-columns:1fr 1fr;}.ref-grid{grid-template-columns:1fr;}}
   .low-banner .lb-txt{font-size:13.5px;font-weight:600;color:#ffb44d;display:inline-flex;align-items:center;}
   .low-banner .lb-btn{background:linear-gradient(135deg,#ff9100,#e07d00);color:#111;border:none;border-radius:100px;padding:8px 18px;font-size:12.5px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;}
   .low-banner .lb-btn:hover{filter:brightness(1.08);}
@@ -1598,6 +1627,12 @@
           </a>
         </li>
         <li>
+          <a href="#" id="mobileNavReferral">
+            <i data-lucide="gift"></i>
+            Invite et Gagne
+          </a>
+        </li>
+        <li>
           <a href="#" id="mobileNavAccount">
             <i data-lucide="user"></i>
             Mon compte
@@ -1636,6 +1671,12 @@
             <a href="#" id="navSubscription">
               <i data-lucide="credit-card"></i>
               Abonnement
+            </a>
+          </li>
+          <li>
+            <a href="#" id="navReferral">
+              <i data-lucide="gift"></i>
+              Invite et Gagne
             </a>
           </li>
           <li>
@@ -1877,6 +1918,39 @@
             <button class="acc-btn-logout" type="button" onclick="document.getElementById('logoutBtn').click()">
               <i data-lucide="log-out" style="width:16px;height:16px;"></i> Se déconnecter
             </button>
+          </div>
+        </div>
+
+        <!-- INVITE ET GAGNE SECTION -->
+        <div class="referral-section" id="referralSection">
+          <div class="ref-head">
+            <span class="ref-badge">🎁 Programme de parrainage</span>
+            <h1 class="ref-title">Invite et Gagne</h1>
+            <p class="ref-sub">Partage GolBody avec tes amis et gagne des crédits pour chaque nouvel abonné parrainé.</p>
+          </div>
+          <div class="ref-stats">
+            <div class="ref-stat"><i data-lucide="users"></i><div class="ref-stat-val" id="refStatSubscribed">0</div><div class="ref-stat-lbl">Filleuls abonnés</div></div>
+            <div class="ref-stat"><i data-lucide="zap"></i><div class="ref-stat-val" id="refStatEarned">0</div><div class="ref-stat-lbl">Crédits gagnés</div></div>
+            <div class="ref-stat"><i data-lucide="user-plus"></i><div class="ref-stat-val" id="refStatSignups">0</div><div class="ref-stat-lbl">Filleuls inscrits</div></div>
+            <div class="ref-stat"><i data-lucide="clock"></i><div class="ref-stat-val" id="refStatPending">0</div><div class="ref-stat-lbl">En attente</div></div>
+          </div>
+          <div class="ref-grid">
+            <div class="ref-card">
+              <h3>Ton lien de parrainage</h3>
+              <p class="ref-card-sub">Envoie ce lien à tes contacts pour commencer à gagner.</p>
+              <div class="ref-link-row"><input id="refLinkInput" readonly value=""><button id="refCopyBtn" type="button" aria-label="Copier"><i data-lucide="copy"></i></button></div>
+              <button class="ref-share-btn" id="refShareBtn" type="button"><i data-lucide="share-2"></i> Partager maintenant</button>
+            </div>
+            <div class="ref-card">
+              <h3><i data-lucide="users" style="width:16px;height:16px;"></i> Mes filleuls</h3>
+              <div id="refFilleuls"></div>
+            </div>
+          </div>
+          <div class="ref-bareme">
+            <div class="ref-bareme-title">Barème des récompenses</div>
+            <div class="ref-bareme-row"><span>Starter</span><b>1000 crédits</b></div>
+            <div class="ref-bareme-row"><span>Pro</span><b>2000 crédits</b></div>
+            <div class="ref-bareme-row"><span>Ultra</span><b>4000 crédits</b></div>
           </div>
         </div>
 
@@ -2150,9 +2224,10 @@
     let currentFile = null;
     let currentUser = null;
     let currentCredits = 0;
-    let currentLoyalty = 0; // cagnotte fidélité (crédits bonus utilisables, perdus si annulation)
+    let currentLoyalty = 0; // cagnotte fidélité (perdue si annulation)
+    let currentBonus = 0;   // crédits gagnés (parrainage) — gardés à l'annulation
     let currentPlan = 'free';
-    function totalCr() { return (currentCredits || 0) + (currentLoyalty || 0); } // solde dépensable total
+    function totalCr() { return (currentCredits || 0) + (currentLoyalty || 0) + (currentBonus || 0); }
 
     const PLAN_NAMES = {
       free: 'Plan Gratuit',
@@ -2232,7 +2307,7 @@
       try {
         const { data: profile, error } = await supabaseClient
           .from('profiles')
-          .select('credits, plan, stripe_customer_id, stripe_subscription_id, credits_reset_date, loyalty_credits, loyalty_months')
+          .select('credits, plan, stripe_customer_id, stripe_subscription_id, credits_reset_date, loyalty_credits, loyalty_months, bonus_credits')
           .eq('id', userId)
           .single();
 
@@ -2241,17 +2316,35 @@
           await supabaseClient.from('profiles').insert({ id: userId, credits: 200, plan: 'free' });
           currentCredits = 200;
           currentLoyalty = 0;
+          currentBonus = 0;
           currentPlan = 'free';
         } else {
           console.log('[Profile] Loaded:', profile.plan, profile.credits, 'credits');
           currentCredits = profile.credits ?? 100;
           currentLoyalty = profile.loyalty_credits ?? 0;
+          currentBonus = profile.bonus_credits ?? 0;
           currentPlan = profile.plan || 'free';
         }
         updateSidebar();
         updateAccountSection(profile || { plan: 'free', credits: 100 });
         if (typeof maybeRevealResult === 'function') maybeRevealResult();
         if (typeof restoreBackupPhoto === 'function') restoreBackupPhoto();
+        // Attribution parrainage (best effort) : si un code a été capté à l'inscription
+        try {
+          const refCode = localStorage.getItem('golbody_ref');
+          if (refCode) {
+            const s = await supabaseClient.auth.getSession();
+            const tok = s.data.session?.access_token;
+            if (tok) {
+              await fetch('https://www.golbody.com/api/referral-attribute', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+                body: JSON.stringify({ code: refCode }),
+              });
+            }
+            localStorage.removeItem('golbody_ref');
+          }
+        } catch (e) {}
         // Onboarding prioritaire au 1er login ; sinon seulement, le survey mensuel
         const obOpened = window.golMaybeOnboarding ? window.golMaybeOnboarding() : false;
         if (!obOpened && window.golMaybeSurvey) window.golMaybeSurvey();
@@ -2470,7 +2563,15 @@
     });
 
     // ===== Navigation =====
+    // Masque la vue Parrainage + désactive son nav (appelé par les autres vues)
+    function hideReferralView() {
+      const rs = document.getElementById('referralSection'); if (rs) rs.classList.remove('is-visible');
+      const nr = document.getElementById('navReferral'); if (nr) nr.classList.remove('active');
+      const mnr = document.getElementById('mobileNavReferral'); if (mnr) mnr.classList.remove('active');
+    }
+
     function showGeneration() {
+      hideReferralView();
       generationSection.style.display = 'block';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2483,6 +2584,7 @@
     }
 
     function showSubscription() {
+      hideReferralView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.add('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2496,6 +2598,7 @@
     }
 
     function showAccount() {
+      hideReferralView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.add('is-visible');
@@ -2506,6 +2609,24 @@
       mobileNavSubscription.classList.remove('active');
       mobileNavAccount.classList.add('active');
     }
+
+    function showReferral() {
+      generationSection.style.display = 'none';
+      subscriptionSection.classList.remove('is-visible');
+      accountSection.classList.remove('is-visible');
+      const rs = document.getElementById('referralSection'); if (rs) rs.classList.add('is-visible');
+      navGenerate.classList.remove('active');
+      navSubscription.classList.remove('active');
+      navAccount.classList.remove('active');
+      const nr = document.getElementById('navReferral'); if (nr) nr.classList.add('active');
+      mobileNavGenerate.classList.remove('active');
+      mobileNavSubscription.classList.remove('active');
+      mobileNavAccount.classList.remove('active');
+      const mnr = document.getElementById('mobileNavReferral'); if (mnr) mnr.classList.add('active');
+      try { lucide.createIcons(); } catch (e) {}
+      loadReferral();
+    }
+    window.showReferral = showReferral;
 
     navGenerate.addEventListener('click', (e) => {
       e.preventDefault();
@@ -2521,6 +2642,53 @@
       e.preventDefault();
       showAccount();
     });
+
+    const navReferral = document.getElementById('navReferral');
+    if (navReferral) navReferral.addEventListener('click', (e) => { e.preventDefault(); showReferral(); });
+    const mobileNavReferral = document.getElementById('mobileNavReferral');
+    if (mobileNavReferral) mobileNavReferral.addEventListener('click', (e) => { e.preventDefault(); if (typeof closeMobileNav === 'function') closeMobileNav(); showReferral(); });
+
+    // ===== Chargement + rendu de la page Invite et Gagne =====
+    async function loadReferral() {
+      try {
+        const s = await supabaseClient.auth.getSession();
+        const tok = s.data.session?.access_token;
+        if (!tok) return;
+        const res = await fetch('https://www.golbody.com/api/referral-info', { headers: { 'Authorization': 'Bearer ' + tok } });
+        const d = await res.json();
+        if (!d || !d.code) return;
+        const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+        set('refStatSubscribed', d.stats.subscribed);
+        set('refStatEarned', (d.stats.earned || 0).toLocaleString('fr-FR'));
+        set('refStatSignups', d.stats.signups);
+        set('refStatPending', d.stats.pending);
+        const input = document.getElementById('refLinkInput'); if (input) input.value = d.link;
+        const list = document.getElementById('refFilleuls');
+        if (list) {
+          if (!d.filleuls.length) {
+            list.innerHTML = '<div class="ref-empty"><i data-lucide="gift"></i><br>Aucun filleul pour le moment — partage ton lien pour commencer.</div>';
+          } else {
+            list.innerHTML = d.filleuls.map(f =>
+              '<div class="ref-filleul"><span>' + f.emailMasked + '</span><span class="fst">' +
+              (f.status === 'abonné' ? 'Abonné 🎉 +' + f.reward.toLocaleString('fr-FR') : 'Inscrit') + '</span></div>'
+            ).join('');
+          }
+        }
+        try { lucide.createIcons(); } catch (e) {}
+      } catch (e) {}
+    }
+    (function(){
+      const copyBtn = document.getElementById('refCopyBtn');
+      const shareBtn = document.getElementById('refShareBtn');
+      const input = document.getElementById('refLinkInput');
+      const doCopy = () => { try { navigator.clipboard.writeText(input.value); showError('Lien copié ✅'); } catch(e){ input.select(); try { document.execCommand('copy'); } catch(e2){} } };
+      if (copyBtn) copyBtn.addEventListener('click', doCopy);
+      if (shareBtn) shareBtn.addEventListener('click', async () => {
+        gtrack('referral_share');
+        if (navigator.share) { try { await navigator.share({ title: 'GolBody', text: 'Transforme ton physique avec GolBody 💪', url: input.value }); } catch(e){} }
+        else doCopy();
+      });
+    })();
 
     mobileNavGenerate.addEventListener('click', (e) => {
       e.preventDefault();
@@ -3314,6 +3482,7 @@
         if (typeof submitData.credits === 'number') {
           currentCredits = submitData.credits;
           if (typeof submitData.loyalty_credits === 'number') currentLoyalty = submitData.loyalty_credits;
+          if (typeof submitData.bonus_credits === 'number') currentBonus = submitData.bonus_credits;
           updateSidebar();
           if (typeof updateAccountCagnotte === 'function') updateAccountCagnotte();
         }

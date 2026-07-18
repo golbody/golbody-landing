@@ -2226,6 +2226,7 @@
         updateSidebar();
         updateAccountSection(profile || { plan: 'free', credits: 100 });
         if (typeof maybeRevealResult === 'function') maybeRevealResult();
+        if (typeof restoreBackupPhoto === 'function') restoreBackupPhoto();
         // Onboarding prioritaire au 1er login ; sinon seulement, le survey mensuel
         const obOpened = window.golMaybeOnboarding ? window.golMaybeOnboarding() : false;
         if (!obOpened && window.golMaybeSurvey) window.golMaybeSurvey();
@@ -2747,7 +2748,39 @@
     if (lowCreditBtn) {
       lowCreditBtn.addEventListener('click', () => { gtrack('low_credit_recharge_clicked'); openRecharge(); });
     }
-    if (unlockBtn) unlockBtn.addEventListener('click', function(){ gtrack('unlock_clicked'); openPaywall(); });
+    // ===== Sauvegarde photo + navigation vers l'abonnement (au lieu du pop-up) =====
+    const BACKUP_KEY = 'golbody_backup_photo';
+    let lastInputDataUrl = null; // input downscalé de la dernière génération (rempli dans generate)
+
+    // Reconstruit un File depuis une data URL (sync, sans fetch)
+    function dataUrlToFile(dataUrl, name) {
+      const parts = dataUrl.split(',');
+      const mime = ((parts[0] || '').match(/:(.*?);/) || [])[1] || 'image/jpeg';
+      const bin = atob(parts[1] || '');
+      const arr = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+      return new File([arr], name, { type: mime });
+    }
+
+    // Clic « Débloquer » ou 402 (gratuit) → on garde la photo en backup, puis transition fluide
+    // vers la section Abonnement (l'animation viewIn existe déjà). Plus de pop-up.
+    function goToUpgrade() {
+      try { if (lastInputDataUrl) localStorage.setItem(BACKUP_KEY, lastInputDataUrl); } catch (e) {}
+      showSubscription();
+      try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
+    }
+
+    // Au retour (après paiement, reload) : restaure la photo dans la zone d'upload pour que
+    // l'utilisateur puisse relancer un prompt sans re-uploader. One-shot (on efface après).
+    function restoreBackupPhoto() {
+      let d = null;
+      try { d = localStorage.getItem(BACKUP_KEY); } catch (e) { return; }
+      if (!d || currentFile) return;
+      try { handleFile(dataUrlToFile(d, 'photo.jpg')); } catch (e) {}
+      try { localStorage.removeItem(BACKUP_KEY); } catch (e) {}
+    }
+
+    if (unlockBtn) unlockBtn.addEventListener('click', function(){ gtrack('unlock_clicked'); goToUpgrade(); });
     document.getElementById('pwClose').addEventListener('click', closePaywall);
     document.getElementById('pwLater').addEventListener('click', closePaywall);
     paywallModal.addEventListener('click', (e) => { if (e.target === paywallModal) closePaywall(); });
@@ -2893,7 +2926,8 @@
 
     // ===== New generation =====
     newGenBtn.addEventListener('click', () => {
-      clearFile();
+      // On GARDE la photo (pas de clearFile) → l'utilisateur peut relancer un prompt sur la
+      // même photo sans re-uploader. Pour changer de photo : bouton « Supprimer la photo ».
       promptExtra.value = '';
       transformGrid.querySelectorAll('.transform-btn').forEach(btn => btn.classList.remove('selected'));
       if (typeof refreshOptCnt === 'function') refreshOptCnt();
@@ -2904,6 +2938,8 @@
       resultLock.style.display = 'none';
       resultActions.style.display = '';
       formZone.style.display = 'block';
+      generateBtn.disabled = !currentFile;
+      if (typeof updateGenerateHint === 'function') updateGenerateHint();
     });
 
     // ===== Transformation selection + options repliables =====
@@ -3154,6 +3190,7 @@
 
       try {
         const imageUrl = await fileToDataUrl(currentFile);
+        lastInputDataUrl = imageUrl; // pour le backup si l'user va payer
 
         const selected = Array.from(transformGrid.querySelectorAll('.transform-btn.selected')).map(btn => btn.dataset.value);
         const extra = promptExtra.value.trim();
@@ -3181,7 +3218,7 @@
         const submitData = await submitRes.json();
         if (submitRes.status === 402) {
           // Gratuit → paywall (choisir un plan). Payant à sec → modal recharge (packs).
-          if (typeof isLocked === 'function' && isLocked()) { gtrack('paywall_shown_402'); openPaywall(); }
+          if (typeof isLocked === 'function' && isLocked()) { gtrack('paywall_shown_402'); goToUpgrade(); }
           else { gtrack('recharge_shown_402'); openRecharge(); }
           return;
         }

@@ -1407,7 +1407,10 @@
   .ref-card-sub{font-size:13px;color:var(--rd-muted);margin:0 0 16px;}
   .ref-link-row{display:flex;gap:8px;margin-bottom:12px;}
   .ref-link-row input{flex:1;background:var(--rd-inset);border:1px solid var(--rd-bd);border-radius:12px;padding:12px 14px;color:var(--rd-txt);font-size:13px;font-family:inherit;}
-  .ref-link-row button{background:var(--rd-panel2);border:1px solid var(--rd-bdg);border-radius:12px;width:46px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-accent);}
+  .ref-link-row button{background:var(--rd-panel2);border:1px solid var(--rd-bdg);border-radius:12px;width:46px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--rd-accent);transition:background .2s,border-color .2s,color .2s,transform .15s;}
+  #refCopyBtn.copied{background:rgba(45,211,132,.14);border-color:rgba(45,211,132,.55);color:#2dd384;animation:refCopyPop .32s ease;}
+  #refCopyBtn.copied svg,#refCopyBtn.copied i{color:#2dd384;}
+  @keyframes refCopyPop{0%{transform:scale(1);}45%{transform:scale(1.18);}100%{transform:scale(1);}}
   .ref-share-btn{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;}
   .ref-empty{text-align:center;color:var(--rd-faint);padding:24px 0;font-size:13px;}
   .ref-filleul{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--rd-bd);font-size:13.5px;}
@@ -3155,7 +3158,23 @@
       const copyBtn = document.getElementById('refCopyBtn');
       const shareBtn = document.getElementById('refShareBtn');
       const input = document.getElementById('refLinkInput');
-      const doCopy = () => { try { navigator.clipboard.writeText(input.value); showError('Lien copié ✅'); } catch(e){ input.select(); try { document.execCommand('copy'); } catch(e2){} } };
+      let copyTimer = null;
+      const flashCopied = () => {
+        if (!copyBtn) return;
+        copyBtn.classList.add('copied');
+        copyBtn.innerHTML = '<i data-lucide="check"></i>';
+        try { lucide.createIcons(); } catch (e) {}
+        clearTimeout(copyTimer);
+        copyTimer = setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyBtn.innerHTML = '<i data-lucide="copy"></i>';
+          try { lucide.createIcons(); } catch (e) {}
+        }, 1500);
+      };
+      const doCopy = () => {
+        try { navigator.clipboard.writeText(input.value); } catch (e) { try { input.select(); document.execCommand('copy'); } catch (e2) {} }
+        flashCopied();
+      };
       if (copyBtn) copyBtn.addEventListener('click', doCopy);
       if (shareBtn) shareBtn.addEventListener('click', async () => {
         gtrack('referral_share');

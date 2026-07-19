@@ -2937,9 +2937,11 @@
           showError('Veuillez vous connecter pour accéder au portail d\'abonnement.');
           return;
         }
+        const s = await supabaseClient.auth.getSession();
+        const tok = s.data.session?.access_token;
         const res = await fetch('https://www.golbody.com/create-portal-session', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
           body: JSON.stringify({ user_id: user.id })
         });
         const data = await res.json();

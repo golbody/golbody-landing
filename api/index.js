@@ -287,8 +287,12 @@ async function handleCheckout(body, req, res) {
 
 async function handlePortal(body, req, res) {
   if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'STRIPE_SECRET_KEY not configured' });
-  const { user_id } = body || {};
-  if (!user_id) return res.status(400).json({ error: 'Missing user_id' });
+  // Auth : user_id dérivé du token Supabase, jamais du corps (anti-IDOR).
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+  const user_id = user.id;
   const pr = await supa('GET', `profiles?id=eq.${user_id}&select=stripe_customer_id`);
   const customerId = firstRow(pr) && firstRow(pr).stripe_customer_id;
   if (!customerId) return res.status(404).json({ error: 'No Stripe customer' });

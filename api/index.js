@@ -883,6 +883,17 @@ async function handleContestJoin(body, req, res) {
   return res.status(200).json({ joined: true, tickets, period });
 }
 
+async function handleContestLeave(body, req, res) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+  const period = contestPeriod(new Date());
+  await supa('DELETE', `contest_entries?user_id=eq.${user.id}&period=eq.${period}`);
+  return res.status(200).json({ left: true, period });
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
@@ -918,6 +929,7 @@ module.exports = async (req, res) => {
     if (path === '/api/feedback' && req.method === 'POST') return await handleFeedbackPost(body, req, res);
     if (path === '/api/contest' && req.method === 'GET') return await handleContestGet(req, res);
     if (path === '/api/contest/join' && req.method === 'POST') return await handleContestJoin(body, req, res);
+    if (path === '/api/contest/leave' && req.method === 'POST') return await handleContestLeave(body, req, res);
 
     res.status(404).json({ error: 'Route not found: ' + path });
   } catch (err) {

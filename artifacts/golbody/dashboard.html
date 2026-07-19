@@ -1742,6 +1742,9 @@
   .co-join-btn:hover:not(:disabled){filter:brightness(1.05);transform:translateY(-1px);}
   .co-join-btn.joined{background:rgba(45,211,132,.14);color:#3ddc84;border:1px solid rgba(45,211,132,.5);cursor:default;}
   .co-join-btn.locked{background:var(--rd-panel2);color:var(--rd-accent);border:1px solid var(--rd-bdg);}
+  .co-leave-btn{display:block;width:100%;background:none;border:none;color:var(--rd-muted);font-size:12.5px;padding:12px 0 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  .co-leave-btn:hover{color:#ff8a8a;}
+  .co-leave-btn:disabled{opacity:.5;cursor:default;}
   .co-part-wrap,.co-results,.co-tickets,.co-rules{background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:18px;padding:22px;margin-bottom:20px;}
   .co-participants{display:flex;flex-wrap:wrap;gap:14px;}
   .co-avatar-w{display:flex;flex-direction:column;align-items:center;gap:6px;width:64px;}
@@ -2385,6 +2388,7 @@
                 <span class="co-stat">👥 <b id="coWinnersN">3</b> gagnants tirés au sort</span>
               </div>
               <button class="co-join-btn" id="coJoinBtn" type="button">Je m'inscris</button>
+              <button class="co-leave-btn" id="coLeaveBtn" type="button" hidden>Se désinscrire</button>
             </div>
 
             <div class="co-part-wrap">
@@ -3428,6 +3432,8 @@
           btn.dataset.eligible = d.eligible ? '1' : '0';
           btn.dataset.joined = d.joined ? '1' : '0';
         }
+        const leaveBtn = document.getElementById('coLeaveBtn');
+        if (leaveBtn) { leaveBtn.hidden = !d.joined; leaveBtn.disabled = false; }
         coEndsAt = new Date(d.endsAt).getTime();
         coTick();
         if (coCountdownTimer) clearInterval(coCountdownTimer);
@@ -3456,6 +3462,18 @@
           else if (res.status === 403) { showError('Réservé aux abonnés — passe à un abonnement pour participer.'); btn.disabled = false; btn.textContent = orig; showSubscription(); }
           else { showError('Erreur. Réessaie.'); btn.disabled = false; btn.textContent = orig; }
         } catch (e) { showError('Erreur réseau. Réessaie.'); btn.disabled = false; btn.textContent = orig; }
+      });
+      const leaveBtn = document.getElementById('coLeaveBtn');
+      if (leaveBtn) leaveBtn.addEventListener('click', async () => {
+        leaveBtn.disabled = true;
+        try {
+          const ss = await supabaseClient.auth.getSession();
+          const tok = ss.data.session && ss.data.session.access_token;
+          if (!tok) { showError('Connecte-toi.'); leaveBtn.disabled = false; return; }
+          const res = await fetch('https://www.golbody.com/api/contest/leave', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok } });
+          if (res.status === 200) { try { if (typeof gtrack === 'function') gtrack('contest_leave'); } catch (e) {} showError('Tu es désinscrit du concours.'); loadContest(); }
+          else { showError('Erreur. Réessaie.'); leaveBtn.disabled = false; }
+        } catch (e) { showError('Erreur réseau. Réessaie.'); leaveBtn.disabled = false; }
       });
     })();
 

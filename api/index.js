@@ -45,6 +45,11 @@ const SNAP_STEPS = [
 const FEEDBACK_REWARD = 300;
 const FEEDBACK_MIN_CHARS = 15; // longueur minimale par réponse (et pour le message)
 const FEEDBACK_Q_COUNT = 15;   // nombre de questions attendues
+// Concours du mois (tirage au sort) — réservé aux clients, tirage auto fin de mois
+const CONTEST_PRIZE = 300;                                   // crédits par gagnant
+const CONTEST_WINNERS = 3;                                   // nombre de gagnants
+const CONTEST_TICKETS = { starter: 200, pro: 600, ultra: 1500 }; // tickets = chances (free = non éligible)
+const MONTHS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 const WH_PRICES = {
   // Anciens prix (abonnés existants « grandfathered ») — À GARDER pour leurs renouvellements
   'price_1TsVBqACVZ6Qm7icIBz2xjmO': { plan: 'starter', credits: 1000 },
@@ -760,6 +765,124 @@ async function handleFeedbackPost(body, req, res) {
   return res.status(200).json({ credited: FEEDBACK_REWARD, credits });
 }
 
+// ===== Concours du mois (tirage au sort) =====
+function contestPeriod(d) { return d.toISOString().slice(0, 7); } // 'YYYY-MM' (UTC)
+function prevPeriod(period) {
+  const [y, m] = period.split('-').map(Number);
+  const py = m === 1 ? y - 1 : y;
+  const pm = m === 1 ? 12 : m - 1;
+  return py + '-' + String(pm).padStart(2, '0');
+}
+function periodEndsAt(period) {
+  const [y, m] = period.split('-').map(Number);
+  const ny = m === 12 ? y + 1 : y;
+  const nm = m === 12 ? 1 : m + 1;
+  return new Date(Date.UTC(ny, nm - 1, 1, 0, 0, 0)).toISOString(); // 1er du mois suivant 00:00 UTC
+}
+function monthLabelFr(period) {
+  const [y, m] = period.split('-').map(Number);
+  const name = MONTHS_FR[m - 1] || '';
+  return name.charAt(0).toUpperCase() + name.slice(1) + ' ' + y;
+}
+function weightedPick(entries, k) {
+  const pool = entries.map(e => ({ user_id: e.user_id, handle: e.handle, w: Math.max(1, e.tickets || 1) }));
+  const winners = [];
+  for (let i = 0; i < k && pool.length; i++) {
+    const total = pool.reduce((s, e) => s + e.w, 0);
+    let r = Math.random() * total, idx = 0;
+    for (; idx < pool.length; idx++) { r -= pool[idx].w; if (r <= 0) break; }
+    if (idx >= pool.length) idx = pool.length - 1;
+    winners.push(pool[idx]); pool.splice(idx, 1);
+  }
+  return winners;
+}
+// Tirage paresseux + idempotent d'un mois terminé (lock = insert du gagnant rank 1).
+async function maybeDrawPeriod(period) {
+  try {
+    const already = await supa('GET', `contest_winners?period=eq.${period}&select=rank&limit=1`);
+    if (firstRow(already)) return; // déjà tiré
+    const eR = await supa('GET', `contest_entries?period=eq.${period}&select=user_id,tickets,handle`);
+    const entries = Array.isArray(eR.body) ? eR.body : [];
+    if (!entries.length) return; // aucun participant
+    const winners = weightedPick(entries, CONTEST_WINNERS);
+    // Lock : le 1er insert (period, rank 1) fait office de verrou anti double-tirage
+    const lock = await supa('POST', 'contest_winners', { period, rank: 1, user_id: winners[0].user_id, handle: winners[0].handle, credited: CONTEST_PRIZE });
+    if (lock.status >= 300) return; // un autre process a déjà tiré → on s'arrête
+    for (let i = 1; i < winners.length; i++) {
+      await supa('POST', 'contest_winners', { period, rank: i + 1, user_id: winners[i].user_id, handle: winners[i].handle, credited: CONTEST_PRIZE });
+    }
+    // Crédite chaque gagnant
+    for (const w of winners) {
+      const pr = await supa('GET', `profiles?id=eq.${w.user_id}&select=credits`);
+      const cur = firstRow(pr) ? (firstRow(pr).credits || 0) : null;
+      if (typeof cur === 'number') await supa('PATCH', `profiles?id=eq.${w.user_id}`, { credits: cur + CONTEST_PRIZE });
+    }
+  } catch (e) { console.error('contest draw error:', e); }
+}
+
+async function handleContestGet(req, res) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+
+  const now = new Date();
+  const period = contestPeriod(now);
+  await maybeDrawPeriod(prevPeriod(period)); // tire le mois précédent si pas encore fait
+
+  const meR = await supa('GET', `profiles?id=eq.${user.id}&select=plan`);
+  const plan = (firstRow(meR) && firstRow(meR).plan) || 'free';
+  const eligible = CONTEST_TICKETS[plan] != null;
+
+  const myE = await supa('GET', `contest_entries?user_id=eq.${user.id}&period=eq.${period}&select=tickets`);
+  const myRow = firstRow(myE);
+  const joined = !!myRow;
+  const myTickets = joined ? myRow.tickets : (eligible ? CONTEST_TICKETS[plan] : 0);
+
+  const partsR = await supa('GET', `contest_entries?period=eq.${period}&select=handle&order=created_at.desc`);
+  const parts = Array.isArray(partsR.body) ? partsR.body : [];
+  const participants = parts.slice(0, 18).map(p => ({ handle: p.handle || 'Membre' }));
+
+  // Derniers résultats : gagnants du mois le plus récemment tiré
+  const winR = await supa('GET', 'contest_winners?select=period,rank,handle&order=period.desc,rank.asc&limit=3');
+  const wrows = Array.isArray(winR.body) ? winR.body : [];
+  let results = null;
+  if (wrows.length) {
+    const wp = wrows[0].period;
+    results = { period: wp, monthLabel: monthLabelFr(wp), winners: wrows.filter(w => w.period === wp).sort((a, b) => a.rank - b.rank).map(w => ({ rank: w.rank, handle: w.handle || 'Gagnant' })) };
+  }
+
+  return res.status(200).json({
+    period, monthLabel: monthLabelFr(period), endsAt: periodEndsAt(period), serverNow: now.toISOString(),
+    prize: CONTEST_PRIZE, winnersCount: CONTEST_WINNERS,
+    plan, eligible, joined, myTickets, ticketTiers: CONTEST_TICKETS,
+    participants, participantCount: parts.length, results,
+  });
+}
+
+async function handleContestJoin(body, req, res) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+
+  const meR = await supa('GET', `profiles?id=eq.${user.id}&select=plan`);
+  const plan = (firstRow(meR) && firstRow(meR).plan) || 'free';
+  const tickets = CONTEST_TICKETS[plan];
+  if (tickets == null) return res.status(403).json({ error: 'not_eligible', plan }); // gratuit → non éligible
+
+  const period = contestPeriod(new Date());
+  const handle = handleForUser(user.id);
+  const ins = await supa('POST', 'contest_entries', { user_id: user.id, period, tickets, handle });
+  if (ins.status >= 300) {
+    // Déjà inscrit → on met à jour les tickets (le plan a pu changer)
+    await supa('PATCH', `contest_entries?user_id=eq.${user.id}&period=eq.${period}`, { tickets, handle });
+  }
+  return res.status(200).json({ joined: true, tickets, period });
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
@@ -793,6 +916,8 @@ module.exports = async (req, res) => {
     if (path === '/api/snap-tutorial' && req.method === 'GET') return await handleSnapTutorial(req, res);
     if (path === '/api/feedback' && req.method === 'GET') return await handleFeedbackGet(req, res);
     if (path === '/api/feedback' && req.method === 'POST') return await handleFeedbackPost(body, req, res);
+    if (path === '/api/contest' && req.method === 'GET') return await handleContestGet(req, res);
+    if (path === '/api/contest/join' && req.method === 'POST') return await handleContestJoin(body, req, res);
 
     res.status(404).json({ error: 'Route not found: ' + path });
   } catch (err) {

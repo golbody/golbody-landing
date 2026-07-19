@@ -1721,6 +1721,58 @@
   .tk-avail{font-size:13px;color:var(--rd-muted);margin:0 0 10px;}
   .tk-fine{font-size:11.5px;color:var(--rd-faint);line-height:1.5;max-width:560px;margin:0 auto;}
   @media(max-width:640px){.tk-pay{grid-template-columns:1fr;}}
+
+  /* --- Concours du mois — CONCOURS 2026-07-19 --- */
+  .co-section{display:none;max-width:840px;margin:0 auto;padding:8px 4px 48px;}
+  .co-section.is-visible{display:block;animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
+  .co-loading{text-align:center;padding:60px 0;color:var(--rd-muted);}
+  .co-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--rd-faint);margin-bottom:14px;}
+  .co-header{background:linear-gradient(160deg,rgba(255,214,0,.08),rgba(255,214,0,.02));border:1px solid rgba(255,214,0,.28);border-radius:20px;padding:24px;margin-bottom:20px;}
+  .co-header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+  .co-h-left{display:flex;gap:14px;align-items:flex-start;}
+  .co-gift{font-size:34px;line-height:1;}
+  .co-title{font-size:clamp(20px,3vw,26px);font-weight:900;color:var(--rd-txt);margin:0 0 4px;}
+  .co-sub{font-size:14px;color:var(--rd-muted);margin:0;}
+  .co-sub b{color:var(--rd-accent);}
+  .co-live{flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.05em;color:#3ddc84;background:rgba(45,211,132,.12);border:1px solid rgba(45,211,132,.4);padding:5px 11px;border-radius:999px;}
+  .co-stats{display:flex;flex-wrap:wrap;gap:18px;margin:18px 0;}
+  .co-stat{font-size:13px;color:var(--rd-muted);}
+  .co-stat b{color:var(--rd-txt);font-weight:800;}
+  .co-join-btn{width:100%;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;font-weight:900;font-size:15px;padding:14px;border-radius:13px;border:none;cursor:pointer;transition:filter .15s,transform .15s,opacity .15s;}
+  .co-join-btn:hover:not(:disabled){filter:brightness(1.05);transform:translateY(-1px);}
+  .co-join-btn.joined{background:rgba(45,211,132,.14);color:#3ddc84;border:1px solid rgba(45,211,132,.5);cursor:default;}
+  .co-join-btn.locked{background:var(--rd-panel2);color:var(--rd-accent);border:1px solid var(--rd-bdg);}
+  .co-part-wrap,.co-results,.co-tickets,.co-rules{background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:18px;padding:22px;margin-bottom:20px;}
+  .co-participants{display:flex;flex-wrap:wrap;gap:14px;}
+  .co-avatar-w{display:flex;flex-direction:column;align-items:center;gap:6px;width:64px;}
+  .co-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#111;}
+  .co-avatar-name{font-size:10.5px;color:var(--rd-muted);max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;}
+  .co-part-count{margin-top:14px;font-size:13px;font-weight:700;color:var(--rd-accent);text-align:right;}
+  .co-res-month{font-weight:700;color:var(--rd-muted);text-transform:none;letter-spacing:0;}
+  .co-winners{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
+  .co-winner{background:var(--rd-panel2);border:1px dashed var(--rd-bdg);border-radius:14px;padding:18px 10px;text-align:center;}
+  .co-winner.filled{border-style:solid;border-color:rgba(255,214,0,.4);background:linear-gradient(160deg,rgba(255,214,0,.08),transparent);}
+  .co-w-av{width:38px;height:38px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#111;}
+  .co-w-q{font-size:26px;font-weight:900;color:var(--rd-faint);}
+  .co-w-name{font-size:12.5px;font-weight:700;color:var(--rd-txt);}
+  .co-w-rank{font-size:11px;color:var(--rd-faint);margin-top:4px;}
+  .co-cd-label{text-align:center;font-size:12.5px;color:var(--rd-muted);margin-bottom:12px;}
+  .co-countdown{display:flex;justify-content:center;gap:10px;}
+  .co-cd{background:var(--rd-panel2);border:1px solid var(--rd-bd);border-radius:12px;padding:12px 8px;min-width:60px;text-align:center;}
+  .co-cd b{display:block;font-size:24px;font-weight:900;color:var(--rd-accent);line-height:1;}
+  .co-cd span{font-size:9px;font-weight:700;letter-spacing:.05em;color:var(--rd-faint);}
+  .co-claim{text-align:center;font-size:12px;color:var(--rd-faint);margin:18px 0 0;}
+  .co-mytickets{font-weight:800;color:var(--rd-accent);text-transform:none;letter-spacing:0;}
+  .co-tk-intro{font-size:13.5px;color:var(--rd-muted);line-height:1.5;margin:0 0 16px;}
+  .co-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .co-tier{background:var(--rd-panel2);border:1px solid var(--rd-bd);border-radius:14px;padding:18px;text-align:center;}
+  .co-tier b{display:block;font-size:26px;font-weight:900;color:var(--rd-txt);}
+  .co-tier span{font-size:12.5px;color:var(--rd-muted);}
+  .co-tier-top{border-color:rgba(255,214,0,.4);background:linear-gradient(160deg,rgba(255,214,0,.08),transparent);}
+  .co-tier-top b{color:var(--rd-accent);}
+  .co-rules ul{margin:0;padding-left:18px;}
+  .co-rules li{font-size:13px;color:var(--rd-muted);line-height:1.55;margin-bottom:9px;}
+  @media(max-width:560px){.co-winners{grid-template-columns:1fr;}.co-countdown{flex-wrap:wrap;}}
   </style>
 </head>
 <body>
@@ -1782,6 +1834,12 @@
           <a href="#" id="mobileNavTiktok">
             <i data-lucide="video"></i>
             Monétise TikTok
+          </a>
+        </li>
+        <li>
+          <a href="#" id="mobileNavContest">
+            <i data-lucide="trophy"></i>
+            Concours du mois
           </a>
         </li>
         <li>
@@ -1847,6 +1905,12 @@
             <a href="#" id="navTiktok">
               <i data-lucide="video"></i>
               Monétise TikTok
+            </a>
+          </li>
+          <li>
+            <a href="#" id="navContest">
+              <i data-lucide="trophy"></i>
+              Concours du mois
             </a>
           </li>
           <li>
@@ -2297,6 +2361,72 @@
             </div>
             <p class="tk-avail">Support disponible 7j/7 — réponse sous 24 h.</p>
             <p class="tk-fine">Les conditions précises du programme (validation des comptes, plafonds anti-fraude, modalités de paiement) sont expliquées par le support lors de l'inscription.</p>
+          </div>
+        </div>
+
+        <!-- CONCOURS DU MOIS SECTION — CONCOURS 2026-07-19 -->
+        <div class="co-section" id="contestSection">
+          <div class="co-loading" id="coLoading"><div class="snap-spinner"></div><p>Chargement du concours…</p></div>
+          <div class="co-body" id="coBody" hidden>
+            <div class="co-header">
+              <div class="co-header-top">
+                <div class="co-h-left">
+                  <span class="co-gift">🎁</span>
+                  <div>
+                    <h1 class="co-title">Concours du mois — <span id="coMonth">—</span></h1>
+                    <p class="co-sub">Gagne <b id="coPrize">300</b> crédits offerts chaque mois</p>
+                  </div>
+                </div>
+                <span class="co-live">EN COURS</span>
+              </div>
+              <div class="co-stats">
+                <span class="co-stat">⏳ <b id="coDays">—</b> jours restants</span>
+                <span class="co-stat">🏆 <b id="coPrize2">300</b> crédits à gagner</span>
+                <span class="co-stat">👥 <b id="coWinnersN">3</b> gagnants tirés au sort</span>
+              </div>
+              <button class="co-join-btn" id="coJoinBtn" type="button">Je m'inscris</button>
+            </div>
+
+            <div class="co-part-wrap">
+              <div class="co-label">Participants ce mois-ci</div>
+              <div class="co-participants" id="coParticipants"></div>
+              <div class="co-part-count" id="coPartCount"></div>
+            </div>
+
+            <div class="co-results">
+              <div class="co-label">🏆 Résultats <span id="coResultsMonth" class="co-res-month"></span></div>
+              <div class="co-winners" id="coWinners3"></div>
+              <div class="co-cd-label">⏳ Tirage au sort dans</div>
+              <div class="co-countdown">
+                <div class="co-cd"><b id="cdD">--</b><span>JOURS</span></div>
+                <div class="co-cd"><b id="cdH">--</b><span>HEURES</span></div>
+                <div class="co-cd"><b id="cdM">--</b><span>MIN</span></div>
+                <div class="co-cd"><b id="cdS">--</b><span>SEC</span></div>
+              </div>
+              <p class="co-claim">Les gagnants sont crédités automatiquement et affichés ci-dessus.</p>
+            </div>
+
+            <div class="co-tickets">
+              <div class="co-label">⭐ Système de tickets <span class="co-mytickets" id="coMyTickets"></span></div>
+              <p class="co-tk-intro">Ton abonnement te donne des tickets dans l'urne. Plus tu as de tickets, plus tu as de chances de gagner !</p>
+              <div class="co-tiers">
+                <div class="co-tier"><b>200</b><span>Starter</span></div>
+                <div class="co-tier"><b>600</b><span>Pro</span></div>
+                <div class="co-tier co-tier-top"><b>1500</b><span>Ultra</span></div>
+              </div>
+            </div>
+
+            <div class="co-rules">
+              <div class="co-label">📋 Règlement</div>
+              <ul>
+                <li>Le concours est ouvert à tout client ayant un abonnement actif sur GolBody.</li>
+                <li>Les gains sont attribués aléatoirement. Plus tu as de tickets, plus tu as de chances de gagner.</li>
+                <li>Le tirage au sort est effectué automatiquement à la fin de chaque mois.</li>
+                <li>Les 3 gagnants reçoivent 300 crédits directement sur leur compte.</li>
+                <li>Les crédits sont non remboursables.</li>
+                <li>GolBody se réserve le droit d'annuler le concours en cas d'abus ou de fraude.</li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -2929,6 +3059,7 @@
       hideSnapView();
       hideFeedbackView();
       hideTikTokView();
+      hideContestView();
       generationSection.style.display = 'block';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2945,6 +3076,7 @@
       hideSnapView();
       hideFeedbackView();
       hideTikTokView();
+      hideContestView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.add('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2962,6 +3094,7 @@
       hideSnapView();
       hideFeedbackView();
       hideTikTokView();
+      hideContestView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.add('is-visible');
@@ -2983,6 +3116,7 @@
       hideReferralView();
       hideFeedbackView();
       hideTikTokView();
+      hideContestView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -3010,6 +3144,7 @@
       hideReferralView();
       hideSnapView();
       hideTikTokView();
+      hideContestView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -3037,6 +3172,7 @@
       hideReferralView();
       hideSnapView();
       hideFeedbackView();
+      hideContestView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -3054,10 +3190,41 @@
     }
     window.showTikTok = showTikTok;
 
+    let coCountdownTimer = null;
+    function hideContestView() {
+      const cs = document.getElementById('contestSection'); if (cs) cs.classList.remove('is-visible');
+      const nc = document.getElementById('navContest'); if (nc) nc.classList.remove('active');
+      const mnc = document.getElementById('mobileNavContest'); if (mnc) mnc.classList.remove('active');
+      if (coCountdownTimer) { clearInterval(coCountdownTimer); coCountdownTimer = null; }
+    }
+    function showContest() {
+      hideReferralView();
+      hideSnapView();
+      hideFeedbackView();
+      hideTikTokView();
+      generationSection.style.display = 'none';
+      subscriptionSection.classList.remove('is-visible');
+      accountSection.classList.remove('is-visible');
+      navGenerate.classList.remove('active');
+      navSubscription.classList.remove('active');
+      navAccount.classList.remove('active');
+      mobileNavGenerate.classList.remove('active');
+      mobileNavSubscription.classList.remove('active');
+      mobileNavAccount.classList.remove('active');
+      const cs = document.getElementById('contestSection'); if (cs) cs.classList.add('is-visible');
+      const nc = document.getElementById('navContest'); if (nc) nc.classList.add('active');
+      const mnc = document.getElementById('mobileNavContest'); if (mnc) mnc.classList.add('active');
+      try { lucide.createIcons(); } catch (e) {}
+      try { if (typeof gtrack === 'function') gtrack('contest_open'); } catch (e) {}
+      loadContest();
+    }
+    window.showContest = showContest;
+
     function showReferral() {
       hideSnapView();
       hideFeedbackView();
       hideTikTokView();
+      hideContestView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -3193,6 +3360,104 @@
         else { window.location.href = 'mailto:golbodyyy@gmail.com?subject=Programme%20TikTok%20GolBody'; }
       } catch (e) { window.location.href = 'mailto:golbodyyy@gmail.com?subject=Programme%20TikTok%20GolBody'; }
     });
+
+    const navContest = document.getElementById('navContest');
+    if (navContest) navContest.addEventListener('click', (e) => { e.preventDefault(); showContest(); });
+    const mobileNavContest = document.getElementById('mobileNavContest');
+    if (mobileNavContest) mobileNavContest.addEventListener('click', (e) => { e.preventDefault(); if (typeof closeMobileNav === 'function') closeMobileNav(); showContest(); });
+
+    // ===== Concours du mois : chargement + rendu =====
+    const CO_COLORS = ['#FFD600', '#3ddc84', '#5b9dff', '#ff7ab6', '#c58bff', '#ffa64d', '#4dd0e1', '#ff6b6b'];
+    function coAvatar(handle) {
+      const h = String(handle || 'M'); let hash = 0;
+      for (let i = 0; i < h.length; i++) hash = (hash * 31 + h.charCodeAt(i)) >>> 0;
+      const color = CO_COLORS[hash % CO_COLORS.length];
+      const parts = h.split(/[_\s]+/).filter(Boolean);
+      const initials = (((parts[0] || 'M')[0] || 'M') + (parts[1] ? parts[1][0] : ((parts[0] || 'MM')[1] || ''))).toUpperCase();
+      return { color, initials };
+    }
+    const coPad = (n) => String(n).padStart(2, '0');
+    let coEndsAt = 0;
+    function coTick() {
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+      const diff = coEndsAt - Date.now();
+      if (diff <= 0) { set('cdD', '00'); set('cdH', '00'); set('cdM', '00'); set('cdS', '00'); set('coDays', '0'); return; }
+      const s = Math.floor(diff / 1000);
+      set('cdD', coPad(Math.floor(s / 86400)));
+      set('cdH', coPad(Math.floor((s % 86400) / 3600)));
+      set('cdM', coPad(Math.floor((s % 3600) / 60)));
+      set('cdS', coPad(s % 60));
+      set('coDays', String(Math.max(0, Math.ceil(s / 86400))));
+    }
+    async function loadContest() {
+      const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+      const loading = document.getElementById('coLoading'), body = document.getElementById('coBody');
+      if (loading) loading.hidden = false; if (body) body.hidden = true;
+      try {
+        let tok = null;
+        try { const ss = await supabaseClient.auth.getSession(); tok = ss.data.session && ss.data.session.access_token; } catch (e) {}
+        if (!tok) return;
+        const res = await fetch('https://www.golbody.com/api/contest', { headers: { 'Authorization': 'Bearer ' + tok } });
+        const d = await res.json().catch(() => null);
+        if (!d || !d.period) return;
+        setTxt('coMonth', d.monthLabel);
+        setTxt('coPrize', d.prize); setTxt('coPrize2', d.prize); setTxt('coWinnersN', d.winnersCount);
+        const pbox = document.getElementById('coParticipants');
+        if (pbox) pbox.innerHTML = (d.participants || []).map((p) => { const a = coAvatar(p.handle); return '<div class="co-avatar-w"><div class="co-avatar" style="background:' + a.color + '">' + snapEsc(a.initials) + '</div><div class="co-avatar-name">' + snapEsc(p.handle) + '</div></div>'; }).join('');
+        const pc = d.participantCount || 0;
+        setTxt('coPartCount', '👥 ' + pc + ' participant' + (pc > 1 ? 's' : ''));
+        const wbox = document.getElementById('coWinners3'), rm = document.getElementById('coResultsMonth');
+        const byRank = {}; if (d.results && d.results.winners) d.results.winners.forEach((w) => { byRank[w.rank] = w; });
+        if (rm) rm.textContent = (d.results && d.results.winners && d.results.winners.length) ? ('— ' + d.results.monthLabel) : '';
+        if (wbox) {
+          let html = '';
+          for (let k = 1; k <= d.winnersCount; k++) {
+            const w = byRank[k];
+            if (w) { const a = coAvatar(w.handle); html += '<div class="co-winner filled"><div class="co-w-av" style="background:' + a.color + '">' + snapEsc(a.initials) + '</div><div class="co-w-name">' + snapEsc(w.handle) + '</div><div class="co-w-rank">Gagnant ' + k + '</div></div>'; }
+            else html += '<div class="co-winner"><div class="co-w-q">?</div><div class="co-w-rank">Gagnant ' + k + '</div></div>';
+          }
+          wbox.innerHTML = html;
+        }
+        setTxt('coMyTickets', d.joined ? ('· tu as ' + (d.myTickets || 0) + ' tickets 🎟️') : '');
+        const btn = document.getElementById('coJoinBtn');
+        if (btn) {
+          btn.classList.remove('joined', 'locked');
+          if (d.joined) { btn.textContent = '✓ Inscrit — bonne chance !'; btn.classList.add('joined'); btn.disabled = true; }
+          else if (!d.eligible) { btn.textContent = 'Réservé aux abonnés — Voir les offres'; btn.classList.add('locked'); btn.disabled = false; }
+          else { btn.textContent = "Je m'inscris"; btn.disabled = false; }
+          btn.dataset.eligible = d.eligible ? '1' : '0';
+          btn.dataset.joined = d.joined ? '1' : '0';
+        }
+        coEndsAt = new Date(d.endsAt).getTime();
+        coTick();
+        if (coCountdownTimer) clearInterval(coCountdownTimer);
+        coCountdownTimer = setInterval(coTick, 1000);
+        try { lucide.createIcons(); } catch (e) {}
+      } catch (e) {
+      } finally {
+        if (loading) loading.hidden = true; if (body) body.hidden = false;
+      }
+    }
+    window.loadContest = loadContest;
+
+    (function () {
+      const btn = document.getElementById('coJoinBtn');
+      if (!btn) return;
+      btn.addEventListener('click', async () => {
+        if (btn.dataset.joined === '1') return;
+        if (btn.dataset.eligible !== '1') { showSubscription(); return; }
+        btn.disabled = true; const orig = btn.textContent; btn.textContent = 'Inscription…';
+        try {
+          const ss = await supabaseClient.auth.getSession();
+          const tok = ss.data.session && ss.data.session.access_token;
+          if (!tok) { showError('Connecte-toi pour participer.'); btn.disabled = false; btn.textContent = orig; return; }
+          const res = await fetch('https://www.golbody.com/api/contest/join', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok } });
+          if (res.status === 200) { try { if (typeof gtrack === 'function') gtrack('contest_join'); } catch (e) {} showError('🎉 Inscrit au concours du mois !'); loadContest(); }
+          else if (res.status === 403) { showError('Réservé aux abonnés — passe à un abonnement pour participer.'); btn.disabled = false; btn.textContent = orig; showSubscription(); }
+          else { showError('Erreur. Réessaie.'); btn.disabled = false; btn.textContent = orig; }
+        } catch (e) { showError('Erreur réseau. Réessaie.'); btn.disabled = false; btn.textContent = orig; }
+      });
+    })();
 
     // ===== Questionnaire feedback « Gagne 300 crédits » =====
     const FB_QUESTIONS = [

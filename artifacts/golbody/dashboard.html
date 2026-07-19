@@ -1587,6 +1587,32 @@
   #generationSection{animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
   .subscription-section.is-visible{animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
   .account-section.is-visible{animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
+
+  /* ---------- SNAP ROUGE (tutoriel) — SNAP-ROUGE 2026-07-19 ---------- */
+  .snap-section{display:none;max-width:900px;margin:0 auto;padding:8px 4px 48px;}
+  .snap-section.is-visible{display:block;animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
+  .snap-head{text-align:center;margin:6px 0 30px;}
+  .snap-badge{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--rd-accent);background:rgba(255,214,0,.10);border:1px solid rgba(255,214,0,.28);padding:6px 13px;border-radius:999px;}
+  .snap-title{font-size:clamp(26px,4vw,38px);font-weight:900;line-height:1.1;margin:16px 0 10px;background:linear-gradient(90deg,var(--rd-txt),var(--rd-accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .snap-sub{font-size:14.5px;color:var(--rd-muted);max-width:520px;margin:0 auto;line-height:1.5;}
+  .snap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;}
+  .snap-card{position:relative;background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:18px;padding:22px 20px 20px;overflow:hidden;transition:border-color .18s,transform .18s;}
+  .snap-card:hover{border-color:rgba(255,214,0,.35);transform:translateY(-2px);}
+  .snap-num{position:absolute;top:6px;right:16px;font-size:60px;font-weight:900;line-height:1;color:rgba(255,214,0,.08);pointer-events:none;user-select:none;}
+  .snap-emoji{font-size:30px;line-height:1;margin-bottom:14px;}
+  .snap-shot{width:100%;border-radius:12px;margin-bottom:14px;border:1px solid var(--rd-bd);display:block;}
+  .snap-step-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--rd-accent);margin-bottom:4px;position:relative;}
+  .snap-card h3{font-size:16.5px;font-weight:800;color:var(--rd-txt);margin:0 0 7px;position:relative;}
+  .snap-card p{font-size:13.5px;color:var(--rd-muted);margin:0;line-height:1.5;position:relative;}
+  .snap-outro{text-align:center;margin-top:34px;background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:20px;padding:30px 24px;}
+  .snap-outro h3{font-size:20px;font-weight:900;color:var(--rd-txt);margin:0 0 8px;}
+  .snap-outro p{font-size:14px;color:var(--rd-muted);max-width:480px;margin:0 auto 20px;line-height:1.55;}
+  .snap-cta{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;font-weight:900;font-size:15px;padding:14px 26px;border-radius:14px;border:none;cursor:pointer;transition:filter .15s,transform .15s;}
+  .snap-cta:hover{filter:brightness(1.05);transform:translateY(-1px);}
+  /* bouton "Envoyer en Snap Rouge" sur l'écran résultat (hérite de .share-btn) */
+  .snap-cta-btn{border:1px solid rgba(255,74,74,.55)!important;color:#ff7a7a!important;}
+  .snap-cta-btn:hover{background:rgba(255,74,74,.12)!important;color:#ff9a9a!important;}
+  @media(max-width:560px){.snap-grid{grid-template-columns:1fr;}.snap-num{font-size:52px;}}
   </style>
 </head>
 <body>
@@ -1618,6 +1644,12 @@
           <a href="dashboard.html" class="active" id="mobileNavGenerate">
             <i data-lucide="zap"></i>
             Génération
+          </a>
+        </li>
+        <li>
+          <a href="#" id="mobileNavSnap">
+            <i data-lucide="send"></i>
+            Snap Rouge
           </a>
         </li>
         <li>
@@ -1665,6 +1697,12 @@
             <a href="dashboard.html" class="active" id="navGenerate">
               <i data-lucide="zap"></i>
               Génération
+            </a>
+          </li>
+          <li>
+            <a href="#" id="navSnap">
+              <i data-lucide="send"></i>
+              Snap Rouge
             </a>
           </li>
           <li>
@@ -1954,6 +1992,94 @@
           </div>
         </div>
 
+        <!-- SNAP ROUGE SECTION (tutoriel) -->
+        <div class="snap-section" id="snapSection">
+          <div class="snap-head">
+            <span class="snap-badge">⭐ Tutoriel Exclusif</span>
+            <h1 class="snap-title">Comment envoyer un Snap Rouge</h1>
+            <p class="snap-sub">Suis ces 9 étapes illustrées pour envoyer tes photos GolBody en snap rouge indétectable.</p>
+          </div>
+          <div class="snap-grid">
+            <div class="snap-card">
+              <span class="snap-num">1</span>
+              <img class="snap-shot" hidden alt="">
+              <div class="snap-emoji">👻</div>
+              <div class="snap-step-label">Étape 1</div>
+              <h3>Ouvre Snapchat</h3>
+              <p>Clique sur l'icône des filtres dans l'appareil Snapchat.</p>
+            </div>
+            <div class="snap-card">
+              <span class="snap-num">2</span>
+              <img class="snap-shot" hidden alt="">
+              <div class="snap-emoji">🔍</div>
+              <div class="snap-step-label">Étape 2</div>
+              <h3>Exploration</h3>
+              <p>Ensuite, clique sur la barre de recherche des filtres.</p>
+            </div>
+            <div class="snap-card">
+              <span class="snap-num">3</span>
+              <img class="snap-shot" hidden alt="">
+              <div class="snap-emoji">⌨️</div>
+              <div class="snap-step-label">Étape 3</div>
+              <h3>Recherche</h3>
+              <p>Une fois dans la barre de recherche, tape : UP</p>
+            </div>
+            <div class="snap-card">
+              <span class="snap-num">4</span>
+              <img class="snap-shot" hidden alt="">
+              <div class="snap-emoji">🎞️</div>
+              <div class="snap-step-label">Étape 4</div>
+              <h3>Sélection du filtre</h3>
+              <p>Clique sur le premier filtre 'Camera Roll' qui apparaît.</p>
+            </div>
+            <div class="snap-card">
+              <span class="snap-num">5</span>
+              <img class="snap-shot" hidden alt="">
+              <div class="snap-emoji">🖼️</div>
+              <div class="snap-step-label">Étape 5</div>
+              <h3>Choix de la photo</h3>
+              <p>Choisis la photo de ton choix dans ta galerie que tu souhaites envoyer.</p>
+            </div>
+            <div class="snap-card">
+              <span class="snap-num">6</span>
+              <img class="snap-shot" hidden alt="">
+              <div class="snap-emoji">📸</div>
+              <div class="snap-step-label">Étape 6</div>
+              <h3>Capture</h3>
+              <p>Maintenant, appuie sur le bouton pour prendre la photo.</p>
+            </div>
+            <div class="snap-card">
+              <span class="snap-num">7</span>
+              <img class="snap-shot" hidden alt="">
+              <div class="snap-emoji">🔄</div>
+              <div class="snap-step-label">Étape 7</div>
+              <h3>Finalisation</h3>
+              <p>Relance l'application si nécessaire pour valider le filtre.</p>
+            </div>
+            <div class="snap-card">
+              <span class="snap-num">8</span>
+              <img class="snap-shot" hidden alt="">
+              <div class="snap-emoji">📤</div>
+              <div class="snap-step-label">Étape 8</div>
+              <h3>Envoi</h3>
+              <p>Appuie sur 'Envoyer à' pour choisir tes destinataires.</p>
+            </div>
+            <div class="snap-card">
+              <span class="snap-num">9</span>
+              <img class="snap-shot" hidden alt="">
+              <div class="snap-emoji">✅</div>
+              <div class="snap-step-label">Étape 9</div>
+              <h3>C'est prêt !</h3>
+              <p>Choisis à qui l'envoyer et le snap s'enverra sans aucun filtre, comme un vrai snap rouge !</p>
+            </div>
+          </div>
+          <div class="snap-outro">
+            <h3>C'est aussi simple que ça !</h3>
+            <p>Ton destinataire verra un snap rouge classique, impossible de savoir que la photo vient de ta galerie.</p>
+            <button class="snap-cta" type="button" id="snapGenerateBtn">⚡ Générer une photo maintenant</button>
+          </div>
+        </div>
+
         <!-- GENERATION SECTION -->
         <div id="generationSection">
           <!-- Form Zone -->
@@ -2044,6 +2170,10 @@
             <button class="share-btn" id="shareBtn" type="button">
               <i data-lucide="share-2"></i>
               Partager
+            </button>
+            <button class="share-btn snap-cta-btn" id="snapFromResultBtn" type="button">
+              <i data-lucide="send"></i>
+              Envoyer en Snap Rouge
             </button>
             <button class="newgen-btn" id="newGenBtn" type="button">
               Nouvelle génération
@@ -2572,6 +2702,7 @@
 
     function showGeneration() {
       hideReferralView();
+      hideSnapView();
       generationSection.style.display = 'block';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2585,6 +2716,7 @@
 
     function showSubscription() {
       hideReferralView();
+      hideSnapView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.add('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2599,6 +2731,7 @@
 
     function showAccount() {
       hideReferralView();
+      hideSnapView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.add('is-visible');
@@ -2610,7 +2743,33 @@
       mobileNavAccount.classList.add('active');
     }
 
+    function hideSnapView() {
+      const ss = document.getElementById('snapSection'); if (ss) ss.classList.remove('is-visible');
+      const ns = document.getElementById('navSnap'); if (ns) ns.classList.remove('active');
+      const mns = document.getElementById('mobileNavSnap'); if (mns) mns.classList.remove('active');
+    }
+
+    function showSnap() {
+      hideReferralView();
+      generationSection.style.display = 'none';
+      subscriptionSection.classList.remove('is-visible');
+      accountSection.classList.remove('is-visible');
+      const ss = document.getElementById('snapSection'); if (ss) ss.classList.add('is-visible');
+      navGenerate.classList.remove('active');
+      navSubscription.classList.remove('active');
+      navAccount.classList.remove('active');
+      const ns = document.getElementById('navSnap'); if (ns) ns.classList.add('active');
+      mobileNavGenerate.classList.remove('active');
+      mobileNavSubscription.classList.remove('active');
+      mobileNavAccount.classList.remove('active');
+      const mns = document.getElementById('mobileNavSnap'); if (mns) mns.classList.add('active');
+      try { lucide.createIcons(); } catch (e) {}
+      try { if (typeof gtrack === 'function') gtrack('snap_tab_open'); } catch (e) {}
+    }
+    window.showSnap = showSnap;
+
     function showReferral() {
+      hideSnapView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2647,6 +2806,15 @@
     if (navReferral) navReferral.addEventListener('click', (e) => { e.preventDefault(); showReferral(); });
     const mobileNavReferral = document.getElementById('mobileNavReferral');
     if (mobileNavReferral) mobileNavReferral.addEventListener('click', (e) => { e.preventDefault(); if (typeof closeMobileNav === 'function') closeMobileNav(); showReferral(); });
+
+    const navSnap = document.getElementById('navSnap');
+    if (navSnap) navSnap.addEventListener('click', (e) => { e.preventDefault(); showSnap(); });
+    const mobileNavSnap = document.getElementById('mobileNavSnap');
+    if (mobileNavSnap) mobileNavSnap.addEventListener('click', (e) => { e.preventDefault(); if (typeof closeMobileNav === 'function') closeMobileNav(); showSnap(); });
+    const snapGenerateBtn = document.getElementById('snapGenerateBtn');
+    if (snapGenerateBtn) snapGenerateBtn.addEventListener('click', (e) => { e.preventDefault(); showGeneration(); });
+    const snapFromResultBtn = document.getElementById('snapFromResultBtn');
+    if (snapFromResultBtn) snapFromResultBtn.addEventListener('click', (e) => { e.preventDefault(); showSnap(); });
 
     // ===== Chargement + rendu de la page Invite et Gagne =====
     async function loadReferral() {

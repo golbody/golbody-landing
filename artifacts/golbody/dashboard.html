@@ -1644,6 +1644,37 @@
   .snap-incl-btn:hover{filter:brightness(1.05);}
   .snap-incl-btn svg{width:16px;height:16px;}
   @media(max-width:560px){.snap-grid{grid-template-columns:1fr;}.snap-num{font-size:52px;}}
+
+  /* --- Questionnaire feedback (Gagne 300 crédits) — FEEDBACK 2026-07-19 --- */
+  .fb-section{display:none;max-width:720px;margin:0 auto;padding:8px 4px 48px;}
+  .fb-section.is-visible{display:block;animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
+  .fb-loading{text-align:center;padding:60px 0;color:var(--rd-muted);}
+  .fb-head{text-align:center;margin:6px 0 26px;}
+  .fb-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:var(--rd-accent);background:rgba(255,214,0,.10);border:1px solid rgba(255,214,0,.28);padding:6px 13px;border-radius:999px;}
+  .fb-title{font-size:clamp(26px,4vw,36px);font-weight:900;color:var(--rd-txt);margin:14px 0 10px;}
+  .fb-sub{font-size:14px;color:var(--rd-muted);line-height:1.55;max-width:520px;margin:0 auto;}
+  .fb-done{text-align:center;max-width:480px;margin:0 auto;padding:30px 0;}
+  .fb-done-ic{font-size:48px;margin-bottom:12px;}
+  .fb-done .snap-cta{margin-top:20px;}
+  .fb-questions{display:flex;flex-direction:column;gap:14px;margin-bottom:14px;}
+  .fb-card{background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:16px;padding:18px;}
+  .fb-q-label{display:block;font-size:14.5px;font-weight:700;color:var(--rd-txt);margin-bottom:11px;line-height:1.4;}
+  .fb-q-num{color:var(--rd-accent);font-weight:800;margin-right:6px;}
+  .fb-req{font-size:11.5px;font-weight:600;color:var(--rd-faint);}
+  .fb-ta{width:100%;background:var(--rd-panel2,#141414);border:1px solid var(--rd-bd);border-radius:11px;padding:11px 13px;color:var(--rd-txt);font-size:14px;font-family:inherit;resize:vertical;min-height:62px;line-height:1.5;transition:border-color .15s;box-sizing:border-box;}
+  .fb-ta:focus{outline:none;border-color:var(--rd-accent);}
+  .fb-ta.fb-invalid{border-color:rgba(255,120,120,.5);}
+  .fb-count{text-align:right;font-size:11.5px;color:var(--rd-faint);margin-top:6px;}
+  .fb-count.fb-ok{color:var(--rd-accent);}
+  .fb-rating-card{text-align:center;margin-bottom:14px;}
+  .fb-stars{display:flex;justify-content:center;gap:8px;}
+  .fb-star{background:none;border:none;font-size:34px;line-height:1;cursor:pointer;color:var(--rd-bd);transition:color .12s,transform .12s;padding:0;}
+  .fb-star:hover{transform:scale(1.12);}
+  .fb-star.on{color:var(--rd-accent);}
+  .fb-submit{width:100%;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;font-weight:900;font-size:16px;padding:16px;border-radius:14px;border:none;cursor:pointer;margin-top:6px;transition:filter .15s,transform .15s,opacity .15s;}
+  .fb-submit:hover:not(:disabled){filter:brightness(1.05);transform:translateY(-1px);}
+  .fb-submit:disabled{opacity:.5;cursor:not-allowed;}
+  .fb-foot{text-align:center;font-size:12px;color:var(--rd-faint);margin-top:12px;}
   </style>
 </head>
 <body>
@@ -1970,10 +2001,10 @@
                 <i data-lucide="settings" style="width:16px;height:16px;"></i> Gérer mon abonnement
               </button>
             </div>
-            <div class="acc-manage" id="acc-survey" style="cursor:pointer;" onclick="window.golOpenSurvey&&window.golOpenSurvey()">
+            <div class="acc-manage" id="acc-survey" style="cursor:pointer;" onclick="window.showFeedback&&window.showFeedback()">
               <div class="acc-mtxt">
-                <div class="acc-mt">🎁 Gagne jusqu'à 100 crédits</div>
-                <div class="acc-md">Réponds à l'enquête du mois — +25 crédits par question.</div>
+                <div class="acc-mt">🎁 Gagne 300 crédits</div>
+                <div class="acc-md">Réponds à notre questionnaire (une fois) — 300 crédits offerts.</div>
               </div>
               <span class="acc-btn-gold">Répondre</span>
             </div>
@@ -2079,6 +2110,46 @@
             </div>
           </div>
 
+        </div>
+
+        <!-- FEEDBACK SECTION (Gagne 300 crédits) — FEEDBACK 2026-07-19 -->
+        <div class="fb-section" id="feedbackSection">
+          <div class="fb-loading" id="fbLoading"><div class="snap-spinner"></div><p>Chargement…</p></div>
+
+          <!-- Déjà complété -->
+          <div class="fb-done" id="fbDone" hidden>
+            <div class="fb-done-ic">🎉</div>
+            <h1 class="fb-title">Merci pour ton retour !</h1>
+            <p class="fb-sub">Tu as déjà rempli ce questionnaire et reçu tes <b>300 crédits</b>. C'est une seule fois par compte — mais ton avis nous aide énormément. ❤️</p>
+            <button class="snap-cta" type="button" id="fbDoneGenerate">⚡ Générer une photo</button>
+          </div>
+
+          <!-- Formulaire -->
+          <div class="fb-form" id="fbForm" hidden>
+            <div class="fb-head">
+              <span class="fb-badge">🎁 +300 crédits</span>
+              <h1 class="fb-title">Gagne 300 crédits</h1>
+              <p class="fb-sub">Aide-nous à améliorer GolBody et reçois des crédits bonus. Les réponses doivent être développées (minimum 15 caractères), sans quoi la demande pourra être refusée.</p>
+            </div>
+            <div class="fb-questions" id="fbQuestions"></div>
+            <div class="fb-card fb-rating-card">
+              <div class="fb-q-label">Note globale</div>
+              <div class="fb-stars" id="fbStars">
+                <button type="button" class="fb-star" data-v="1" aria-label="1 étoile">★</button>
+                <button type="button" class="fb-star" data-v="2" aria-label="2 étoiles">★</button>
+                <button type="button" class="fb-star" data-v="3" aria-label="3 étoiles">★</button>
+                <button type="button" class="fb-star" data-v="4" aria-label="4 étoiles">★</button>
+                <button type="button" class="fb-star" data-v="5" aria-label="5 étoiles">★</button>
+              </div>
+            </div>
+            <div class="fb-card">
+              <label class="fb-q-label" for="fbMessage">Un mot pour l'équipe ? <span class="fb-req">obligatoire · min. 15 caractères</span></label>
+              <textarea class="fb-ta" id="fbMessage" rows="3" placeholder="Ton message détaillé ici…"></textarea>
+              <div class="fb-count" id="fbMessageCount">0 / 15</div>
+            </div>
+            <button class="fb-submit" id="fbSubmit" type="button" disabled>Envoyer et gagner 300 crédits</button>
+            <div class="fb-foot">Réponses développées requises pour validation.</div>
+          </div>
         </div>
 
         <!-- GENERATION SECTION -->
@@ -2295,18 +2366,7 @@
     </div>
   </div>
 
-  <div class="sv-modal" id="surveyModal">
-    <div class="sv">
-      <button class="sv-close" id="svClose" type="button">&times;</button>
-      <div class="sv-pill">🎁 Gagne jusqu'à 100 crédits</div>
-      <div class="sv-h">Aide-nous à améliorer GolBody</div>
-      <div class="sv-sub"><b style="color:var(--rd-accent)">+25 crédits</b> par question · 4 questions rapides (+ 1 bonus)</div>
-      <div class="sv-prog"><div class="sv-bar"><span id="svBar"></span></div><div class="sv-earned" id="svEarned">0 / 100 crédits</div></div>
-      <div id="svStep"></div>
-      <button class="sv-later" id="svLater" type="button">Plus tard</button>
-    </div>
-  </div>
-  <div class="sv-plus" id="svPlus">+25 crédits 🔥</div>
+  <!-- (ancien pop-up sondage retiré le 2026-07-19 — remplacé par la section Questionnaire « Gagne 300 crédits ») -->
 
   <script>
     // ===== Supabase =====
@@ -2476,9 +2536,8 @@
             localStorage.removeItem('golbody_ref');
           }
         } catch (e) {}
-        // Onboarding prioritaire au 1er login ; sinon seulement, le survey mensuel
-        const obOpened = window.golMaybeOnboarding ? window.golMaybeOnboarding() : false;
-        if (!obOpened && window.golMaybeSurvey) window.golMaybeSurvey();
+        // Onboarding au 1er login (le pop-up sondage a été retiré — remplacé par la section Questionnaire « Gagne 300 crédits »)
+        if (window.golMaybeOnboarding) window.golMaybeOnboarding();
       } catch (err) {
         console.error('[Profile] Load error:', err);
         currentCredits = 200;
@@ -2720,6 +2779,7 @@
     function showGeneration() {
       hideReferralView();
       hideSnapView();
+      hideFeedbackView();
       generationSection.style.display = 'block';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2734,6 +2794,7 @@
     function showSubscription() {
       hideReferralView();
       hideSnapView();
+      hideFeedbackView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.add('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2749,6 +2810,7 @@
     function showAccount() {
       hideReferralView();
       hideSnapView();
+      hideFeedbackView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.add('is-visible');
@@ -2768,6 +2830,7 @@
 
     function showSnap() {
       hideReferralView();
+      hideFeedbackView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2786,8 +2849,31 @@
     }
     window.showSnap = showSnap;
 
+    function hideFeedbackView() {
+      const fs = document.getElementById('feedbackSection'); if (fs) fs.classList.remove('is-visible');
+    }
+    function showFeedback() {
+      hideReferralView();
+      hideSnapView();
+      generationSection.style.display = 'none';
+      subscriptionSection.classList.remove('is-visible');
+      accountSection.classList.remove('is-visible');
+      navGenerate.classList.remove('active');
+      navSubscription.classList.remove('active');
+      navAccount.classList.remove('active');
+      mobileNavGenerate.classList.remove('active');
+      mobileNavSubscription.classList.remove('active');
+      mobileNavAccount.classList.remove('active');
+      const fs = document.getElementById('feedbackSection'); if (fs) fs.classList.add('is-visible');
+      try { lucide.createIcons(); } catch (e) {}
+      try { if (typeof gtrack === 'function') gtrack('feedback_open'); } catch (e) {}
+      loadFeedback();
+    }
+    window.showFeedback = showFeedback;
+
     function showReferral() {
       hideSnapView();
+      hideFeedbackView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2906,6 +2992,114 @@
     if (snapRecheckBtn) snapRecheckBtn.addEventListener('click', () => { loadSnapAccess(); });
     const snapSeePlansBtn = document.getElementById('snapSeePlansBtn');
     if (snapSeePlansBtn) snapSeePlansBtn.addEventListener('click', () => { showSubscription(); });
+
+    // ===== Questionnaire feedback « Gagne 300 crédits » =====
+    const FB_QUESTIONS = [
+      "En arrivant pour la première fois sur GolBody, as-tu tout de suite compris ce que l'app permet de faire ? Raconte ta première impression.",
+      "Sur les photos que GolBody génère, qu'est-ce qui te déçoit le plus ou que tu aimerais voir s'améliorer en priorité ?",
+      "Qu'est-ce qui te manquerait pour avoir une confiance totale avant de payer (preuves, avis, garanties…) ?",
+      "Dans le parcours upload → options → génération → résultat, une étape t'a-t-elle semblé lente, confuse ou inutile ? Laquelle ?",
+      "Par rapport aux autres apps de retouche physique, où trouves-tu que GolBody est le plus faible aujourd'hui ?",
+      "Quelle fonctionnalité, si on l'ajoutait, te ferait revenir sur GolBody presque tous les jours ?",
+      "Y a-t-il eu un moment précis où tu as failli fermer l'onglet et abandonner ? Décris-le.",
+      "Le fonctionnement des crédits (coût d'une génération, façon d'en gagner) est-il clair pour toi ? Explique.",
+      "Les prix des abonnements te paraissent-ils justifiés par rapport à ce que tu reçois ? Pourquoi ?",
+      "Si tu devais convaincre un ami d'essayer GolBody en une phrase, tu lui dirais quoi exactement ?",
+      "Qu'est-ce qui te retient aujourd'hui de prendre un abonnement, ou de passer à un palier supérieur ?",
+      "Quand tu as payé (ou envisagé de le faire), quel moyen de paiement voulais-tu utiliser en priorité ?",
+      "As-tu rencontré le moindre souci pendant le paiement (blocage, doute, bug) ? Si oui, lequel ?",
+      "Comment est-ce qu'on pourrait rendre l'étape du paiement plus simple ou plus rassurante selon toi ?",
+      "Par quel canal (TikTok, Instagram, un ami, une pub…) as-tu découvert GolBody, et qu'est-ce qui t'a donné envie de tester ?",
+    ];
+    const FB_MIN = 15;
+    let fbRating = 0, fbBuilt = false;
+
+    function fbSetState(which) {
+      const L = document.getElementById('fbLoading'), F = document.getElementById('fbForm'), D = document.getElementById('fbDone');
+      if (L) L.hidden = which !== 'loading';
+      if (F) F.hidden = which !== 'form';
+      if (D) D.hidden = which !== 'done';
+    }
+    function fbUpdateCount(ta, countEl) {
+      const len = (ta.value || '').trim().length;
+      if (countEl) { countEl.textContent = len + ' / ' + FB_MIN; countEl.classList.toggle('fb-ok', len >= FB_MIN); }
+      ta.classList.toggle('fb-invalid', len > 0 && len < FB_MIN);
+    }
+    function fbPaintStars() {
+      document.querySelectorAll('#fbStars .fb-star').forEach((st) => st.classList.toggle('on', (parseInt(st.dataset.v, 10) || 0) <= fbRating));
+    }
+    function fbAllValid() {
+      const tas = document.querySelectorAll('#fbQuestions textarea[data-fb]');
+      if (tas.length !== FB_QUESTIONS.length) return false;
+      for (const ta of tas) if ((ta.value || '').trim().length < FB_MIN) return false;
+      const msg = document.getElementById('fbMessage');
+      if (!msg || (msg.value || '').trim().length < FB_MIN) return false;
+      return fbRating >= 1;
+    }
+    function fbRefresh() { const btn = document.getElementById('fbSubmit'); if (btn) btn.disabled = !fbAllValid(); }
+    function fbBuild() {
+      if (fbBuilt) return;
+      const box = document.getElementById('fbQuestions');
+      if (!box) return;
+      box.innerHTML = FB_QUESTIONS.map((q, idx) =>
+        '<div class="fb-card">' +
+          '<label class="fb-q-label" for="fbq' + idx + '"><span class="fb-q-num">' + (idx + 1) + '.</span>' + snapEsc(q) + '</label>' +
+          '<textarea class="fb-ta" id="fbq' + idx + '" data-fb rows="2" placeholder="Votre réponse développée (minimum 15 caractères)…"></textarea>' +
+          '<div class="fb-count" id="fbc' + idx + '">0 / ' + FB_MIN + '</div>' +
+        '</div>'
+      ).join('');
+      box.querySelectorAll('textarea[data-fb]').forEach((ta, idx) => {
+        ta.addEventListener('input', () => { fbUpdateCount(ta, document.getElementById('fbc' + idx)); fbRefresh(); });
+      });
+      const msg = document.getElementById('fbMessage');
+      if (msg) msg.addEventListener('input', () => { fbUpdateCount(msg, document.getElementById('fbMessageCount')); fbRefresh(); });
+      document.querySelectorAll('#fbStars .fb-star').forEach((st) => st.addEventListener('click', () => { fbRating = parseInt(st.dataset.v, 10) || 0; fbPaintStars(); fbRefresh(); }));
+      fbBuilt = true;
+    }
+    async function loadFeedback() {
+      fbBuild();
+      fbSetState('loading');
+      try {
+        let tok = null;
+        try { const s = await supabaseClient.auth.getSession(); tok = s.data.session && s.data.session.access_token; } catch (e) {}
+        if (!tok) { fbSetState('form'); fbRefresh(); return; }
+        const res = await fetch('https://www.golbody.com/api/feedback', { headers: { 'Authorization': 'Bearer ' + tok } });
+        const d = await res.json().catch(() => ({}));
+        if (res.status === 200 && d && d.done) fbSetState('done');
+        else { fbSetState('form'); fbRefresh(); }
+      } catch (e) { fbSetState('form'); fbRefresh(); }
+    }
+    window.loadFeedback = loadFeedback;
+
+    (function () {
+      const submit = document.getElementById('fbSubmit');
+      if (submit) submit.addEventListener('click', async () => {
+        if (!fbAllValid()) return;
+        submit.disabled = true; const orig = submit.textContent; submit.textContent = 'Envoi…';
+        try {
+          const s = await supabaseClient.auth.getSession();
+          const tok = s.data.session && s.data.session.access_token;
+          if (!tok) { showError('Connecte-toi pour envoyer.'); submit.disabled = false; submit.textContent = orig; return; }
+          const answers = FB_QUESTIONS.map((q, idx) => ({ q, a: (document.getElementById('fbq' + idx).value || '').trim() }));
+          const message = (document.getElementById('fbMessage').value || '').trim();
+          const res = await fetch('https://www.golbody.com/api/feedback', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok },
+            body: JSON.stringify({ answers, rating: fbRating, message }),
+          });
+          const d = await res.json().catch(() => ({}));
+          if (res.status === 200 && (d.credited > 0 || d.already)) {
+            if (typeof d.credits === 'number') { currentCredits = d.credits; try { updateSidebar(); } catch (e) {} }
+            if (d.credited > 0) { try { if (typeof gtrack === 'function') gtrack('feedback_submitted'); } catch (e) {} showError('🎉 Merci ! +300 crédits ajoutés.'); }
+            fbSetState('done');
+          } else {
+            showError('Réponses incomplètes ou trop courtes — chaque champ doit faire au moins 15 caractères.');
+            submit.disabled = false; submit.textContent = orig;
+          }
+        } catch (e) { showError('Erreur réseau. Réessaie.'); submit.disabled = false; submit.textContent = orig; }
+      });
+      const dg = document.getElementById('fbDoneGenerate');
+      if (dg) dg.addEventListener('click', () => showGeneration());
+    })();
 
     // ===== Chargement + rendu de la page Invite et Gagne =====
     async function loadReferral() {

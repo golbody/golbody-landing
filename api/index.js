@@ -41,6 +41,10 @@ const SNAP_STEPS = [
   { n: 8, emoji: '📤', label: 'Étape 8', title: 'Envoi', text: "Appuie sur 'Envoyer à' pour choisir tes destinataires." },
   { n: 9, emoji: '✅', label: 'Étape 9', title: "C'est prêt !", text: "Choisis à qui l'envoyer et le snap s'enverra sans aucun filtre, comme un vrai snap rouge !" },
 ];
+// Questionnaire feedback « Gagne 300 crédits » (1× par compte, réponses développées)
+const FEEDBACK_REWARD = 300;
+const FEEDBACK_MIN_CHARS = 15; // longueur minimale par réponse (et pour le message)
+const FEEDBACK_Q_COUNT = 15;   // nombre de questions attendues
 const WH_PRICES = {
   // Anciens prix (abonnés existants « grandfathered ») — À GARDER pour leurs renouvellements
   'price_1TsVBqACVZ6Qm7icIBz2xjmO': { plan: 'starter', credits: 1000 },
@@ -708,6 +712,54 @@ async function handleSnapTutorial(req, res) {
   return res.status(200).json({ access: true, source: viaPlan ? 'plan' : 'purchase', steps: SNAP_STEPS });
 }
 
+// ===== Questionnaire feedback « Gagne 300 crédits » (1× par compte) =====
+async function handleFeedbackGet(req, res) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+  const r = await supa('GET', `feedback_responses?user_id=eq.${user.id}&select=user_id`);
+  return res.status(200).json({ done: !!firstRow(r), reward: FEEDBACK_REWARD });
+}
+
+async function handleFeedbackPost(body, req, res) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+
+  // ---- Validation SERVEUR (non contournable) : 15 réponses ≥ 15 car + note 1-5 + message ≥ 15 ----
+  const answers = (body && body.answers) || [];
+  if (!Array.isArray(answers) || answers.length !== FEEDBACK_Q_COUNT) return res.status(400).json({ error: 'invalid_answers', reason: 'count' });
+  const clean = [];
+  for (let k = 0; k < answers.length; k++) {
+    const item = answers[k] || {};
+    const q = String(item.q == null ? '' : item.q).slice(0, 300);
+    const a = String(item.a == null ? '' : item.a).trim();
+    if (a.length < FEEDBACK_MIN_CHARS) return res.status(400).json({ error: 'answer_too_short', index: k });
+    clean.push({ q, a: a.slice(0, 2000) });
+  }
+  const rating = parseInt(body && body.rating, 10);
+  if (isNaN(rating) || rating < 1 || rating > 5) return res.status(400).json({ error: 'invalid_rating' });
+  const message = String((body && body.message) || '').trim();
+  if (message.length < FEEDBACK_MIN_CHARS) return res.status(400).json({ error: 'message_too_short' });
+
+  async function currentCredits() { const pr = await supa('GET', `profiles?id=eq.${user.id}&select=credits`); return firstRow(pr) ? firstRow(pr).credits : null; }
+
+  // Insert-first : PK user_id → toute 2e soumission échoue (anti double-crédit / anti-race)
+  const ins = await supa('POST', 'feedback_responses', { user_id: user.id, answers: clean, rating, message: message.slice(0, 4000), credited: FEEDBACK_REWARD });
+  if (ins.status >= 300) return res.status(200).json({ credited: 0, credits: await currentCredits(), already: true });
+
+  let credits = await currentCredits();
+  if (typeof credits === 'number') {
+    credits = credits + FEEDBACK_REWARD;
+    await supa('PATCH', `profiles?id=eq.${user.id}`, { credits });
+  }
+  return res.status(200).json({ credited: FEEDBACK_REWARD, credits });
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
@@ -739,6 +791,8 @@ module.exports = async (req, res) => {
     if (path === '/api/chat' && req.method === 'GET') return await handleChatGet(req, res);
     if (path === '/api/chat' && req.method === 'POST') return await handleChatPost(body, req, res);
     if (path === '/api/snap-tutorial' && req.method === 'GET') return await handleSnapTutorial(req, res);
+    if (path === '/api/feedback' && req.method === 'GET') return await handleFeedbackGet(req, res);
+    if (path === '/api/feedback' && req.method === 'POST') return await handleFeedbackPost(body, req, res);
 
     res.status(404).json({ error: 'Route not found: ' + path });
   } catch (err) {

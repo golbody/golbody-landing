@@ -1612,6 +1612,37 @@
   /* bouton "Envoyer en Snap Rouge" sur l'écran résultat (hérite de .share-btn) */
   .snap-cta-btn{border:1px solid rgba(255,74,74,.55)!important;color:#ff7a7a!important;}
   .snap-cta-btn:hover{background:rgba(255,74,74,.12)!important;color:#ff9a9a!important;}
+  /* --- Paywall Snap Rouge --- */
+  .snap-loading{text-align:center;padding:60px 0;color:var(--rd-muted);}
+  .snap-spinner{width:34px;height:34px;border:3px solid var(--rd-bd);border-top-color:var(--rd-accent);border-radius:50%;margin:0 auto 14px;animation:snapspin .8s linear infinite;}
+  @keyframes snapspin{to{transform:rotate(360deg);}}
+  .snap-paywall{max-width:520px;margin:0 auto;text-align:center;}
+  .snap-lock-ic{width:74px;height:74px;border-radius:20px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;background:rgba(255,74,74,.10);border:1px solid rgba(255,74,74,.32);}
+  .snap-lock-ic svg{width:32px;height:32px;color:#ff5a5a;}
+  .snap-pw-title{font-size:clamp(26px,4vw,36px);font-weight:900;color:var(--rd-txt);margin:0 0 10px;}
+  .snap-pw-sub{font-size:14.5px;color:var(--rd-muted);line-height:1.55;margin:0 auto 26px;max-width:420px;}
+  .snap-price-card{background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:18px;padding:24px;text-align:left;margin-bottom:18px;}
+  .snap-price-row{display:flex;align-items:center;justify-content:space-between;padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--rd-bd);}
+  .snap-price-name{font-size:18px;font-weight:800;color:var(--rd-txt);}
+  .snap-price-amt{font-size:30px;font-weight:900;color:var(--rd-txt);}
+  .snap-price-feats{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:13px;}
+  .snap-price-feats li{display:flex;align-items:center;gap:11px;font-size:14px;color:var(--rd-muted);}
+  .snap-price-feats svg{width:18px;height:18px;color:var(--rd-accent);flex-shrink:0;}
+  .snap-pw-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(135deg,#ff5a5a,#e23b3b);color:#fff;font-weight:900;font-size:16px;padding:16px;border-radius:14px;border:none;cursor:pointer;box-shadow:0 8px 26px rgba(255,74,74,.28);transition:filter .15s,transform .15s;}
+  .snap-pw-btn:hover{filter:brightness(1.06);transform:translateY(-1px);}
+  .snap-pw-btn svg{width:18px;height:18px;}
+  .snap-recheck{display:block;width:100%;background:none;border:none;color:var(--rd-muted);font-size:13px;padding:16px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  .snap-recheck:hover{color:var(--rd-txt);}
+  .snap-incl{background:linear-gradient(180deg,rgba(255,214,0,.06),rgba(255,214,0,.02));border:1px solid rgba(255,214,0,.22);border-radius:18px;padding:22px;text-align:left;margin-top:8px;}
+  .snap-incl-head{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800;color:var(--rd-txt);margin-bottom:16px;}
+  .snap-incl-head svg{width:18px;height:18px;color:var(--rd-accent);}
+  .snap-incl-plan{display:flex;align-items:flex-start;gap:12px;background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:13px;padding:14px 16px;margin-bottom:12px;}
+  .snap-incl-plan svg{width:18px;height:18px;color:var(--rd-accent);flex-shrink:0;margin-top:2px;}
+  .snap-incl-plan b{display:block;font-size:14.5px;color:var(--rd-txt);}
+  .snap-incl-plan span{display:block;font-size:12.5px;color:var(--rd-muted);margin-top:2px;}
+  .snap-incl-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;font-weight:900;font-size:14.5px;padding:14px;border-radius:13px;border:none;cursor:pointer;margin-top:4px;transition:filter .15s;}
+  .snap-incl-btn:hover{filter:brightness(1.05);}
+  .snap-incl-btn svg{width:16px;height:16px;}
   @media(max-width:560px){.snap-grid{grid-template-columns:1fr;}.snap-num{font-size:52px;}}
   </style>
 </head>
@@ -1994,90 +2025,60 @@
 
         <!-- SNAP ROUGE SECTION (tutoriel) -->
         <div class="snap-section" id="snapSection">
-          <div class="snap-head">
-            <span class="snap-badge">⭐ Tutoriel Exclusif</span>
-            <h1 class="snap-title">Comment envoyer un Snap Rouge</h1>
-            <p class="snap-sub">Suis ces 9 étapes illustrées pour envoyer tes photos GolBody en snap rouge indétectable.</p>
+
+          <!-- État CHARGEMENT (vérification d'accès) -->
+          <div class="snap-loading" id="snapLoading">
+            <div class="snap-spinner"></div>
+            <p>Vérification de ton accès…</p>
           </div>
-          <div class="snap-grid">
-            <div class="snap-card">
-              <span class="snap-num">1</span>
-              <img class="snap-shot" hidden alt="">
-              <div class="snap-emoji">👻</div>
-              <div class="snap-step-label">Étape 1</div>
-              <h3>Ouvre Snapchat</h3>
-              <p>Clique sur l'icône des filtres dans l'appareil Snapchat.</p>
+
+          <!-- État VERROUILLÉ (paywall) -->
+          <div class="snap-paywall" id="snapPaywall" hidden>
+            <div class="snap-lock-ic"><i data-lucide="lock"></i></div>
+            <h1 class="snap-pw-title">Tuto Snap Rouge</h1>
+            <p class="snap-pw-sub">Découvre comment envoyer des snaps rouges indétectables avec les photos générées par GolBody.</p>
+            <div class="snap-price-card">
+              <div class="snap-price-row">
+                <span class="snap-price-name">Accès à vie</span>
+                <span class="snap-price-amt">9 €</span>
+              </div>
+              <ul class="snap-price-feats">
+                <li><i data-lucide="check-circle-2"></i> Système exclusif Snap rouge sans média chargé</li>
+                <li><i data-lucide="check-circle-2"></i> Méthode 100% indétectable</li>
+                <li><i data-lucide="check-circle-2"></i> Accès à vie</li>
+              </ul>
             </div>
-            <div class="snap-card">
-              <span class="snap-num">2</span>
-              <img class="snap-shot" hidden alt="">
-              <div class="snap-emoji">🔍</div>
-              <div class="snap-step-label">Étape 2</div>
-              <h3>Exploration</h3>
-              <p>Ensuite, clique sur la barre de recherche des filtres.</p>
-            </div>
-            <div class="snap-card">
-              <span class="snap-num">3</span>
-              <img class="snap-shot" hidden alt="">
-              <div class="snap-emoji">⌨️</div>
-              <div class="snap-step-label">Étape 3</div>
-              <h3>Recherche</h3>
-              <p>Une fois dans la barre de recherche, tape : UP</p>
-            </div>
-            <div class="snap-card">
-              <span class="snap-num">4</span>
-              <img class="snap-shot" hidden alt="">
-              <div class="snap-emoji">🎞️</div>
-              <div class="snap-step-label">Étape 4</div>
-              <h3>Sélection du filtre</h3>
-              <p>Clique sur le premier filtre 'Camera Roll' qui apparaît.</p>
-            </div>
-            <div class="snap-card">
-              <span class="snap-num">5</span>
-              <img class="snap-shot" hidden alt="">
-              <div class="snap-emoji">🖼️</div>
-              <div class="snap-step-label">Étape 5</div>
-              <h3>Choix de la photo</h3>
-              <p>Choisis la photo de ton choix dans ta galerie que tu souhaites envoyer.</p>
-            </div>
-            <div class="snap-card">
-              <span class="snap-num">6</span>
-              <img class="snap-shot" hidden alt="">
-              <div class="snap-emoji">📸</div>
-              <div class="snap-step-label">Étape 6</div>
-              <h3>Capture</h3>
-              <p>Maintenant, appuie sur le bouton pour prendre la photo.</p>
-            </div>
-            <div class="snap-card">
-              <span class="snap-num">7</span>
-              <img class="snap-shot" hidden alt="">
-              <div class="snap-emoji">🔄</div>
-              <div class="snap-step-label">Étape 7</div>
-              <h3>Finalisation</h3>
-              <p>Relance l'application si nécessaire pour valider le filtre.</p>
-            </div>
-            <div class="snap-card">
-              <span class="snap-num">8</span>
-              <img class="snap-shot" hidden alt="">
-              <div class="snap-emoji">📤</div>
-              <div class="snap-step-label">Étape 8</div>
-              <h3>Envoi</h3>
-              <p>Appuie sur 'Envoyer à' pour choisir tes destinataires.</p>
-            </div>
-            <div class="snap-card">
-              <span class="snap-num">9</span>
-              <img class="snap-shot" hidden alt="">
-              <div class="snap-emoji">✅</div>
-              <div class="snap-step-label">Étape 9</div>
-              <h3>C'est prêt !</h3>
-              <p>Choisis à qui l'envoyer et le snap s'enverra sans aucun filtre, comme un vrai snap rouge !</p>
+            <button class="snap-pw-btn" type="button" id="snapUnlockBtn"><i data-lucide="zap"></i> Débloquer pour 9 €</button>
+            <button class="snap-recheck" type="button" id="snapRecheckBtn">J'ai déjà payé — activer mon accès</button>
+            <div class="snap-incl">
+              <div class="snap-incl-head"><i data-lucide="sparkles"></i> Déjà inclus avec un abonnement</div>
+              <div class="snap-incl-plan">
+                <i data-lucide="check-circle-2"></i>
+                <div><b>Pro — 19,90 €/mois</b><span>Snap Rouge inclus + 3 000 crédits/mois</span></div>
+              </div>
+              <div class="snap-incl-plan">
+                <i data-lucide="check-circle-2"></i>
+                <div><b>Ultra — 39,90 €/mois</b><span>Snap Rouge inclus + 7 500 crédits/mois</span></div>
+              </div>
+              <button class="snap-incl-btn" type="button" id="snapSeePlansBtn">Voir les abonnements <i data-lucide="arrow-right"></i></button>
             </div>
           </div>
-          <div class="snap-outro">
-            <h3>C'est aussi simple que ça !</h3>
-            <p>Ton destinataire verra un snap rouge classique, impossible de savoir que la photo vient de ta galerie.</p>
-            <button class="snap-cta" type="button" id="snapGenerateBtn">⚡ Générer une photo maintenant</button>
+
+          <!-- État DÉBLOQUÉ (tutoriel, les 9 étapes sont injectées par l'API) -->
+          <div class="snap-tutorial" id="snapTutorial" hidden>
+            <div class="snap-head">
+              <span class="snap-badge">⭐ Tutoriel Exclusif</span>
+              <h1 class="snap-title">Comment envoyer un Snap Rouge</h1>
+              <p class="snap-sub">Suis ces 9 étapes illustrées pour envoyer tes photos GolBody en snap rouge indétectable.</p>
+            </div>
+            <div class="snap-grid" id="snapCards"></div>
+            <div class="snap-outro">
+              <h3>C'est aussi simple que ça !</h3>
+              <p>Ton destinataire verra un snap rouge classique, impossible de savoir que la photo vient de ta galerie.</p>
+              <button class="snap-cta" type="button" id="snapGenerateBtn">⚡ Générer une photo maintenant</button>
+            </div>
           </div>
+
         </div>
 
         <!-- GENERATION SECTION -->
@@ -2659,6 +2660,22 @@
       canceledBanner.classList.add('is-visible');
       setTimeout(() => canceledBanner.classList.remove('is-visible'), 6000);
     }
+    // Retour de paiement / lien direct vers l'onglet Snap Rouge
+    if (urlParams.get('tab') === 'snap') {
+      setTimeout(() => {
+        try { showSnap(); } catch (e) {}
+        // Après un paiement, le webhook peut accuser un léger retard → on re-vérifie l'accès quelques fois
+        if (urlParams.get('success') === 'true') {
+          let tries = 0;
+          const iv = setInterval(async () => {
+            tries++;
+            let unlocked = false;
+            try { unlocked = await loadSnapAccess(); } catch (e) {}
+            if (unlocked || tries >= 6) clearInterval(iv);
+          }, 2500);
+        }
+      }, 0);
+    }
 
     // ===== Mobile nav =====
     const mobileNavBtn = document.getElementById('mobileNavBtn');
@@ -2765,6 +2782,7 @@
       const mns = document.getElementById('mobileNavSnap'); if (mns) mns.classList.add('active');
       try { lucide.createIcons(); } catch (e) {}
       try { if (typeof gtrack === 'function') gtrack('snap_tab_open'); } catch (e) {}
+      try { loadSnapAccess(); } catch (e) {}
     }
     window.showSnap = showSnap;
 
@@ -2815,6 +2833,79 @@
     if (snapGenerateBtn) snapGenerateBtn.addEventListener('click', (e) => { e.preventDefault(); showGeneration(); });
     const snapFromResultBtn = document.getElementById('snapFromResultBtn');
     if (snapFromResultBtn) snapFromResultBtn.addEventListener('click', (e) => { e.preventDefault(); showSnap(); });
+
+    // ===== Snap Rouge : accès (serveur) + rendu tuto/paywall =====
+    function snapEsc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+    function snapSetState(which) {
+      const L = document.getElementById('snapLoading'), P = document.getElementById('snapPaywall'), T = document.getElementById('snapTutorial');
+      if (L) L.hidden = which !== 'loading';
+      if (P) P.hidden = which !== 'paywall';
+      if (T) T.hidden = which !== 'tutorial';
+    }
+    function snapRenderSteps(steps) {
+      const box = document.getElementById('snapCards');
+      if (!box) return;
+      box.innerHTML = (steps || []).map((s) =>
+        '<div class="snap-card">' +
+          '<span class="snap-num">' + snapEsc(s.n) + '</span>' +
+          '<img class="snap-shot" hidden alt="">' +
+          '<div class="snap-emoji">' + snapEsc(s.emoji) + '</div>' +
+          '<div class="snap-step-label">' + snapEsc(s.label || ('Étape ' + s.n)) + '</div>' +
+          '<h3>' + snapEsc(s.title) + '</h3>' +
+          '<p>' + snapEsc(s.text) + '</p>' +
+        '</div>'
+      ).join('');
+    }
+    let snapAccessLoading = false;
+    async function loadSnapAccess() {
+      if (snapAccessLoading) return false;
+      snapAccessLoading = true;
+      snapSetState('loading');
+      try {
+        let tok = null;
+        try { const s = await supabaseClient.auth.getSession(); tok = s.data.session && s.data.session.access_token; } catch (e) {}
+        if (!tok) { snapSetState('paywall'); try { lucide.createIcons(); } catch (e) {} return false; }
+        const res = await fetch('https://www.golbody.com/api/snap-tutorial', { headers: { 'Authorization': 'Bearer ' + tok } });
+        if (res.status === 200) {
+          const d = await res.json();
+          snapRenderSteps(d && d.steps);
+          snapSetState('tutorial');
+          try { lucide.createIcons(); } catch (e) {}
+          return true;
+        }
+        snapSetState('paywall');
+        try { lucide.createIcons(); } catch (e) {}
+        return false;
+      } catch (e) {
+        snapSetState('paywall');
+        try { lucide.createIcons(); } catch (e) {}
+        return false;
+      } finally {
+        snapAccessLoading = false;
+      }
+    }
+    window.loadSnapAccess = loadSnapAccess;
+
+    const snapUnlockBtn = document.getElementById('snapUnlockBtn');
+    if (snapUnlockBtn) snapUnlockBtn.addEventListener('click', async () => {
+      try {
+        if (typeof gtrack === 'function') gtrack('snap_unlock_click');
+        const u = await ensureUser();
+        if (!u) { showError('Connecte-toi pour débloquer.'); return; }
+        snapUnlockBtn.disabled = true;
+        const res = await fetch('https://www.golbody.com/create-checkout-session', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'snap', user_id: u.id, customerEmail: u.email }),
+        });
+        const d = await res.json();
+        if (d && d.url) { window.location.href = d.url; }
+        else { showError('Paiement indisponible. Réessaie.'); snapUnlockBtn.disabled = false; }
+      } catch (e) { showError('Erreur réseau. Réessaie.'); snapUnlockBtn.disabled = false; }
+    });
+    const snapRecheckBtn = document.getElementById('snapRecheckBtn');
+    if (snapRecheckBtn) snapRecheckBtn.addEventListener('click', () => { loadSnapAccess(); });
+    const snapSeePlansBtn = document.getElementById('snapSeePlansBtn');
+    if (snapSeePlansBtn) snapSeePlansBtn.addEventListener('click', () => { showSubscription(); });
 
     // ===== Chargement + rendu de la page Invite et Gagne =====
     async function loadReferral() {

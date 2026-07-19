@@ -26,6 +26,21 @@ const CREDIT_PACKS = {
   small: { amount: 990, credits: 1000, name: 'Recharge' },
   large: { amount: 1990, credits: 2500, name: 'Recharge Max' },
 };
+// Snap Rouge — déblocage à vie (paiement unique, montant inline → aucun prix Stripe à créer).
+// Accès accordé aussi aux abonnés pro/ultra (voir handleSnapTutorial).
+const SNAP_PRICE = 900; // 9,00 € one-time
+const SNAP_PLANS = ['pro', 'ultra']; // abonnements qui incluent le Snap Rouge
+const SNAP_STEPS = [
+  { n: 1, emoji: '👻', label: 'Étape 1', title: 'Ouvre Snapchat', text: "Clique sur l'icône des filtres dans l'appareil Snapchat." },
+  { n: 2, emoji: '🔍', label: 'Étape 2', title: 'Exploration', text: 'Ensuite, clique sur la barre de recherche des filtres.' },
+  { n: 3, emoji: '⌨️', label: 'Étape 3', title: 'Recherche', text: 'Une fois dans la barre de recherche, tape : UP' },
+  { n: 4, emoji: '🎞️', label: 'Étape 4', title: 'Sélection du filtre', text: "Clique sur le premier filtre 'Camera Roll' qui apparaît." },
+  { n: 5, emoji: '🖼️', label: 'Étape 5', title: 'Choix de la photo', text: 'Choisis la photo de ton choix dans ta galerie que tu souhaites envoyer.' },
+  { n: 6, emoji: '📸', label: 'Étape 6', title: 'Capture', text: 'Maintenant, appuie sur le bouton pour prendre la photo.' },
+  { n: 7, emoji: '🔄', label: 'Étape 7', title: 'Finalisation', text: "Relance l'application si nécessaire pour valider le filtre." },
+  { n: 8, emoji: '📤', label: 'Étape 8', title: 'Envoi', text: "Appuie sur 'Envoyer à' pour choisir tes destinataires." },
+  { n: 9, emoji: '✅', label: 'Étape 9', title: "C'est prêt !", text: "Choisis à qui l'envoyer et le snap s'enverra sans aucun filtre, comme un vrai snap rouge !" },
+];
 const WH_PRICES = {
   // Anciens prix (abonnés existants « grandfathered ») — À GARDER pour leurs renouvellements
   'price_1TsVBqACVZ6Qm7icIBz2xjmO': { plan: 'starter', credits: 1000 },
@@ -195,7 +210,7 @@ async function handleGenerate(body, req, res) {
 async function handleCheckout(body, req, res) {
   if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'STRIPE_SECRET_KEY not configured' });
   if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
-  const { plan, billing, pack, customerEmail, user_id } = body || {};
+  const { plan, billing, pack, type, customerEmail, user_id } = body || {};
   if (!user_id) return res.status(400).json({ error: 'Missing user_id' });
 
   // Crée un nouveau customer Stripe et l'enregistre sur le profil
@@ -235,8 +250,17 @@ async function handleCheckout(body, req, res) {
       cancel_url: `${origin}/dashboard.html?canceled=true`,
       metadata: { user_id, pack, credits: String(pd.credits) },
     };
+  } else if (type === 'snap') {
+    // Déblocage Snap Rouge à vie : paiement unique 9 €, montant inline (pas de prix Stripe pré-créé)
+    params = {
+      mode: 'payment', allow_promotion_codes: true,
+      line_items: [{ price_data: { currency: 'eur', product_data: { name: 'Snap Rouge — Accès à vie' }, unit_amount: SNAP_PRICE }, quantity: 1 }],
+      success_url: `${origin}/dashboard.html?success=true&tab=snap`,
+      cancel_url: `${origin}/dashboard.html?canceled=true&tab=snap`,
+      metadata: { user_id, type: 'snap' },
+    };
   } else {
-    return res.status(400).json({ error: 'Missing plan or pack' });
+    return res.status(400).json({ error: 'Missing plan, pack or type' });
   }
 
   // Crée la session. Si le customer_id stocké est périmé (ancien compte / sandbox →
@@ -327,8 +351,12 @@ async function handleWebhook(rawBody, req, res) {
       const pack = s.metadata && s.metadata.pack;
       const plan = s.metadata && s.metadata.plan;
       const credits = parseInt((s.metadata && s.metadata.credits) || '0', 10);
+      const type = s.metadata && s.metadata.type;
       if (userId && s.customer) await supa('PATCH', `profiles?id=eq.${userId}`, { stripe_customer_id: s.customer });
-      if (pack && credits && userId) {
+      if (type === 'snap' && userId) {
+        // Déblocage Snap Rouge à vie (paiement unique 9 €) — indépendant du plan, conservé à l'annulation
+        await supa('PATCH', `profiles?id=eq.${userId}`, { snap_access: true });
+      } else if (pack && credits && userId) {
         const pr = await supa('GET', `profiles?id=eq.${userId}&select=credits`);
         const cur = (firstRow(pr) && firstRow(pr).credits) || 0;
         await supa('PATCH', `profiles?id=eq.${userId}`, { credits: cur + credits });
@@ -661,6 +689,25 @@ async function handleReferralAttribute(body, req, res) {
   res.status(200).json({ ok: true });
 }
 
+// ===== Snap Rouge (tutoriel verrouillé) =====
+async function handleSnapTutorial(req, res) {
+  if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+
+  const pr = await supa('GET', `profiles?id=eq.${user.id}&select=plan,snap_access`);
+  const p = firstRow(pr) || {};
+  const viaPlan = SNAP_PLANS.includes(p.plan);       // Pro / Ultra → inclus
+  const viaPurchase = p.snap_access === true;         // a payé les 9 € à vie
+  if (!viaPlan && !viaPurchase) {
+    // Verrouillé : on ne renvoie AUCUNE étape (contenu non exposé)
+    return res.status(402).json({ access: false });
+  }
+  return res.status(200).json({ access: true, source: viaPlan ? 'plan' : 'purchase', steps: SNAP_STEPS });
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
@@ -691,6 +738,7 @@ module.exports = async (req, res) => {
     if (path === '/api/referral-attribute' && req.method === 'POST') return await handleReferralAttribute(body, req, res);
     if (path === '/api/chat' && req.method === 'GET') return await handleChatGet(req, res);
     if (path === '/api/chat' && req.method === 'POST') return await handleChatPost(body, req, res);
+    if (path === '/api/snap-tutorial' && req.method === 'GET') return await handleSnapTutorial(req, res);
 
     res.status(404).json({ error: 'Route not found: ' + path });
   } catch (err) {

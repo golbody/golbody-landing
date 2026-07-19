@@ -4484,6 +4484,7 @@
     #gcLauncher .gc-dot{width:8px;height:8px;border-radius:50%;background:#1db954;box-shadow:0 0 0 3px rgba(29,185,84,.25)}
     #gcLauncher .gc-badge{background:#111;color:#FFD600;font-size:11px;font-weight:800;padding:1px 7px;border-radius:100px;min-width:18px;text-align:center;display:none}
     #gcLauncher .gc-badge.on{display:inline-block}
+    #gcLauncher .gc-ic{display:none}
     #gcPanel{position:fixed;right:22px;bottom:22px;z-index:9999;width:340px;max-width:calc(100vw - 40px);height:min(520px,calc(100vh - 120px));background:#141210;border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden;font-family:'Inter',sans-serif}
     #gcPanel.on{display:flex}
     .gc-head{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#1a1813;border-bottom:1px solid rgba(255,255,255,.06)}
@@ -4506,9 +4507,12 @@
     .gc-foot input::placeholder{color:#66666f}
     .gc-foot button{background:linear-gradient(135deg,#FFD600,#e6c000);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;color:#111;font-size:15px;flex:0 0 auto}
     .gc-foot button:disabled{opacity:.5;cursor:default}
-    @media(max-width:480px){#gcPanel{width:calc(100vw - 24px);right:12px;bottom:16px;height:70vh}#gcLauncher{right:14px;bottom:16px}}
+    @media(max-width:480px){#gcPanel{width:calc(100vw - 24px);right:12px;bottom:16px;height:70vh}#gcLauncher{right:14px;bottom:16px;padding:0;width:54px;height:54px;border-radius:50%;justify-content:center;gap:0}#gcLauncher .gc-txt,#gcLauncher .gc-dot{display:none}#gcLauncher .gc-ic{display:block;font-size:24px;line-height:1}#gcLauncher .gc-badge{position:absolute;top:-2px;right:-2px}}
+    /* Zone de sécurité en bas : évite que le lanceur de chat recouvre le CTA « Générer » et la dernière carte Snap */
+    .main-inner{padding-bottom:96px}
+    @media(max-width:900px){.main-inner{padding-bottom:120px}}
   </style>
-  <button id="gcLauncher"><span class="gc-dot"></span> Chat général <span class="gc-badge" id="gcBadge">0</span></button>
+  <button id="gcLauncher"><span class="gc-ic" aria-hidden="true">💬</span><span class="gc-dot"></span> <span class="gc-txt">Chat général</span> <span class="gc-badge" id="gcBadge">0</span></button>
   <div id="gcPanel" role="dialog" aria-label="Chat général">
     <div class="gc-head">
       <div class="gc-av">💬</div>

@@ -401,6 +401,55 @@
       opacity: 1;
     }
 
+    /* Gender toggle */
+    .gender-toggle-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .gender-toggle {
+      display: flex;
+      position: relative;
+      background: #1a1a2e;
+      border: 1px solid rgba(255,214,0,0.15);
+      border-radius: 999px;
+      padding: 4px;
+      width: 220px;
+    }
+    .gender-slider {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      border-radius: 999px;
+      background: linear-gradient(135deg, #FFD600, #ccaa00);
+      box-shadow: 0 4px 14px rgba(255,214,0,0.25);
+      transition: transform 0.3s cubic-bezier(0.34,1.4,0.5,1);
+      z-index: 0;
+    }
+    .gender-toggle.female .gender-slider {
+      transform: translateX(100%);
+    }
+    .gender-toggle button {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      border: none;
+      background: transparent;
+      color: #666;
+      padding: 9px 0;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      transition: color 0.22s;
+    }
+    .gender-toggle button.active {
+      color: #111;
+    }
+
     @keyframes uploadGlow {
       0%, 100% { box-shadow: 0 0 0 0 rgba(204, 170, 0, 0); border-color: rgba(255, 214, 0, 0.3); }
       50% { box-shadow: 0 0 20px 4px rgba(204, 170, 0, 0.3); border-color: rgba(204, 170, 0, 0.6); }
@@ -1978,11 +2027,20 @@
             <input type="file" class="upload-input" id="cameraInput" accept="image/*" capture="environment">
           </div>
 
+          <!-- Gender toggle -->
+          <div class="gender-toggle-wrap">
+            <div class="gender-toggle" id="genderToggle">
+              <div class="gender-slider"></div>
+              <button type="button" class="active" id="genderMale">👨 Homme</button>
+              <button type="button" id="genderFemale">👩 Femme</button>
+            </div>
+          </div>
+
           <!-- Prompt principal (visible direct) -->
           <div class="prompt-main">
             <div class="opt-lbl pm-lbl">✍️ Écris ce que tu veux</div>
             <textarea class="prompt-extra" id="promptExtra" placeholder="Ex : rends-moi plus musclé et sec 💪" rows="3"></textarea>
-            <div class="prompt-helper">Pas d'idée&nbsp;? Laisse vide et clique <b>Générer</b> — on te muscle par défaut.</div>
+            <div class="prompt-helper" id="promptHelper">Pas d'idée&nbsp;? Laisse vide et clique <b>Générer</b> — on te muscle par défaut.</div>
           </div>
 
           <!-- Toggle zones (optionnel) -->
@@ -1994,7 +2052,7 @@
           </button>
 
           <div class="opt-body" id="optBody">
-            <!-- Transformation Options -->
+            <!-- Transformation Options — Homme -->
             <div class="transform-grid" id="transformGrid">
               <button type="button" class="transform-btn" data-value="Make the biceps bigger"><span class="em">💪</span> Biceps</button>
               <button type="button" class="transform-btn" data-value="Make the shoulders wider"><span class="em">🏋️</span> Épaules</button>
@@ -2011,6 +2069,22 @@
               <button type="button" class="transform-btn" data-value="Add visible veins and vascularity on the arms"><span class="em">🩸</span> Vascularité</button>
               <button type="button" class="transform-btn" data-value="Give the skin a natural sun tan"><span class="em">🌞</span> Bronzage</button>
               <button type="button" class="transform-btn" data-value="Make the jawline sharper and more defined"><span class="em">🗿</span> Mâchoire</button>
+              <button type="button" class="transform-btn" data-value="Make the skin clearer and smoother"><span class="em">✨</span> Peau nette</button>
+            </div>
+
+            <!-- Transformation Options — Femme (hidden by default) -->
+            <div class="transform-grid" id="transformGridFemale" style="display:none;">
+              <button type="button" class="transform-btn" data-value="FEMALE_slim_waist"><span class="em">⌛</span> Taille fine</button>
+              <button type="button" class="transform-btn" data-value="FEMALE_flat_belly"><span class="em">🔥</span> Ventre plat</button>
+              <button type="button" class="transform-btn" data-value="FEMALE_toned_abs"><span class="em">💎</span> Abdos toniques</button>
+              <button type="button" class="transform-btn" data-value="FEMALE_lifted_glutes"><span class="em">🍑</span> Fessiers galbés</button>
+              <button type="button" class="transform-btn" data-value="FEMALE_toned_thighs"><span class="em">🦵</span> Cuisses toniques</button>
+              <button type="button" class="transform-btn" data-value="FEMALE_lean_body"><span class="em">📐</span> Corps affiné</button>
+              <button type="button" class="transform-btn" data-value="FEMALE_hourglass"><span class="em">✨</span> Silhouette sablier</button>
+              <button type="button" class="transform-btn" data-value="FEMALE_toned_arms"><span class="em">💪</span> Bras toniques</button>
+              <button type="button" class="transform-btn" data-value="FEMALE_toned_back"><span class="em">🔙</span> Dos affiné</button>
+              <button type="button" class="transform-btn" data-value="FEMALE_toned_calves"><span class="em">🦿</span> Mollets fins</button>
+              <button type="button" class="transform-btn" data-value="Give the skin a natural sun tan"><span class="em">🌞</span> Bronzage</button>
               <button type="button" class="transform-btn" data-value="Make the skin clearer and smoother"><span class="em">✨</span> Peau nette</button>
             </div>
 
@@ -2199,7 +2273,41 @@
     const removeFile = document.getElementById('removeFile');
     const generateBtn = document.getElementById('generateBtn');
     const transformGrid = document.getElementById('transformGrid');
+    const transformGridFemale = document.getElementById('transformGridFemale');
     const promptExtra = document.getElementById('promptExtra');
+    const promptHelper = document.getElementById('promptHelper');
+
+    // Gender toggle
+    let currentGender = 'male'; // 'male' | 'female'
+    const genderToggle = document.getElementById('genderToggle');
+    const genderMaleBtn = document.getElementById('genderMale');
+    const genderFemaleBtn = document.getElementById('genderFemale');
+
+    function setGender(g) {
+      currentGender = g;
+      if (g === 'female') {
+        genderToggle.classList.add('female');
+        genderMaleBtn.classList.remove('active');
+        genderFemaleBtn.classList.add('active');
+        transformGrid.style.display = 'none';
+        transformGridFemale.style.display = '';
+        promptExtra.placeholder = 'Ex : affine ma taille et aplatis mon ventre 🔥';
+        promptHelper.innerHTML = 'Pas d\'idée&nbsp;? Laisse vide et clique <b>Générer</b> — on affine ta silhouette par défaut.';
+      } else {
+        genderToggle.classList.remove('female');
+        genderFemaleBtn.classList.remove('active');
+        genderMaleBtn.classList.add('active');
+        transformGrid.style.display = '';
+        transformGridFemale.style.display = 'none';
+        promptExtra.placeholder = 'Ex : rends-moi plus musclé et sec 💪';
+        promptHelper.innerHTML = 'Pas d\'idée&nbsp;? Laisse vide et clique <b>Générer</b> — on te muscle par défaut.';
+      }
+      // Deselect all buttons
+      document.querySelectorAll('.transform-btn.selected').forEach(b => b.classList.remove('selected'));
+    }
+
+    genderMaleBtn.addEventListener('click', () => setGender('male'));
+    genderFemaleBtn.addEventListener('click', () => setGender('female'));
     const logoutBtn = document.getElementById('logoutBtn');
     const userEmail = document.getElementById('user-email');
     const userCredits = document.getElementById('user-credits');
@@ -3181,7 +3289,7 @@
       // On GARDE la photo (pas de clearFile) → l'utilisateur peut relancer un prompt sur la
       // même photo sans re-uploader. Pour changer de photo : bouton « Supprimer la photo ».
       promptExtra.value = '';
-      transformGrid.querySelectorAll('.transform-btn').forEach(btn => btn.classList.remove('selected'));
+      document.querySelectorAll('.transform-btn.selected').forEach(btn => btn.classList.remove('selected'));
       if (typeof refreshOptCnt === 'function') refreshOptCnt();
       resultZone.style.display = 'none';
       resultImage.src = '';
@@ -3199,7 +3307,7 @@
     const optBody = document.getElementById('optBody');
     const optCnt = document.getElementById('optCnt');
     function refreshOptCnt() {
-      const n = transformGrid.querySelectorAll('.transform-btn.selected').length;
+      const n = document.querySelectorAll('.transform-btn.selected').length;
       if (optCnt) {
         if (n > 0) { optCnt.style.display = ''; optCnt.textContent = n; }
         else { optCnt.style.display = 'none'; }
@@ -3212,7 +3320,7 @@
         formZone.classList.toggle('opts-open');
       });
     }
-    transformGrid.querySelectorAll('.transform-btn').forEach(btn => {
+    document.querySelectorAll('.transform-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         btn.classList.toggle('selected');
         refreshOptCnt();
@@ -3221,20 +3329,23 @@
     refreshOptCnt();
 
     // ===== Chargement narratif (étapes + barre) =====
-    const LOAD_STEPS = ['Analyse de ta photo…','Détection de la morphologie…','On sculpte les muscles…','Ajout de la définition & du relief…','Rendu photoréaliste…','Finalisation…'];
+    const LOAD_STEPS_MALE = ['Analyse de ta photo…','Détection de la morphologie…','On sculpte les muscles…','Ajout de la définition & du relief…','Rendu photoréaliste…','Finalisation…'];
+    const LOAD_STEPS_FEMALE = ['Analyse de ta photo…','Détection de la morphologie…','Affinement de la silhouette…','Galbage & tonification…','Rendu photoréaliste…','Finalisation…'];
+    const LOAD_STEPS = LOAD_STEPS_MALE; // kept for reference; actual steps used dynamically below
     let loadIv = null;
     function startLoadSteps() {
+      const steps = currentGender === 'female' ? LOAD_STEPS_FEMALE : LOAD_STEPS_MALE;
       const stepEl = document.getElementById('loadStep'), barEl = document.getElementById('loadBar');
       let i = 0;
-      if (stepEl) stepEl.textContent = LOAD_STEPS[0];
+      if (stepEl) stepEl.textContent = steps[0];
       if (barEl) barEl.style.width = '10%';
       loadIv = setInterval(() => {
         i++;
-        if (i < LOAD_STEPS.length - 1) {
-          if (stepEl) stepEl.textContent = LOAD_STEPS[i];
+        if (i < steps.length - 1) {
+          if (stepEl) stepEl.textContent = steps[i];
           if (barEl) barEl.style.width = (10 + i * 15) + '%';
         } else {
-          if (stepEl) stepEl.textContent = LOAD_STEPS[LOAD_STEPS.length - 1];
+          if (stepEl) stepEl.textContent = steps[steps.length - 1];
           if (barEl) barEl.style.width = '90%';
           clearInterval(loadIv); loadIv = null;
         }
@@ -3422,6 +3533,18 @@
       "Give the skin a natural sun tan": "Keep this as a real photograph of the same person. Give the skin a natural, even golden sun tan that makes existing tone and muscle definition stand out, keeping it warm, realistic and healthy, never orange or fake. Keep realistic skin texture and pores, with natural highlights and shadows consistent with the photo original light source and intensity. Keep the exact same face, identity, pose, angle, background and clothing. The result must look like a genuine unretouched photograph, fully realistic and undetectable, never plastic or airbrushed. Do not change body shape or proportions.",
       "Make the jawline sharper and more defined": "Keep this as a real photograph of the same person. Make the jawline clearly sharper, more chiseled and defined, with a stronger, more masculine jaw and reduced softness under the chin, while keeping the face fully recognizable as the same person. Keep realistic skin texture and pores, with natural highlights and shadows consistent with the photo original light source and intensity. Keep the exact same face, identity, pose, angle, background and clothing. The result must look like a genuine unretouched photograph, fully realistic and undetectable, never plastic or airbrushed. Do not change body shape or proportions.",
       "Make the skin clearer and smoother": "Keep this as a real photograph of the same person. Make the skin clearly clearer, smoother and healthier, removing blemishes, redness and imperfections while keeping natural skin texture and pores. Keep realistic skin texture and pores, with natural highlights and shadows consistent with the photo original light source and intensity. Keep the exact same face, identity, pose, angle, background and clothing. The result must look like a genuine unretouched photograph, fully realistic and undetectable, never plastic or airbrushed. Do not change body shape or proportions.",
+
+      // Female-specific prompts
+      "FEMALE_slim_waist": "Keep this as a real photograph of the same woman. Clearly and visibly slim and narrow the waist, pulling it in significantly to create a pronounced hourglass silhouette. The waist must be noticeably smaller — this change MUST be clearly visible. If the waist is covered by clothing, reshape the clothing naturally around the slimmer waist so the change reads clearly. Render the edit with photorealistic three-dimensional volume: accurate highlights, mid-tones and cast shadows following the photo original light direction and intensity. Keep the exact same face, identity, pose, angle, framing, background and skin tone. The result must look like a genuine unretouched photograph, fully realistic and undetectable.",
+      "FEMALE_flat_belly": "Keep this as a real photograph of the same woman. Give her a clearly flat, toned and smooth stomach — this change MUST be very visible in the result. Reduce any belly roundness, creating a lean and firm midsection. If the belly is covered by clothing, let the fabric fall flat and smooth to show the flatter stomach clearly. Render the edit with photorealistic three-dimensional volume: accurate highlights, mid-tones and cast shadows following the photo original light direction and intensity, with natural skin texture. Keep the exact same face, identity, pose, angle, framing, background and skin tone. The result must look like a genuine unretouched photograph, fully realistic and undetectable.",
+      "FEMALE_toned_abs": "Keep this as a real photograph of the same woman. Give her a clearly toned, firm feminine midsection with subtle but visible abdominal definition — a flat stomach with light ab outline and tight obliques, athletic without being overly muscular. This change MUST be clearly visible. If the belly area is visible, show the toned skin directly. Render the edit with photorealistic three-dimensional volume: accurate highlights, mid-tones and shadows following the photo original lighting. Keep the exact same face, identity, pose, angle, framing, background and skin tone. The result must look like a genuine unretouched photograph, fully realistic and undetectable.",
+      "FEMALE_lifted_glutes": "Keep this as a real photograph of the same woman. Make the glutes clearly more round, lifted, firm and sculpted — a significant visible improvement. Show the shape through clothing if needed: tighter, fuller fit across the glutes. Render the added volume with photorealistic three-dimensional shadows, highlights and skin texture consistent with the photo original light source. Keep the exact same face, identity, pose, angle, framing and background. The result must look like a genuine unretouched photograph, fully realistic and undetectable.",
+      "FEMALE_toned_thighs": "Keep this as a real photograph of the same woman. Make the thighs clearly more toned, firm and lean — reducing soft tissue and giving an athletic, sculpted look. This change MUST be clearly visible. Show the difference through clothing if needed. Render the edit with photorealistic three-dimensional volume: accurate highlights, mid-tones and shadows following the photo original lighting. Keep the exact same face, identity, pose, angle, framing, background and skin tone. The result must look like a genuine unretouched photograph, fully realistic and undetectable.",
+      "FEMALE_lean_body": "Keep this as a real photograph of the same woman. Make the whole body clearly leaner, more toned and sculpted, with a noticeably slimmer silhouette: flatter stomach, slimmer waist, tighter arms and legs. This change MUST be clearly visible. Render the edit with photorealistic three-dimensional volume: accurate highlights, mid-tones and cast shadows following the photo original light direction and intensity, with natural skin texture. Keep the exact same face, identity, pose, angle, framing and background. The result must look like a genuine unretouched photograph, fully realistic and undetectable.",
+      "FEMALE_hourglass": "Keep this as a real photograph of the same woman. Give her a pronounced, clearly visible hourglass silhouette: significantly narrower waist, slightly fuller hips and bust, creating a classic feminine hourglass figure. This transformation MUST be very visible. Reshape clothing naturally around the new silhouette. Render the edit with photorealistic three-dimensional volume: accurate highlights, mid-tones and cast shadows following the photo original light direction, with natural skin texture. Keep the exact same face, identity, pose, angle, framing and background. The result must look like a genuine unretouched photograph, fully realistic and undetectable.",
+      "FEMALE_toned_arms": "Keep this as a real photograph of the same woman. Make the arms clearly more toned, firm and lean — removing soft tissue and showing defined, athletic feminine arm muscles. This change MUST be clearly visible. Render the edit with photorealistic three-dimensional volume: accurate highlights, mid-tones and shadows following the photo original lighting, with natural skin texture. Keep the exact same face, identity, pose, angle, framing, background and clothing. The result must look like a genuine unretouched photograph, fully realistic and undetectable.",
+      "FEMALE_toned_back": "Keep this as a real photograph of the same woman. Make the back clearly more toned, defined and lean — with a visible feminine V-line taper and reduced back fat. This change MUST be clearly visible. Render the edit with photorealistic three-dimensional volume: accurate highlights, mid-tones and shadows following the photo original lighting. Keep the exact same face, identity, pose, angle, framing, background and clothing. The result must look like a genuine unretouched photograph, fully realistic and undetectable.",
+      "FEMALE_toned_calves": "Keep this as a real photograph of the same woman. Make the calves clearly more toned, defined and shapely — athletic and lean, not overly bulky. This change MUST be clearly visible. Render the edit with photorealistic three-dimensional volume: accurate highlights, mid-tones and shadows following the photo original lighting. Keep the exact same face, identity, pose, angle, framing, background and clothing. The result must look like a genuine unretouched photograph, fully realistic and undetectable.",
     };
 
     // ===== Generate =====
@@ -3444,18 +3567,29 @@
         const imageUrl = await fileToDataUrl(currentFile);
         lastInputDataUrl = imageUrl; // pour le backup si l'user va payer
 
-        const selected = Array.from(transformGrid.querySelectorAll('.transform-btn.selected')).map(btn => btn.dataset.value);
+        // Collect selected buttons from whichever grid is active
+        const activeGrid = currentGender === 'female' ? transformGridFemale : transformGrid;
+        const selected = Array.from(activeGrid.querySelectorAll('.transform-btn.selected')).map(btn => btn.dataset.value);
         const extra = promptExtra.value.trim();
-        let promptText = "Keep this as a real photograph of the same person. Transform the body into a significantly more muscular and athletic physique: fuller chest, broader shoulders, bigger arms, defined six-pack abs and a lean V-taper. Render every added muscle with photorealistic three-dimensional volume: accurate highlights, mid-tones and cast shadows that follow the photo original light source, direction and intensity, with natural skin texture and pores. Keep the exact same face, skin tone, hair, clothing, pose and background. The result must look like a genuine unretouched photograph, fully realistic and undetectable, never plastic, airbrushed or CGI.";
-        if (selected.length > 0) {
-          const detailedPrompts = selected.map(key => PROMPTS[key] || key);
-          promptText = detailedPrompts.join('. ');
-          if (extra) promptText += ' Additionally: ' + extra + '.';
-        } else if (extra) {
-          // Texte libre : on MÈNE avec la demande de l'user, on la rend impérative, et on ne
-          // préserve QUE l'identité (surtout PAS les vêtements, sinon les retouches peau/épaule
-          // deviennent impossibles). nano-banana suit très bien une instruction directe.
-          promptText = "You are editing this real photograph of a person. Apply this exact edit now: " + extra + ". This change MUST be clearly visible in the result — do not return the image unchanged. Keep the same face and identity, the same pose, camera angle, framing and background. Clothing rule: by DEFAULT keep the person's exact same clothes. If the edit changes the body or physique (for example 'more muscular'), show it naturally THROUGH the existing clothes (fuller sleeves, broader shoulders, tighter fit) and do NOT undress the person. ONLY if the edit truly requires bare skin that is currently covered (for example a tan line, a tattoo, or skin tone on a covered area) may you uncover just that specific area, minimally, and nothing else. Match the original lighting, shadows and skin texture so it looks like a genuine unretouched photograph, never plastic or CGI. Change only what the requested edit needs and leave everything else untouched.";
+        let promptText;
+        if (currentGender === 'female') {
+          promptText = "Keep this as a real photograph of the same woman. Give her a clearly more toned, lean and sculpted feminine body: slimmer waist, flatter and more toned stomach, firmer and lifted glutes, and an overall leaner silhouette. Every change MUST be clearly visible and significant — do not return the image unchanged. Reshape clothing naturally around the new body so the transformation reads clearly through the fabric. Render every change with photorealistic three-dimensional volume: accurate highlights, mid-tones and cast shadows following the photo original light direction and intensity, with natural skin texture and pores. Keep the exact same face, skin tone, hair, pose and background. The result must look like a genuine unretouched photograph, fully realistic and undetectable, never plastic, airbrushed or CGI.";
+          if (selected.length > 0) {
+            const detailedPrompts = selected.map(key => PROMPTS[key] || key);
+            promptText = detailedPrompts.join(' ');
+            if (extra) promptText += ' Additionally: ' + extra + '.';
+          } else if (extra) {
+            promptText = "You are editing this real photograph of a woman. Apply this exact feminine body transformation now: " + extra + ". This change MUST be clearly and significantly visible in the result — do not return the image unchanged. Keep the same face and identity, the same pose, camera angle, framing and background. Keep the exact same clothing. When the transformation affects the body shape (for example slimmer waist, flatter belly, toned abs), make the new silhouette clearly visible — reshape the clothing naturally around the transformed body so the change reads clearly through the fabric, with realistic creases and fit. Match the original lighting, shadows and skin texture so it looks like a genuine unretouched photograph, never plastic or CGI. Change only what the requested edit needs and leave everything else untouched.";
+          }
+        } else {
+          promptText = "Keep this as a real photograph of the same person. Transform the body into a significantly more muscular and athletic physique: fuller chest, broader shoulders, bigger arms, defined six-pack abs and a lean V-taper. Render every added muscle with photorealistic three-dimensional volume: accurate highlights, mid-tones and cast shadows that follow the photo original light source, direction and intensity, with natural skin texture and pores. Keep the exact same face, skin tone, hair, clothing, pose and background. The result must look like a genuine unretouched photograph, fully realistic and undetectable, never plastic, airbrushed or CGI.";
+          if (selected.length > 0) {
+            const detailedPrompts = selected.map(key => PROMPTS[key] || key);
+            promptText = detailedPrompts.join('. ');
+            if (extra) promptText += ' Additionally: ' + extra + '.';
+          } else if (extra) {
+            promptText = "You are editing this real photograph of a person. Apply this exact edit now: " + extra + ". This change MUST be clearly visible in the result — do not return the image unchanged. Keep the same face and identity, the same pose, camera angle, framing and background. Clothing rule: by DEFAULT keep the person's exact same clothes. If the edit changes the body or physique (for example 'more muscular'), show it naturally THROUGH the existing clothes (fuller sleeves, broader shoulders, tighter fit) and do NOT undress the person. ONLY if the edit truly requires bare skin that is currently covered (for example a tan line, a tattoo, or skin tone on a covered area) may you uncover just that specific area, minimally, and nothing else. Match the original lighting, shadows and skin texture so it looks like a genuine unretouched photograph, never plastic or CGI. Change only what the requested edit needs and leave everything else untouched.";
+          }
         }
 
         const session = await supabaseClient.auth.getSession();

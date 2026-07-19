@@ -311,8 +311,14 @@ async function handleUseCredit(body, res) {
   res.status(200).json({ success: true, credits: newCredits });
 }
 
-async function handleProfile(userId, res) {
+async function handleProfile(userId, req, res) {
   if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
+  // Auth : Bearer token Supabase obligatoire ET le token doit appartenir au userId demandé.
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+  if (user.id !== userId) return res.status(403).json({ error: 'Forbidden' });
   const pr = await supa('GET', `profiles?id=eq.${userId}&select=credits,plan,stripe_customer_id,stripe_subscription_id,credits_reset_date`);
   const profile = firstRow(pr);
   if (!profile) return res.status(404).json({ error: 'Profile not found' });
@@ -917,7 +923,7 @@ module.exports = async (req, res) => {
     if (path === '/create-checkout-session' && req.method === 'POST') return await handleCheckout(body, req, res);
     if (path === '/create-portal-session' && req.method === 'POST') return await handlePortal(body, req, res);
     if (path === '/use-credit' && req.method === 'POST') return await handleUseCredit(body, res);
-    if (path.startsWith('/profile/') && req.method === 'GET') return await handleProfile(path.split('/').pop(), res);
+    if (path.startsWith('/profile/') && req.method === 'GET') return await handleProfile(path.split('/').pop(), req, res);
     if (path === '/api/admin-stats' && req.method === 'GET') return await handleAdminStats(req, res);
     if (path === '/api/survey-answer' && req.method === 'POST') return await handleSurveyAnswer(body, req, res);
     if (path === '/api/referral-info' && req.method === 'GET') return await handleReferralInfo(req, res);

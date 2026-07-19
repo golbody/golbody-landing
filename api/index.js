@@ -219,8 +219,14 @@ async function handleGenerate(body, req, res) {
 async function handleCheckout(body, req, res) {
   if (!STRIPE_SECRET_KEY) return res.status(500).json({ error: 'STRIPE_SECRET_KEY not configured' });
   if (!SUPABASE_SERVICE_ROLE_KEY) return res.status(500).json({ error: 'SUPABASE_SERVICE_ROLE_KEY not configured' });
-  const { plan, billing, pack, type, customerEmail, user_id } = body || {};
-  if (!user_id) return res.status(400).json({ error: 'Missing user_id' });
+  // Auth : user_id et email dérivés du token Supabase, jamais du corps (anti-spam / anti-IDOR).
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (!token) return res.status(401).json({ error: 'Missing Authorization header' });
+  const user = await validateSupabaseToken(token);
+  if (!user) return res.status(401).json({ error: 'Invalid or expired token' });
+  const user_id = user.id;
+  const customerEmail = user.email;
+  const { plan, billing, pack, type } = body || {};
 
   // Crée un nouveau customer Stripe et l'enregistre sur le profil
   async function createCustomer() {

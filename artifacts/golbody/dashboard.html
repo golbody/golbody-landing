@@ -3336,8 +3336,9 @@
         const u = await ensureUser();
         if (!u) { showError('Connecte-toi pour débloquer.'); return; }
         snapUnlockBtn.disabled = true;
+        const ckSnap = await supabaseClient.auth.getSession();
         const res = await fetch('https://www.golbody.com/create-checkout-session', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (ckSnap.data.session && ckSnap.data.session.access_token) },
           body: JSON.stringify({ type: 'snap', user_id: u.id, customerEmail: u.email }),
         });
         const d = await res.json();
@@ -3733,9 +3734,10 @@
           const originalText = btn.textContent;
           btn.textContent = 'Chargement...';
           console.log('[Subscribe] Calling /create-checkout-session with plan:', plan, 'billing:', billingMode, 'userId:', user.id);
+          const ckSub = await supabaseClient.auth.getSession();
           const res = await fetch('https://www.golbody.com/create-checkout-session', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (ckSub.data.session && ckSub.data.session.access_token) },
             body: JSON.stringify({
               plan,
               billing: billingMode,
@@ -3779,9 +3781,10 @@
           btn.disabled = true;
           const originalText = btn.textContent;
           btn.textContent = 'Chargement...';
+          const ckPack = await supabaseClient.auth.getSession();
           const res = await fetch('https://www.golbody.com/create-checkout-session', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (ckPack.data.session && ckPack.data.session.access_token) },
             body: JSON.stringify({
               pack,
               customerEmail: user.email,
@@ -4002,9 +4005,10 @@
         const original = btn.textContent;
         try {
           btn.disabled = true; btn.textContent = '…';
+          const ckPw = await supabaseClient.auth.getSession();
           const res = await fetch('https://www.golbody.com/create-checkout-session', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (ckPw.data.session && ckPw.data.session.access_token) },
             body: JSON.stringify({ plan, billing: 'monthly', customerEmail: user.email, user_id: user.id }),
           });
           const data = await res.json();

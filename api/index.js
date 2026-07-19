@@ -137,6 +137,14 @@ function supa(method, pathAndQuery, bodyObj) {
 }
 function firstRow(r) { return (Array.isArray(r.body) && r.body[0]) ? r.body[0] : null; }
 
+// Date du PROCHAIN renouvellement d'un abonnement Stripe (mensuel ou annuel), au format YYYY-MM-DD.
+// current_period_end est au niveau subscription (anciennes versions API) ou au niveau item (versions récentes « basil »).
+function subRenewalDate(sub) {
+  const it = sub && sub.items && sub.items.data && sub.items.data[0];
+  const ts = (sub && sub.current_period_end) || (it && it.current_period_end);
+  return ts ? new Date(ts * 1000).toISOString().split('T')[0] : null;
+}
+
 // ===== Auth (génération) =====
 async function validateSupabaseToken(token) {
   const result = await httpsRequest({
@@ -418,7 +426,7 @@ async function handleWebhook(rawBody, req, res) {
           }
           const today = new Date().toISOString().split('T')[0];
           for (const p of profiles) {
-            await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: info.plan, stripe_customer_id: sub.customer, stripe_subscription_id: sub.id, credits: info.credits, credits_reset_date: today });
+            await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: info.plan, stripe_customer_id: sub.customer, stripe_subscription_id: sub.id, credits: info.credits, credits_reset_date: subRenewalDate(sub) || today });
           }
         }
       }
@@ -444,7 +452,7 @@ async function handleWebhook(rawBody, req, res) {
           const months = (p.loyalty_months || 0) + 1;
           const bonus = Math.min(months, 5) * 100;
           const newLoyalty = (p.loyalty_credits || 0) + bonus;
-          await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: info.plan, credits: info.credits, credits_reset_date: today, loyalty_months: months, loyalty_credits: newLoyalty });
+          await supa('PATCH', `profiles?id=eq.${p.id}`, { plan: info.plan, credits: info.credits, credits_reset_date: subRenewalDate(sub) || today, loyalty_months: months, loyalty_credits: newLoyalty });
         }
       }
     }

@@ -3394,7 +3394,7 @@
       set('cdH', coPad(Math.floor((s % 86400) / 3600)));
       set('cdM', coPad(Math.floor((s % 3600) / 60)));
       set('cdS', coPad(s % 60));
-      set('coDays', String(Math.max(0, Math.ceil(s / 86400))));
+      set('coDays', String(Math.max(0, Math.floor(s / 86400))));
     }
     async function loadContest() {
       const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };

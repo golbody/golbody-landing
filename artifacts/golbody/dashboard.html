@@ -4485,8 +4485,8 @@
     #gcLauncher .gc-badge{background:#111;color:#FFD600;font-size:11px;font-weight:800;padding:1px 7px;border-radius:100px;min-width:18px;text-align:center;display:none}
     #gcLauncher .gc-badge.on{display:inline-block}
     #gcLauncher .gc-ic{display:none}
-    #gcPanel{position:fixed;right:22px;bottom:22px;z-index:9999;width:340px;max-width:calc(100vw - 40px);height:min(520px,calc(100vh - 120px));background:#141210;border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden;font-family:'Inter',sans-serif}
-    #gcPanel.on{display:flex}
+    #gcPanel{position:fixed;right:22px;bottom:152px;z-index:9999;width:340px;max-width:calc(100vw - 40px);height:min(520px,calc(100vh - 240px));background:#141210;border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.6);display:flex;flex-direction:column;overflow:hidden;font-family:'Inter',sans-serif;opacity:0;visibility:hidden;transform:translateY(10px) scale(.98);transform-origin:bottom right;transition:opacity .2s ease,transform .2s ease,visibility .2s;pointer-events:none}
+    #gcPanel.on{opacity:1;visibility:visible;transform:none;pointer-events:auto}
     .gc-head{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#1a1813;border-bottom:1px solid rgba(255,255,255,.06)}
     .gc-head .gc-av{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#FFD600,#e6c000);display:flex;align-items:center;justify-content:center;font-size:16px}
     .gc-head h4{font-size:14px;font-weight:800;color:#f4f4f5;margin:0;line-height:1.2}
@@ -4507,7 +4507,7 @@
     .gc-foot input::placeholder{color:#66666f}
     .gc-foot button{background:linear-gradient(135deg,#FFD600,#e6c000);border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;color:#111;font-size:15px;flex:0 0 auto}
     .gc-foot button:disabled{opacity:.5;cursor:default}
-    @media(max-width:480px){#gcPanel{width:calc(100vw - 24px);right:12px;bottom:16px;height:70vh}#gcLauncher{right:10px;bottom:92px;padding:0;width:56px;height:56px;border-radius:50%;justify-content:center;gap:0;box-shadow:0 6px 20px rgba(0,0,0,.45),0 0 0 1px rgba(0,0,0,.12)}#gcLauncher .gc-txt,#gcLauncher .gc-dot{display:none}#gcLauncher .gc-ic{display:flex;align-items:center;justify-content:center}#gcLauncher .gc-badge{position:absolute;top:-2px;right:-2px}}
+    @media(max-width:480px){#gcPanel{width:calc(100vw - 24px);right:12px;bottom:160px;height:min(60vh,calc(100vh - 240px))}#gcLauncher{right:10px;bottom:92px;padding:0;width:56px;height:56px;border-radius:50%;justify-content:center;gap:0;box-shadow:0 6px 20px rgba(0,0,0,.45),0 0 0 1px rgba(0,0,0,.12)}#gcLauncher .gc-txt,#gcLauncher .gc-dot{display:none}#gcLauncher .gc-ic{display:flex;align-items:center;justify-content:center}#gcLauncher .gc-badge{position:absolute;top:-2px;right:-2px}}
     /* Zone de sécurité en bas : évite que le lanceur de chat recouvre le CTA « Générer » et la dernière carte Snap */
     .main-inner{padding-bottom:130px}
     @media(max-width:900px){.main-inner{padding-bottom:150px}}
@@ -4583,9 +4583,9 @@
       }
       function flash(msg){var old=input.placeholder;input.placeholder=msg;setTimeout(function(){input.placeholder=old;},2500);}
       function schedule(){if(timer)clearInterval(timer);timer=setInterval(function(){poll(false);},open?4000:11000);}
-      function openPanel(){open=true;panel.classList.add('on');launcher.style.display='none';unread=0;badge.classList.remove('on');scrollBottom();try{window.clarity&&clarity('event','chat_opened');}catch(e){}input.focus();schedule();}
-      function closePanel(){open=false;panel.classList.remove('on');launcher.style.display='flex';schedule();}
-      launcher.addEventListener('click',openPanel);
+      function openPanel(){open=true;panel.classList.add('on');unread=0;badge.classList.remove('on');scrollBottom();try{window.clarity&&clarity('event','chat_opened');}catch(e){}input.focus();schedule();}
+      function closePanel(){open=false;panel.classList.remove('on');schedule();}
+      launcher.addEventListener('click',function(){open?closePanel():openPanel();});
       closeBtn.addEventListener('click',closePanel);
       sendBtn.addEventListener('click',send);
       input.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();send();}});

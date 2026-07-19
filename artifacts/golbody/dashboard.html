@@ -1727,6 +1727,12 @@
           </a>
         </li>
         <li>
+          <a href="#" id="mobileNavFeedback">
+            <i data-lucide="star"></i>
+            Gagne 300 crédits
+          </a>
+        </li>
+        <li>
           <a href="#" id="mobileNavAccount">
             <i data-lucide="user"></i>
             Mon compte
@@ -1777,6 +1783,12 @@
             <a href="#" id="navReferral">
               <i data-lucide="gift"></i>
               Invite et Gagne
+            </a>
+          </li>
+          <li>
+            <a href="#" id="navFeedback">
+              <i data-lucide="star"></i>
+              Gagne 300 crédits
             </a>
           </li>
           <li>
@@ -2851,6 +2863,8 @@
 
     function hideFeedbackView() {
       const fs = document.getElementById('feedbackSection'); if (fs) fs.classList.remove('is-visible');
+      const nf = document.getElementById('navFeedback'); if (nf) nf.classList.remove('active');
+      const mnf = document.getElementById('mobileNavFeedback'); if (mnf) mnf.classList.remove('active');
     }
     function showFeedback() {
       hideReferralView();
@@ -2865,6 +2879,8 @@
       mobileNavSubscription.classList.remove('active');
       mobileNavAccount.classList.remove('active');
       const fs = document.getElementById('feedbackSection'); if (fs) fs.classList.add('is-visible');
+      const nf = document.getElementById('navFeedback'); if (nf) nf.classList.add('active');
+      const mnf = document.getElementById('mobileNavFeedback'); if (mnf) mnf.classList.add('active');
       try { lucide.createIcons(); } catch (e) {}
       try { if (typeof gtrack === 'function') gtrack('feedback_open'); } catch (e) {}
       loadFeedback();
@@ -2992,6 +3008,11 @@
     if (snapRecheckBtn) snapRecheckBtn.addEventListener('click', () => { loadSnapAccess(); });
     const snapSeePlansBtn = document.getElementById('snapSeePlansBtn');
     if (snapSeePlansBtn) snapSeePlansBtn.addEventListener('click', () => { showSubscription(); });
+
+    const navFeedback = document.getElementById('navFeedback');
+    if (navFeedback) navFeedback.addEventListener('click', (e) => { e.preventDefault(); showFeedback(); });
+    const mobileNavFeedback = document.getElementById('mobileNavFeedback');
+    if (mobileNavFeedback) mobileNavFeedback.addEventListener('click', (e) => { e.preventDefault(); if (typeof closeMobileNav === 'function') closeMobileNav(); showFeedback(); });
 
     // ===== Questionnaire feedback « Gagne 300 crédits » =====
     const FB_QUESTIONS = [

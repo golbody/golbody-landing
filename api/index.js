@@ -518,8 +518,12 @@ async function handleAdminStats(req, res) {
     for (const c of ((ch.body && ch.body.data) || [])) {
       if (c.status === 'succeeded' && c.paid) { salesCount++; revenueTotal += (c.amount - (c.amount_refunded || 0)); }
     }
+    // Exclut aussi les abonnements des comptes de test, pour rester cohérent avec le comptage interne.
+    const excludedSubIds = new Set((Array.isArray(pr.body) ? pr.body : [])
+      .filter(r => { const e = (r.email || '').toLowerCase(); return EXCLUDED.includes(e) || e.startsWith('golbodytest+'); })
+      .map(r => r.stripe_subscription_id).filter(Boolean));
     const subs = await stripeGet('subscriptions?status=active&limit=100');
-    activeSubs = ((subs.body && subs.body.data) || []).length;
+    activeSubs = ((subs.body && subs.body.data) || []).filter(s => !excludedSubIds.has(s.id)).length;
   } catch (e) {}
   revenueTotal = Math.round(revenueTotal) / 100;
 

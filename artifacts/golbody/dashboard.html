@@ -1678,6 +1678,49 @@
   .fb-submit:hover:not(:disabled){filter:brightness(1.05);transform:translateY(-1px);}
   .fb-submit:disabled{opacity:.5;cursor:not-allowed;}
   .fb-foot{text-align:center;font-size:12px;color:var(--rd-faint);margin-top:12px;}
+
+  /* --- Monétise TikTok (programme clippeurs) — TIKTOK 2026-07-19 --- */
+  .tk-section{display:none;max-width:860px;margin:0 auto;padding:8px 4px 48px;}
+  .tk-section.is-visible{display:block;animation:viewIn .38s cubic-bezier(.22,.61,.36,1) both;}
+  .tk-head{text-align:center;margin:6px 0 30px;}
+  .tk-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--rd-accent);background:rgba(255,214,0,.10);border:1px solid rgba(255,214,0,.28);padding:6px 13px;border-radius:999px;}
+  .tk-title{font-size:clamp(28px,4.5vw,42px);font-weight:900;line-height:1.08;margin:16px 0 12px;background:linear-gradient(90deg,var(--rd-txt),var(--rd-accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .tk-tagline{font-size:16px;font-weight:700;color:var(--rd-txt);margin:0 auto 12px;max-width:560px;}
+  .tk-intro{font-size:14px;color:var(--rd-muted);line-height:1.6;max-width:600px;margin:0 auto;}
+  .tk-intro b{color:var(--rd-accent);}
+  .tk-benefits{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:30px;}
+  .tk-benefit{background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:18px;padding:24px 20px;text-align:center;}
+  .tk-b-emoji{font-size:34px;margin-bottom:12px;}
+  .tk-benefit h3{font-size:16px;font-weight:800;color:var(--rd-txt);margin:0 0 8px;}
+  .tk-benefit p{font-size:13px;color:var(--rd-muted);line-height:1.5;margin:0;}
+  .tk-block,.tk-pay,.tk-cta{background:var(--rd-panel);border:1px solid var(--rd-bd);border-radius:20px;padding:28px;margin-bottom:20px;}
+  .tk-h2{font-size:clamp(20px,3vw,26px);font-weight:900;color:var(--rd-txt);margin:0 0 8px;}
+  .tk-h2-sub{font-size:14px;color:var(--rd-muted);line-height:1.55;margin:0 0 22px;}
+  .tk-steps{display:flex;flex-direction:column;gap:16px;}
+  .tk-step{display:flex;gap:16px;align-items:flex-start;}
+  .tk-step-n{flex-shrink:0;font-size:20px;font-weight:900;color:#111;background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+  .tk-step-c h3{font-size:16px;font-weight:800;color:var(--rd-txt);margin:6px 0 6px;}
+  .tk-step-c p{font-size:13.5px;color:var(--rd-muted);line-height:1.5;margin:0;}
+  .tk-pay{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;align-items:center;}
+  .tk-pay-main .tk-h2-sub{margin-bottom:16px;}
+  .tk-feats{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;}
+  .tk-feats li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--rd-muted);line-height:1.45;}
+  .tk-feats svg{width:17px;height:17px;color:var(--rd-accent);flex-shrink:0;margin-top:2px;}
+  .tk-example{background:linear-gradient(160deg,rgba(255,214,0,.10),rgba(255,214,0,.02));border:1px solid rgba(255,214,0,.28);border-radius:16px;padding:26px 20px;text-align:center;}
+  .tk-ex-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--rd-faint);margin-bottom:8px;}
+  .tk-ex-amt{font-size:44px;font-weight:900;color:var(--rd-accent);line-height:1;}
+  .tk-ex-sub{font-size:13px;color:var(--rd-muted);margin-top:8px;}
+  .tk-cta{text-align:center;}
+  .tk-cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:6px 0 16px;}
+  .tk-btn-main,.tk-btn-mail{display:inline-flex;align-items:center;gap:9px;font-weight:900;font-size:15px;padding:14px 24px;border-radius:14px;cursor:pointer;text-decoration:none;transition:filter .15s,transform .15s,background .15s,border-color .15s,color .15s;border:none;}
+  .tk-btn-main{background:linear-gradient(135deg,var(--rd-accent),var(--rd-accent-dk));color:#111;}
+  .tk-btn-main:hover{filter:brightness(1.05);transform:translateY(-1px);}
+  .tk-btn-mail{background:var(--rd-panel2);border:1px solid var(--rd-bdg);color:var(--rd-txt);}
+  .tk-btn-mail:hover{border-color:var(--rd-accent);color:var(--rd-accent);}
+  .tk-btn-main svg,.tk-btn-mail svg{width:18px;height:18px;}
+  .tk-avail{font-size:13px;color:var(--rd-muted);margin:0 0 10px;}
+  .tk-fine{font-size:11.5px;color:var(--rd-faint);line-height:1.5;max-width:560px;margin:0 auto;}
+  @media(max-width:640px){.tk-pay{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
@@ -1733,6 +1776,12 @@
           <a href="#" id="mobileNavFeedback">
             <i data-lucide="star"></i>
             Gagne 300 crédits
+          </a>
+        </li>
+        <li>
+          <a href="#" id="mobileNavTiktok">
+            <i data-lucide="video"></i>
+            Monétise TikTok
           </a>
         </li>
         <li>
@@ -1792,6 +1841,12 @@
             <a href="#" id="navFeedback">
               <i data-lucide="star"></i>
               Gagne 300 crédits
+            </a>
+          </li>
+          <li>
+            <a href="#" id="navTiktok">
+              <i data-lucide="video"></i>
+              Monétise TikTok
             </a>
           </li>
           <li>
@@ -2164,6 +2219,84 @@
             </div>
             <button class="fb-submit" id="fbSubmit" type="button" disabled>Envoyer et gagner 300 crédits</button>
             <div class="fb-foot">Réponses développées requises pour validation.</div>
+          </div>
+        </div>
+
+        <!-- MONÉTISE TIKTOK SECTION — TIKTOK 2026-07-19 -->
+        <div class="tk-section" id="tiktokSection">
+          <div class="tk-head">
+            <span class="tk-badge">🚀 Nouveau programme</span>
+            <h1 class="tk-title">Monétise TikTok avec GolBody</h1>
+            <p class="tk-tagline">Fais connaître GolBody, sois payé aux vues — sans ton visage, sans ta voix.</p>
+            <p class="tk-intro">Crée des vidéos TikTok qui font la promo de GolBody, exactement dans le style que tu vois passer sur ta FYP (avant/après, démos de l'app…). Tu publies sur ton compte, tu touches <b>50 centimes pour chaque 1 000 vues</b>.</p>
+          </div>
+
+          <div class="tk-benefits">
+            <div class="tk-benefit">
+              <div class="tk-b-emoji">🙈</div>
+              <h3>Pas besoin de ton visage</h3>
+              <p>Tu n'apparais jamais à l'écran. Montre l'app et les résultats, pas toi. Anonymat total.</p>
+            </div>
+            <div class="tk-benefit">
+              <div class="tk-b-emoji">🔇</div>
+              <h3>Pas besoin de ta voix</h3>
+              <p>Aucune voix off à enregistrer. Musique et texte à l'écran suffisent.</p>
+            </div>
+            <div class="tk-benefit">
+              <div class="tk-b-emoji">💸</div>
+              <h3>50 centimes / 1 000 vues</h3>
+              <p>Payé à la performance sur tes vidéos validées. Plus tu publies, plus tu gagnes.</p>
+            </div>
+          </div>
+
+          <div class="tk-block">
+            <h2 class="tk-h2">Comment ça marche</h2>
+            <p class="tk-h2-sub">Tu crées des vidéos de promo GolBody dans le format des TikTok viraux de ta niche — sans te filmer, sans voix off.</p>
+            <div class="tk-steps">
+              <div class="tk-step">
+                <div class="tk-step-n">01</div>
+                <div class="tk-step-c"><h3>Tu contactes le support</h3><p>Tu nous écris pour rejoindre le programme. On valide ton profil et on t'explique les bonnes pratiques de ta niche.</p></div>
+              </div>
+              <div class="tk-step">
+                <div class="tk-step-n">02</div>
+                <div class="tk-step-c"><h3>Tu crées tes vidéos</h3><p>Tu montes des vidéos qui font la promo de GolBody (avant/après, résultats, démos), dans le style des TikTok qui marchent. Sans visage, sans voix si tu veux.</p></div>
+              </div>
+              <div class="tk-step">
+                <div class="tk-step-n">03</div>
+                <div class="tk-step-c"><h3>Tu publies et tu gagnes</h3><p>Tu postes sur ton compte TikTok. Pour chaque tranche de 1 000 vues sur tes vidéos validées, on te reverse 50 centimes.</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tk-pay">
+            <div class="tk-pay-main">
+              <h2 class="tk-h2">50 centimes pour chaque 1 000 vues</h2>
+              <p class="tk-h2-sub">Sans plafond. Plus tes vidéos performent, plus tu gagnes. Le paiement est calculé sur les vues légitimes des vidéos validées par notre équipe.</p>
+              <ul class="tk-feats">
+                <li><i data-lucide="check-circle-2"></i> Format vertical TikTok, dans le style de ta niche</li>
+                <li><i data-lucide="check-circle-2"></i> Reproduis le style des vidéos qui marchent</li>
+                <li><i data-lucide="check-circle-2"></i> Aucun matériel requis — pas de caméra, pas de micro</li>
+                <li><i data-lucide="check-circle-2"></i> Contenu promo prêt à publier (avant/après, démos GolBody)</li>
+                <li><i data-lucide="check-circle-2"></i> Suivi mensuel de tes vues et de tes paiements</li>
+                <li><i data-lucide="check-circle-2"></i> Accompagnement personnalisé du support GolBody</li>
+              </ul>
+            </div>
+            <div class="tk-example">
+              <div class="tk-ex-label">Exemple</div>
+              <div class="tk-ex-amt">250 €</div>
+              <div class="tk-ex-sub">pour 500 000 vues cumulées</div>
+            </div>
+          </div>
+
+          <div class="tk-cta">
+            <h2 class="tk-h2">Prêt à démarrer ?</h2>
+            <p class="tk-h2-sub">Pour rejoindre le programme et commencer à gagner, contacte notre support. On valide ton profil et on t'explique comment créer tes vidéos.</p>
+            <div class="tk-cta-btns">
+              <button class="tk-btn-main" type="button" id="tkContactBtn"><i data-lucide="message-circle"></i> Contacter le support</button>
+              <a class="tk-btn-mail" id="tkMailBtn" href="mailto:golbodyyy@gmail.com?subject=Programme%20TikTok%20GolBody"><i data-lucide="mail"></i> Envoyer un mail</a>
+            </div>
+            <p class="tk-avail">Support disponible 7j/7 — réponse sous 24 h.</p>
+            <p class="tk-fine">Les conditions précises du programme (validation des comptes, plafonds anti-fraude, modalités de paiement) sont expliquées par le support lors de l'inscription.</p>
           </div>
         </div>
 
@@ -2795,6 +2928,7 @@
       hideReferralView();
       hideSnapView();
       hideFeedbackView();
+      hideTikTokView();
       generationSection.style.display = 'block';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2810,6 +2944,7 @@
       hideReferralView();
       hideSnapView();
       hideFeedbackView();
+      hideTikTokView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.add('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2826,6 +2961,7 @@
       hideReferralView();
       hideSnapView();
       hideFeedbackView();
+      hideTikTokView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.add('is-visible');
@@ -2846,6 +2982,7 @@
     function showSnap() {
       hideReferralView();
       hideFeedbackView();
+      hideTikTokView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2872,6 +3009,7 @@
     function showFeedback() {
       hideReferralView();
       hideSnapView();
+      hideTikTokView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -2890,9 +3028,36 @@
     }
     window.showFeedback = showFeedback;
 
+    function hideTikTokView() {
+      const ts = document.getElementById('tiktokSection'); if (ts) ts.classList.remove('is-visible');
+      const nt = document.getElementById('navTiktok'); if (nt) nt.classList.remove('active');
+      const mnt = document.getElementById('mobileNavTiktok'); if (mnt) mnt.classList.remove('active');
+    }
+    function showTikTok() {
+      hideReferralView();
+      hideSnapView();
+      hideFeedbackView();
+      generationSection.style.display = 'none';
+      subscriptionSection.classList.remove('is-visible');
+      accountSection.classList.remove('is-visible');
+      navGenerate.classList.remove('active');
+      navSubscription.classList.remove('active');
+      navAccount.classList.remove('active');
+      mobileNavGenerate.classList.remove('active');
+      mobileNavSubscription.classList.remove('active');
+      mobileNavAccount.classList.remove('active');
+      const ts = document.getElementById('tiktokSection'); if (ts) ts.classList.add('is-visible');
+      const nt = document.getElementById('navTiktok'); if (nt) nt.classList.add('active');
+      const mnt = document.getElementById('mobileNavTiktok'); if (mnt) mnt.classList.add('active');
+      try { lucide.createIcons(); } catch (e) {}
+      try { if (typeof gtrack === 'function') gtrack('tiktok_open'); } catch (e) {}
+    }
+    window.showTikTok = showTikTok;
+
     function showReferral() {
       hideSnapView();
       hideFeedbackView();
+      hideTikTokView();
       generationSection.style.display = 'none';
       subscriptionSection.classList.remove('is-visible');
       accountSection.classList.remove('is-visible');
@@ -3016,6 +3181,18 @@
     if (navFeedback) navFeedback.addEventListener('click', (e) => { e.preventDefault(); showFeedback(); });
     const mobileNavFeedback = document.getElementById('mobileNavFeedback');
     if (mobileNavFeedback) mobileNavFeedback.addEventListener('click', (e) => { e.preventDefault(); if (typeof closeMobileNav === 'function') closeMobileNav(); showFeedback(); });
+
+    const navTiktok = document.getElementById('navTiktok');
+    if (navTiktok) navTiktok.addEventListener('click', (e) => { e.preventDefault(); showTikTok(); });
+    const mobileNavTiktok = document.getElementById('mobileNavTiktok');
+    if (mobileNavTiktok) mobileNavTiktok.addEventListener('click', (e) => { e.preventDefault(); if (typeof closeMobileNav === 'function') closeMobileNav(); showTikTok(); });
+    const tkContactBtn = document.getElementById('tkContactBtn');
+    if (tkContactBtn) tkContactBtn.addEventListener('click', () => {
+      try {
+        if (window.$crisp) { window.$crisp.push(['do', 'chat:show']); window.$crisp.push(['do', 'chat:open']); }
+        else { window.location.href = 'mailto:golbodyyy@gmail.com?subject=Programme%20TikTok%20GolBody'; }
+      } catch (e) { window.location.href = 'mailto:golbodyyy@gmail.com?subject=Programme%20TikTok%20GolBody'; }
+    });
 
     // ===== Questionnaire feedback « Gagne 300 crédits » =====
     const FB_QUESTIONS = [

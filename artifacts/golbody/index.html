@@ -528,26 +528,22 @@
   document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});clearTimeout(window.__revealFail);}catch(e){}
 
 
+  // Transition CTA → inscription. UN SEUL handler (l'ancien, qui visait un #golCtaBar
+  // supprimé du HTML, jetait "null is not an object" à CHAQUE clic sur le CTA).
+  // Règle : si l'overlay manque, on ne bloque pas le lien ; l'animation ne doit jamais
+  // pouvoir empêcher la navigation.
   document.querySelectorAll('a[href="register.html"]').forEach(function(btn){
     btn.addEventListener('click',function(e){
-      e.preventDefault();
-      var overlay=document.getElementById('golCtaLoader');
-      var bar=document.getElementById('golCtaBar');
-      overlay.classList.add('active');
-      setTimeout(function(){bar.style.width='100%';},40);
-      setTimeout(function(){window.location.href='register.html';},1500);
-    });
-  });
-
-
-  document.querySelectorAll('a[href="register.html"]').forEach(function(btn){
-    btn.addEventListener('click',function(e){
-      e.preventDefault();
       var ov=document.getElementById('golCtaLoader');
+      if(!ov) return; // pas d'overlay → le lien natif fait le travail
+      e.preventDefault();
       var ring=document.getElementById('golRingFill');
       var sil=document.getElementById('golSil');
       ov.classList.add('active');
-      setTimeout(function(){ ring.style.strokeDashoffset='0'; sil.classList.add('morphed'); }, 40);
+      setTimeout(function(){
+        if(ring) ring.style.strokeDashoffset='0';
+        if(sil) sil.classList.add('morphed');
+      }, 40);
       setTimeout(function(){ window.location.href='register.html'; }, 1650);
     });
   });

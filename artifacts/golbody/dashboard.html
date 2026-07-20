@@ -1504,6 +1504,11 @@
   .plan-billing-note{color:var(--rd-faint)!important;}
   .plan-card-big .gens{display:inline-block;font-size:17px;font-weight:800;color:var(--rd-accent);background:rgba(255,214,0,0.12);border:1px solid var(--rd-bdg);padding:7px 16px;border-radius:12px;margin-bottom:8px;letter-spacing:-0.2px;}
   .plan-card-big.featured .gens{background:rgba(255,214,0,0.18);border-color:rgba(255,214,0,0.35);}
+  /* Snap Rouge inclus (Pro/Ultra) — reprend le rouge de l'onglet Snap. Cf. SNAP_PLANS côté api. */
+  .plan-card-big .plan-snap{display:flex;align-items:center;justify-content:center;gap:7px;font-size:12.5px;font-weight:800;color:#ff8a8a;background:rgba(255,74,74,.09);border:1px solid rgba(255,74,74,.30);padding:9px 12px;border-radius:12px;margin:0 0 14px;line-height:1.25;text-align:center;}
+  .plan-card-big .plan-snap b{color:#ffb3b3;font-weight:900;}
+  .plan-card-big .plan-features li.feat-snap{color:#ffb3b3!important;font-weight:700;}
+  .plan-card-big .plan-features li.feat-snap svg{color:#ff8a8a!important;}
   .plan-card-big .tagline{font-size:12.5px;color:var(--rd-muted);line-height:1.4;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--rd-bd);}
   .plan-card-big .incl-label{font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--rd-faint);margin-bottom:11px;}
   .plan-card-big .plan-features{gap:9px!important;margin-bottom:auto;}
@@ -2018,9 +2023,11 @@
                 <div class="plan-billing-note" id="proBilling"></div>
               </div>
               <div class="gens">3 000 crédits / mois</div>
+              <div class="plan-snap">🔴 <b>Technique Snap Rouge</b> incluse</div>
               <div class="tagline">Le meilleur choix pour les passionnés</div>
               <div class="incl-label">Votre forfait inclut :</div>
               <ul class="plan-features">
+                <li class="feat-snap"><i data-lucide="check" class="check-icon"></i> Tuto Snap Rouge — accès à vie (valeur 4,90 €)</li>
                 <li><i data-lucide="check" class="check-icon"></i> Accès à la génération IA</li>
                 <li><i data-lucide="check" class="check-icon"></i> Transformation photo réaliste</li>
                 <li><i data-lucide="check" class="check-icon"></i> Qualité 4K</li>
@@ -2044,9 +2051,11 @@
                 <div class="plan-billing-note" id="ultraBilling"></div>
               </div>
               <div class="gens">7 500 crédits / mois</div>
+              <div class="plan-snap">🔴 <b>Technique Snap Rouge</b> incluse</div>
               <div class="tagline">Pour les créateurs sans limites</div>
               <div class="incl-label">Votre forfait inclut :</div>
               <ul class="plan-features">
+                <li class="feat-snap"><i data-lucide="check" class="check-icon"></i> Tuto Snap Rouge — accès à vie (valeur 4,90 €)</li>
                 <li><i data-lucide="check" class="check-icon"></i> Accès à la génération IA</li>
                 <li><i data-lucide="check" class="check-icon"></i> Transformation photo réaliste</li>
                 <li><i data-lucide="check" class="check-icon"></i> Qualité 8K</li>

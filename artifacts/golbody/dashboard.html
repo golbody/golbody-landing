@@ -4401,10 +4401,13 @@
        part vers son archétype « musclé » (bodybuilder adulte) et fait grossir le torse
        sans ajuster le cou ni les épaules, d'où la tête qui paraît trop petite. */
     const KEEP_IDENTITY = "Keep the same person: same face, same apparent age, same body type, same skin tone, hair, pose, camera angle and background.";
-    const KEEP_PROPORTION = "Keep the whole body proportionate: neck, shoulders, chest and arms must scale together and stay coherent with the head size. The head must never look too small for the body.";
+    const KEEP_PROPORTION = "Keep the whole body proportionate: neck, shoulders, chest and arms must scale together and stay coherent with the head size. The head must never look too small for the body. Distribute any added muscle evenly and moderately across the body: never enlarge the forearms, wrists, hands or any single muscle group more than the rest. Forearms must stay clearly slimmer than the upper arms.";
     const KEEP_PLAUSIBLE = "The physique must stay believable for this exact person's age and frame: the body of someone who trains regularly, never a professional bodybuilder, never exaggerated or inflated mass. If the person looks young or slim, keep the result proportionally modest.";
     const KEEP_CLOTHES = "Keep the same clothes and show any physique change through them; uncover skin only if the requested edit truly requires it.";
-    const KEEP_RENDER = "Match the original lighting, shadow direction and skin texture. The result must look like a genuine unretouched photograph, never plastic, airbrushed or CGI.";
+    /* PROMPT V2.1 2026-07-20 — la peau est décrite POSITIVEMENT (pores, grain, mat).
+       Les consignes négatives (never plastic / never CGI) sont mal gérées par les modèles
+       de diffusion et peuvent renforcer ce quon interdit. */
+    const KEEP_RENDER = "Match the original lighting and shadow direction. Keep the skin exactly as it was captured: visible pores, natural grain, uneven tone and small imperfections, with a completely matte finish. The skin must stay as dull and unpolished as in the original photo, with no added sheen, glow, gloss, wet look or specular highlights, and no smoothing, blurring or airbrushing. The result must look like an ordinary unretouched phone snapshot taken in daylight.";
     const REALISM = [KEEP_IDENTITY, KEEP_PROPORTION, KEEP_PLAUSIBLE, KEEP_CLOTHES, KEEP_RENDER].join(' ');
 
     // Compose le prompt final. Une seule préservation, une seule clause de rendu.

@@ -4,6 +4,7 @@
 <script type="text/javascript">/* Microsoft Clarity */(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","xlud7je8g2");</script>
 <script type="text/javascript">window.$crisp=[];window.CRISP_WEBSITE_ID="3d681453-1a94-42b2-9f07-c0cc14f2d13a";(function(){var d=document,s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();</script>
   <meta charset="UTF-8">
+  <script>document.documentElement.classList.add('js-reveal');window.__revealFail=setTimeout(function(){var n=document.querySelectorAll('.reveal:not(.visible)');for(var i=0;i<n.length;i++)n[i].classList.add('visible');},4000);</script>
   <link rel="manifest" href="/public/manifest.webmanifest">
   <meta name="theme-color" content="#0e0e0e">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -173,8 +174,9 @@
     @media (max-width: 639px) { .gol-footer { padding: 32px 24px; } .gol-footer-inner { flex-direction: column; gap: 16px; text-align: center; } .gol-footer-copy { padding: 0; order: 2; } .gol-footer-links { order: 3; } }
 
     /* REVEAL */
-    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal { opacity: 1; transform: none; transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    html.js-reveal .reveal { opacity: 0; transform: translateY(32px); }
+    html.js-reveal .reveal.visible { opacity: 1; transform: translateY(0); }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
     .gol-carousel-row2 .gol-carousel-track{animation-direction:reverse}
     .gol-slider-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
@@ -522,8 +524,8 @@
   document.querySelectorAll('.gol-faq-question').forEach(function(btn){btn.addEventListener('click',function(){var item=btn.closest('.gol-faq-item'),open=item.classList.contains('is-open');document.querySelectorAll('.gol-faq-item.is-open').forEach(function(i){i.classList.remove('is-open');i.querySelector('.gol-faq-question').setAttribute('aria-expanded','false');});if(!open){item.classList.add('is-open');btn.setAttribute('aria-expanded','true');}});});
 
   // Reveal
-  var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:0.1});
-  document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});
+  try{var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(function(el){ro.observe(el);});clearTimeout(window.__revealFail);}catch(e){}
 
 
   document.querySelectorAll('a[href="register.html"]').forEach(function(btn){

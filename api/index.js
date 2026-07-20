@@ -28,7 +28,7 @@ const CREDIT_PACKS = {
 };
 // Snap Rouge — déblocage à vie (paiement unique, montant inline → aucun prix Stripe à créer).
 // Accès accordé aussi aux abonnés pro/ultra (voir handleSnapTutorial).
-const SNAP_PRICE = 900; // 9,00 € one-time
+const SNAP_PRICE = 490; // 4,90 € one-time
 const SNAP_PLANS = ['pro', 'ultra']; // abonnements qui incluent le Snap Rouge
 const SNAP_STEPS = [
   { n: 1, emoji: '👻', label: 'Étape 1', title: 'Ouvre Snapchat', text: "Clique sur l'icône des filtres dans l'appareil Snapchat." },
@@ -274,7 +274,7 @@ async function handleCheckout(body, req, res) {
       metadata: { user_id, pack, credits: String(pd.credits) },
     };
   } else if (type === 'snap') {
-    // Déblocage Snap Rouge à vie : paiement unique 9 €, montant inline (pas de prix Stripe pré-créé)
+    // Déblocage Snap Rouge à vie : paiement unique 4,90 €, montant inline (pas de prix Stripe pré-créé)
     params = {
       mode: 'payment', allow_promotion_codes: true,
       line_items: [{ price_data: { currency: 'eur', product_data: { name: 'Snap Rouge — Accès à vie' }, unit_amount: SNAP_PRICE }, quantity: 1 }],
